@@ -89,14 +89,16 @@ export default function App() {
       <a className="skip" href="#main">Skip to content</a>
 
       <header className="top">
-        <a className="top__name" href="#top">{ME.name}</a>
-        <nav className="top__nav" aria-label="Sections">
-          <a href="#work">Work</a>
-          <a href="#path">Shipping</a>
-          <a href="#roles">Path</a>
-          <a href="blog/">Writing</a>
-          <a href="#contact">Contact</a>
-        </nav>
+        <div className="top__inner">
+          <a className="top__name" href="#top">{ME.name}</a>
+          <nav className="top__nav" aria-label="Sections">
+            <a href="#work">Work</a>
+            <a href="#path">Shipping</a>
+            <a href="#roles">Path</a>
+            <a href="blog/">Writing</a>
+            <a href="#contact">Contact</a>
+          </nav>
+        </div>
       </header>
 
       <main id="main">

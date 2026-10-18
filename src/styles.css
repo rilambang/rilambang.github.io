@@ -1,9 +1,14 @@
 :root {
   --bg: #fbfaf7;
   --ink: #14140f;
+  --ink-soft: #4a4840;
   --muted: #6d6b62;
   --line: #e2dfd5;
   --accent: #1f4fd8;
+  --tint: #eef2fd;
+  --warm: #f6f4ec;
+  --glass: rgb(251 250 247 / 86%);
+  --rim: rgb(255 255 255 / 60%);
   --radius: 14px;
   --wrap: 1080px;
   --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Helvetica, Arial, sans-serif;
@@ -35,7 +40,7 @@ img { display: block; max-width: 100%; }
 .skip:focus {
   left: 16px;
   top: 16px;
-  z-index: 10;
+  z-index: 30;
   background: var(--ink);
   color: var(--bg);
   padding: 8px 12px;
@@ -43,14 +48,38 @@ img { display: block; max-width: 100%; }
 }
 
 /* ── top bar ─────────────────────────────────────────── */
+/* The material goes on the chrome, the content stays opaque underneath it, and the
+   panel is what sets contrast — so the links on it are --ink-soft, not --muted. With
+   --muted the worst case behind the blur is 3.8:1; scripts/build-blog.py fails the
+   build if either number drifts below 4.5:1. */
 .top {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: var(--glass);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  backdrop-filter: blur(16px) saturate(180%);
+  box-shadow: inset 0 -1px 0 var(--line), inset 0 1px 0 var(--rim);
+}
+
+.top__inner {
   max-width: var(--wrap);
   margin: 0 auto;
-  padding: 28px 24px 0;
+  padding: 18px 24px;
   display: flex;
   align-items: baseline;
   justify-content: space-between;
   gap: 24px;
+}
+
+/* Not the escape hatch: Safari cannot express this query at all, so the default above
+   has to be legible on its own. This only improves things where it is honoured. */
+@media (prefers-reduced-transparency: reduce) {
+  .top { background: var(--bg); -webkit-backdrop-filter: none; backdrop-filter: none; }
+}
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .top { background: var(--bg); }
 }
 
 .top__name {
@@ -63,8 +92,13 @@ img { display: block; max-width: 100%; }
   display: flex;
   gap: 22px;
   font-size: 14px;
-  color: var(--muted);
+  color: var(--ink-soft);
 }
+
+/* A sticky bar hides whatever an anchor jumps to unless the targets know about it.
+   `[id]`, not `section[id]`: the skip link targets `<main id="main">`, and any future
+   anchor may not be a `<section>`. */
+[id] { scroll-margin-top: 76px; }
 
 /* ── hero ────────────────────────────────────────────── */
 .hero {

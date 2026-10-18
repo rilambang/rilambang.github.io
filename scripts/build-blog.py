@@ -31,19 +31,70 @@ def read_tokens():
 
 TOK = read_tokens()
 
+
+def _lin(c):
+    c /= 255
+    return c / 12.92 if c <= 0.04045 else ((c + 0.055) / 1.055) ** 2.4
+
+
+def _lum(rgb):
+    r, g, b = (_lin(x) for x in rgb)
+    return 0.2126 * r + 0.7152 * g + 0.0722 * b
+
+
+def _ratio(a, b):
+    la, lb = _lum(a), _lum(b)
+    return (max(la, lb) + 0.05) / (min(la, lb) + 0.05)
+
+
+def _hex(v):
+    return tuple(int(v[i:i + 2], 16) for i in (1, 3, 5))
+
+
+def check_bar():
+    """A translucent panel decides the contrast of everything sitting on it, and Safari
+    cannot express `prefers-reduced-transparency` at all — so the default has to be legible
+    by itself, and the check has to be arithmetic rather than a look. Worst case is the
+    panel over the darkest thing on the site, i.e. over --ink. Change the glass, the panel
+    colour or the link colour, and this fails the build instead of quietly thinning out."""
+    glass = TOK["glass"]
+    parts = glass[glass.find("(") + 1:glass.rfind(")")].replace("/", " ").split()
+    base = tuple(int(x) for x in parts[:3])
+    alpha = float(parts[3].rstrip("%")) / 100 if len(parts) > 3 else 1.0
+    behind = _hex(TOK["ink"])
+    panel = tuple(alpha * c + (1 - alpha) * i for c, i in zip(base, behind))
+    for tok in ("ink-soft", "ink", "accent"):
+        r = _ratio(_hex(TOK[tok]), panel)
+        if r < 4.5:
+            raise SystemExit(
+                f"\n✗ {tok} ({TOK[tok]}) on the glass panel is {r:.2f}:1, under 4.5:1.\n"
+                f"  Panel: {glass} over {TOK['ink']}. Darken the token, or thicken the glass.")
+        print(f"  {tok:9s} {TOK[tok]:9s} on glass  {r:5.2f}:1")
+
+
+check_bar()
+
 CSS = """
-:root{{--bg:{bg};--ink:{ink};--muted:{muted};--line:{line};--accent:{accent};
-  --tint:#eef2fd;--warm:#f6f4ec;--sans:{sans}}}
+:root{{--bg:{bg};--ink:{ink};--ink-soft:{ink-soft};--muted:{muted};--line:{line};
+  --accent:{accent};--tint:{tint};--warm:{warm};--glass:{glass};--rim:{rim};
+  --sans:{sans}}}
 *{{box-sizing:border-box}}
 html{{scroll-behavior:smooth}}
 body{{margin:0;background:var(--bg);color:var(--ink);
   font:16px/1.68 {sans};-webkit-font-smoothing:antialiased}}
 .wrap{{max-width:720px;margin:0 auto;padding:36px 24px 72px}}
-.top{{display:flex;justify-content:space-between;align-items:baseline;
-  border-bottom:1px solid var(--line);padding-bottom:14px;margin-bottom:36px;font-size:14px}}
-.top a{{color:var(--muted);text-decoration:none}}
+.top{{position:sticky;top:0;z-index:5;margin:0 0 36px;padding:14px 0;
+  display:flex;justify-content:space-between;align-items:baseline;font-size:14px;
+  background:var(--glass);-webkit-backdrop-filter:blur(16px) saturate(180%);
+  backdrop-filter:blur(16px) saturate(180%);
+  box-shadow:inset 0 -1px 0 var(--line),inset 0 1px 0 var(--rim)}}
+.top a{{color:var(--ink-soft);text-decoration:none}}
 .top a:hover{{color:var(--accent)}}
 .top .who{{font-weight:600;color:var(--ink)}}
+@media (prefers-reduced-transparency:reduce){{
+  .top{{background:var(--bg);-webkit-backdrop-filter:none;backdrop-filter:none}}}}
+@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){{
+  .top{{background:var(--bg)}}}}
 h1{{font-size:33px;line-height:1.18;letter-spacing:-0.022em;margin:0 0 12px}}
 h2{{font-size:19.5px;letter-spacing:-0.012em;margin:36px 0 10px}}
 h3{{font-size:16px;margin:24px 0 6px}}
@@ -133,8 +184,8 @@ F_INK = TOK["ink"]
 F_MUTED = TOK["muted"]
 F_LINE = TOK["line"]
 F_ACC = TOK["accent"]
-F_TINT = "#eef2fd"
-F_WARM = "#f6f4ec"
+F_TINT = TOK["tint"]
+F_WARM = TOK["warm"]
 FONT = "font-family='Helvetica Neue,Helvetica,Arial,sans-serif'"
 
 
