@@ -10,7 +10,7 @@ export const ME = {
   where: 'Jakarta, Indonesia',
   email: 'rilambang@gmail.com',
   blurb:
-    'I lead iOS for Pijar Sekolah at Telkom Indonesia — the exam modules a million students sit. Eight years of mobile, three stacks, one habit: ship it and leave the team able to ship without me.',
+    'I lead iOS for Pijar Sekolah at Telkom Indonesia — the exam modules a million students sit. Nine years of mobile, three stacks, one habit: ship it and leave the team able to ship without me.',
   links: [
     { label: 'LinkedIn', url: 'https://linkedin.com/in/muhammad-ilham-rilambang-6400837b' },
     { label: 'GitHub', url: 'https://github.com/rilambang' },
@@ -25,7 +25,7 @@ export const FACTS = [
   { figure: '1M+', label: 'students sat exams on modules I architected' },
   { figure: '99.5%', label: 'crash-free sessions on Indihome Eazy after the rewrite' },
   { figure: '25%', label: 'faster load times after leaving UIKit behind' },
-  { figure: '8', label: 'years in mobile — React Native, UIKit, SwiftUI' },
+  { figure: '9', label: 'years in mobile — React Native, UIKit, SwiftUI' },
 ]
 
 export const WORK = [
