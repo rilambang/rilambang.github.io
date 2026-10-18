@@ -706,7 +706,7 @@ def page(title, description, url, body, extra_head=""):
 <meta property="og:url" content="{url}">
 <meta property="og:image" content="{CARD}">
 <meta name="twitter:card" content="summary_large_image">
-<link rel="icon" href="/favicon.ico">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%231f4fd8'/><text x='16' y='23' font-family='Georgia,serif' font-size='20' fill='%23fbfaf7' text-anchor='middle'>R</text></svg>">
 <link rel="stylesheet" href="./blog.css">
 {extra_head}</head>
 <body>
