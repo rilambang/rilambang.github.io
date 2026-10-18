@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI-native development is a process, not a feature</title>
+<meta name="description" content="What I write down so an agent is useful inside a real codebase: the conventions file, the brief, the one piece of evidence I accept — and the parts I refuse to hand over.">
+<link rel="canonical" href="https://rilambang.github.io/blog/ai-native-development-process.html">
+<meta property="og:type" content="article">
+<meta property="og:title" content="AI-native development is a process, not a feature">
+<meta property="og:description" content="What I write down so an agent is useful inside a real codebase: the conventions file, the brief, the one piece of evidence I accept — and the parts I refuse to hand over.">
+<meta property="og:url" content="https://rilambang.github.io/blog/ai-native-development-process.html">
+<meta property="og:image" content="https://rilambang.github.io/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%231f4fd8'/><text x='16' y='23' font-family='Georgia,serif' font-size='20' fill='%23fbfaf7' text-anchor='middle'>R</text></svg>">
+<link rel="stylesheet" href="./blog.css">
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <a class="who" href="/">Muhammad Ilham Rilambang</a>
+    <a href="./index.html">Writing</a>
+  </div>
+  <header class="post-head">
+    <p class="chip">Process</p>
+    <h1>AI-native development is a process, not a feature</h1>
+    <p class="meta">4 min read · Muhammad Ilham Rilambang</p>
+  </header>
+  <article>
+<p class="lede">"AI-native" describes how an app gets built, not something that ships inside it.
+The interesting engineering is not the model. It is the document you write so a stateless tool
+can work inside a codebase that took years to shape.</p>
+
+  <figure class="fig"><svg viewBox='0 0 640 394' width='640' height='394' role='img' aria-label='Four checkpoints in an agent workflow: what is written once, what is written per task, the evidence accepted, and what stays a person&#x27;s decision' font-family='Helvetica Neue,Helvetica,Arial,sans-serif' xmlns='http://www.w3.org/2000/svg'><g class='n'><rect x='20' y='16' width='470' height='64' rx='10' fill='#eef2fd' stroke='#1f4fd8'/><rect x='20' y='16' width='3' height='64' rx='1.5' fill='#1f4fd8'/><text x='34' y='42' font-size='13' font-weight='600' fill='#14140f'>Written once</text><text x='34' y='62' font-size='11.5' fill='#6d6b62'>conventions, boundaries, roles, stop conditions</text></g><line x1='255' y1='80' x2='255' y2='102' stroke='#e2dfd5' stroke-width='1.5' class='d'/><polygon points='255,102 250.5,94.8 259.5,94.8' fill='#e2dfd5'/><g class='n'><rect x='20' y='106' width='470' height='64' rx='10' fill='#fff' stroke='#e2dfd5'/><rect x='20' y='106' width='3' height='64' rx='1.5' fill='#1f4fd8'/><text x='34' y='132' font-size='13' font-weight='600' fill='#14140f'>Written per task</text><text x='34' y='152' font-size='11.5' fill='#6d6b62'>the brief: exact paths, the invariant, what proves it</text></g><line x1='255' y1='170' x2='255' y2='192' stroke='#e2dfd5' stroke-width='1.5' class='d'/><polygon points='255,192 250.5,184.8 259.5,184.8' fill='#e2dfd5'/><g class='n'><rect x='20' y='196' width='470' height='64' rx='10' fill='#eef2fd' stroke='#1f4fd8'/><rect x='20' y='196' width='3' height='64' rx='1.5' fill='#1f4fd8'/><text x='34' y='222' font-size='13' font-weight='600' fill='#14140f'>The only proof</text><text x='34' y='242' font-size='11.5' fill='#6d6b62'>a hash, a byte count, a test that was red</text></g><line x1='255' y1='260' x2='255' y2='282' stroke='#e2dfd5' stroke-width='1.5' class='d'/><polygon points='255,282 250.5,274.8 259.5,274.8' fill='#e2dfd5'/><g class='n'><rect x='20' y='286' width='470' height='64' rx='10' fill='#eef2fd' stroke='#1f4fd8'/><rect x='20' y='286' width='3' height='64' rx='1.5' fill='#1f4fd8'/><text x='34' y='312' font-size='13' font-weight='600' fill='#14140f'>Still a person</text><text x='34' y='332' font-size='11.5' fill='#6d6b62'>specificity, secrets, anything irreversible</text></g><line x1='512' y1='16' x2='512' y2='350' stroke='#e2dfd5' stroke-width='1.5'/><line x1='500' y1='180' x2='524' y2='180' stroke='#e2dfd5' stroke-width='1.5'/><text x='528' y='92' font-size='11.5' fill='#6d6b62' text-anchor='start' font-weight='400'>you write</text><text x='528' y='262' font-size='11.5' fill='#6d6b62' text-anchor='start' font-weight='400'>you check</text><text x='20' y='380' font-size='11.5' fill='#6d6b62' text-anchor='start' font-weight='400'>A blank context window each time. The document is the only memory.</text></svg>
+    <figcaption>Four checkpoints. Two are writing, and the two that matter most are the ones I will not take on trust.</figcaption>
+  </figure>
+
+
+<p>I have spent the last weeks setting this up on my own projects — an agent harness in the
+editor, skills, plugins — and the installation is the easy half. These are the rules that
+survived contact.</p>
+
+<h2>An agent starts every task with nothing, so the document is the memory</h2>
+
+<p>The first surprise is how much of a good brief turns out to be a restatement of rules that
+were never written down. Which language mode. Which deployment floor. Which layer may call
+which. What "done" means. When to stop and ask rather than try harder.</p>
+
+<p>Those conventions used to live in a senior engineer's head and in the review comments of a
+dozen pull requests. A tool with an empty context window can read neither. Written down once,
+they become the thing every task is briefed from — which is why that file matters more than
+the prompt, and why "I run an agent in my editor" describes almost none of the work.</p>
+
+<h2>What the IDE now gives you, and what it does not</h2>
+
+<p>This stopped being a bolt-on. The Xcode 26 release notes describe "coding intelligence
+features that help you write code, generate tests and documentation, fix errors, refactor
+existing implementations, and navigate codebases" — with a model of your choosing, including
+one that runs locally on Apple silicon.</p>
+
+<p>Xcode 27 pushes further in exactly the direction this post is about: "Planning with agents
+is now first class in Xcode. Plans appear as editable Markdown artifacts next to the
+conversation" — review, annotate, discuss, and approve, before the agent proceeds. And the
+Xcode MCP server's tools now reach real platform state: manipulating the active run state,
+reading the debugger console, listing and switching schemes and run destinations, and
+inspecting or modifying build settings, compiler flags, entitlements and Info.plist keys.</p>
+
+<p>That list deserves reading twice, because two of its items are the whole discipline in
+miniature. A plan you must approve before work starts is a review gate placed at the cheapest
+possible moment. Entitlements and Info.plist behind a tool call means the blast radius of a
+careless instruction now includes your signing configuration.</p>
+
+<p>What the platform still does not ship is the part specific to your codebase. The harness is
+general; the conventions are not. That asymmetry is where a person's leverage sits.</p>
+
+<h2>Four things I write down before the first task</h2>
+
+<ul>
+  <li><strong>Conventions</strong> — what the compiler and the linter enforce and, more
+  usefully, what they cannot: which layer may depend on which, where a string comes from, what
+  an error is allowed to say.</li>
+  <li><strong>Boundaries</strong> — the files an agent may touch, and the ones it must stop at
+  and ask about. Credentials, permissions, payments, privacy surfaces and anything that leaves
+  the machine are on the second list, always.</li>
+  <li><strong>Definition of done</strong> — the exact command that proves the change. Not
+  "looks right": a build, or a test that was red and is now green.</li>
+  <li><strong>Stop conditions</strong> — after a few failed attempts, re-plan rather than try
+  harder; never delete or skip a test to reach green; never widen the scope of a change
+  without saying so.</li>
+</ul>
+
+<p>The shape, as a pattern rather than anyone's real file:</p>
+
+<pre><code>Conventions        language mode · deployment floor · layer rules · where strings live
+Boundaries         may touch: &lt;paths&gt; · must ask: credentials, permissions, payments
+Definition of done the one command that proves it
+Stop conditions    three failed attempts → re-plan · never skip a test · never widen scope
+Roles              who plans, who writes, who verifies, who is allowed to fix</code></pre>
+
+<h2>Two rules about what never goes into a prompt</h2>
+
+<p><strong>Secrets and paths.</strong> A key prefix or a home-directory path is not prose, so a
+word-by-word blocklist can never anticipate it — the check has to be shaped, not spelled. This
+site's own content check now fails the build on a key-shaped string or a
+<code>/Users/&lt;name&gt;/</code> path in the published output. Not because a blog post would
+contain one, but because that class is guessable, and a script can hold a guessable class.</p>
+
+<p><strong>Transcripts.</strong> A real transcript is a document about your job; a pattern is a
+document about your craft. So I show the structure of a brief — the invariant, the constraint,
+the evidence — and never the text. The text carries whatever the session happened to contain,
+and nobody can write the blocklist for a conversation in advance. This is the rule I broke most
+often before I wrote it down.</p>
+
+<h2>What stays a person's job</h2>
+
+<p><strong>Specificity.</strong> App Review is blunt about it: guideline 2.3.1(a) requires new
+features to be "described with specificity in the Notes for Review section of App Store Connect
+(generic descriptions will be rejected)". A generic description is exactly what a templated
+draft produces well — plausible, complete-looking, and about nothing. The model can draft; the
+specificity has to be mine.</p>
+
+<p><strong>The irreversible.</strong> Deployments, credentials, purchases, anything a revert
+cannot undo.</p>
+
+<p><strong>The shape of the whole.</strong> Whether the feature should exist, where the seam
+belongs, which of two working designs will still be right in a year. An empty context window
+does not make any of that easier to delegate.</p>
+
+<p>The pattern that keeps repeating: agents are good at the parts of engineering that are
+typing, and bad at the parts that are deciding. Most of the value of setting this up is the
+writing down — being forced to say, in plain language, which is which.</p>
+    <div class="sources">
+      <h2>Sources</h2>
+      <ul>
+      <li><a href="https://developer.apple.com/documentation/xcode-release-notes/xcode-26-release-notes" target="_blank" rel="noreferrer">Xcode 26 Release Notes — coding intelligence, model choice, local models</a></li>
+      <li><a href="https://developer.apple.com/documentation/xcode-release-notes/xcode-27-release-notes" target="_blank" rel="noreferrer">Xcode 27 Release Notes — plans as artifacts, Gemini, Xcode MCP server</a></li>
+      <li><a href="https://developer.apple.com/app-store/review/guidelines/" target="_blank" rel="noreferrer">App Review Guidelines — 2.3.1(a)</a></li>
+      </ul>
+    </div>
+  </article>
+  <p class="foot">Written from experience shipping iOS apps. No client names, no internal details, no unpublished numbers — everything citable here is public.</p>
+  <nav class="pager">
+    <a href="./the-ios-stack-i-actually-reach-for.html">← The iOS stack I actually reach for</a>
+    <span></span>
+  </nav>
+
+</div>
+</body>
+</html>

@@ -309,25 +309,25 @@ def fig_stack():
     return _svg("The iOS stack as five layers, each with the rule that decides it", 300, b)
 
 
-def fig_ai_gate():
-    b = _box(20, 16, 600, 64, "SystemLanguageModel.availability",
-             "iOS 26.0+ · watchOS 27.0 — the branch you have to write", accent=True)
-    b += _arrow(320, 80, 320, 114)
-    b += _line(160, 114, 480, 114)
-    b += _arrow(160, 114, 160, 146)
-    b += _arrow(480, 114, 480, 146)
-    b += _box(20, 148, 280, 64, "On-device model",
-              "no data leaves the device", accent=True)
-    b += _box(340, 148, 280, 64, "A third-party model",
-              "the branch with an obligation")
-    b += _arrow(480, 212, 480, 246)
-    b += _box(340, 248, 280, 64, "Guideline 5.1.2(i)",
-              "disclose it, get permission")
-    b += _cap(20, 348, "The unavailable branch is a product decision — it is also the "
-                       "code path that carries the rule.")
-    return _svg("The availability branch of the on-device language model, where the "
-                "unavailable path leads to a third-party model and a disclosure "
-                "obligation", 362, b)
+def fig_agent_loop():
+    rows = [
+        (16, "Written once", "conventions, boundaries, roles, stop conditions", True),
+        (106, "Written per task", "the brief: exact paths, the invariant, what proves it", False),
+        (196, "The only proof", "a hash, a byte count, a test that was red", True),
+        (286, "Still a person", "specificity, secrets, anything irreversible", True),
+    ]
+    b = ""
+    for i, (y, t, s, acc) in enumerate(rows):
+        b += _box(20, y, 470, 64, t, s, accent=acc)
+        if i < 3:
+            b += _arrow(255, y + 64, 255, y + 86)
+    b += _line(512, 16, 512, 350, draw=False)
+    b += _line(500, 180, 524, 180, draw=False)
+    b += _cap(528, 92, "you write")
+    b += _cap(528, 262, "you check")
+    b += _cap(20, 380, "A blank context window each time. The document is the only memory.")
+    return _svg("Four checkpoints in an agent workflow: what is written once, what is written "
+                "per task, the evidence accepted, and what stays a person's decision", 394, b)
 
 
 FIGURES = {
@@ -354,10 +354,10 @@ FIGURES = {
     "the-ios-stack-i-actually-reach-for": (
         fig_stack(),
         "Not preferences — the rule each layer is chosen by."),
-    "on-device-ai-decisions": (
-        fig_ai_gate(),
-        "Availability decides the architecture, and it also decides whether Apple's "
-        "third-party AI clause applies to you."),
+    "ai-native-development-process": (
+        fig_agent_loop(),
+        "Four checkpoints. Two are writing, and the two that matter most are the ones I "
+        "will not take on trust."),
 }
 
 POSTS = [
@@ -992,115 +992,113 @@ on call, and leave the codebase so that the next person's hard problem is the in
         ],
     },
     {
-        "slug": "on-device-ai-decisions",
-        "tag": "AI-native",
-        "title": "Shipping on-device AI in an iOS app: the decisions that cost you a rewrite",
-        "summary": "Availability decides your architecture before you write a prompt, and it also decides whether Apple's third-party AI clause applies to you. Plus the workflow rules I use with an agent in the editor.",
+        "slug": "ai-native-development-process",
+        "tag": "Process",
+        "title": "AI-native development is a process, not a feature",
+        "summary": "What I write down so an agent is useful inside a real codebase: the conventions file, the brief, the one piece of evidence I accept — and the parts I refuse to hand over.",
         "body": """
-<p class="lede">Two decisions get made in week one that decide whether your AI feature is a
-weekend or a rewrite: the deployment target, and the shape of the branch you write when the
-model is unavailable.</p>
+<p class="lede">"AI-native" describes how an app gets built, not something that ships inside it.
+The interesting engineering is not the model. It is the document you write so a stateless tool
+can work inside a codebase that took years to shape.</p>
 
-<p>I am building an AI-native iOS app now — which means learning this in public rather than
-recalling it, and writing down the parts that turned out to be structural.</p>
+<p>I have spent the last weeks setting this up on my own projects — an agent harness in the
+editor, skills, plugins — and the installation is the easy half. These are the rules that
+survived contact.</p>
 
-<h2>Availability is architecture, not error handling</h2>
+<h2>An agent starts every task with nothing, so the document is the memory</h2>
 
-<p>Apple's on-device language model arrives through the <strong>Foundation Models</strong>
-framework, which is <strong>iOS 26.0+</strong> and <strong>watchOS 27.0+</strong>. That number
-is not a preference. Below it, the framework is not degraded — it is absent, at compile time.</p>
+<p>The first surprise is how much of a good brief turns out to be a restatement of rules that
+were never written down. Which language mode. Which deployment floor. Which layer may call
+which. What "done" means. When to stop and ask rather than try harder.</p>
 
-<p>So a deployment target is an AI decision now. If your floor is older, "add on-device AI" means
-either raising the floor for everyone, or maintaining two inference paths from the first commit.</p>
+<p>Those conventions used to live in a senior engineer's head and in the review comments of a
+dozen pull requests. A tool with an empty context window can read neither. Written down once,
+they become the thing every task is briefed from — which is why that file matters more than
+the prompt, and why "I run an agent in my editor" describes almost none of the work.</p>
 
-<p>The second half is worse. Apple's documentation is explicit that <em>availability depends on
-whether the device and region supports Apple Intelligence</em> — and it also documents support
-for new model versions, which is the polite way of saying the model under you can change without
-you shipping. Every prompt, every output shape and every evaluation is therefore tied to
-something you do not version.</p>
+<h2>What the IDE now gives you, and what it does not</h2>
 
-<p>That is the argument for treating the unavailable branch as a first-class product path.
-It is not a spinner and a retry. It is a decision about what the feature becomes on the devices
-your users actually hold.</p>
+<p>This stopped being a bolt-on. The Xcode 26 release notes describe "coding intelligence
+features that help you write code, generate tests and documentation, fix errors, refactor
+existing implementations, and navigate codebases" — with a model of your choosing, including
+one that runs locally on Apple silicon.</p>
 
-<h2>The fallback is where the obligation lives</h2>
+<p>Xcode 27 pushes further in exactly the direction this post is about: "Planning with agents
+is now first class in Xcode. Plans appear as editable Markdown artifacts next to the
+conversation" — review, annotate, discuss, and approve, before the agent proceeds. And the
+Xcode MCP server's tools now reach real platform state: manipulating the active run state,
+reading the debugger console, listing and switching schemes and run destinations, and
+inspecting or modifying build settings, compiler flags, entitlements and Info.plist keys.</p>
 
-<p>Here is the part that surprised me, and it is a sentence from Apple's review guidelines
-rather than an inference. Guideline 5.1.2(i):</p>
+<p>That list deserves reading twice, because two of its items are the whole discipline in
+miniature. A plan you must approve before work starts is a review gate placed at the cheapest
+possible moment. Entitlements and Info.plist behind a tool call means the blast radius of a
+careless instruction now includes your signing configuration.</p>
 
-<blockquote>
-<p>"You must clearly disclose where personal data will be shared with third parties,
-<strong>including with third-party AI</strong>, and obtain explicit permission before doing so."</p>
-</blockquote>
+<p>What the platform still does not ship is the part specific to your codebase. The harness is
+general; the conventions are not. That asymmetry is where a person's leverage sits.</p>
 
-<p>The operative word is <em>third-party</em>. On-device inference never touches that clause —
-nothing leaves the device. The moment your availability branch sends a prompt containing
-anything the user typed to a hosted model, you have entered it: in-app disclosure, explicit
-permission, the matching App Privacy answers, and the privacy policy to go with them.</p>
-
-<p>Which means the fallback path is not an engineering detail you add in week six. It is the
-path that carries the legal obligation, and designing it in week one is the difference between
-a feature and a submission-week problem.</p>
-
-<h2>If your feature generates anything, you have four new controls</h2>
-
-<p>Guideline 1.2 is about user-generated content, and it names the category explicitly:</p>
-
-<blockquote>
-<p>"This includes social media, user-generated content platforms, and AI content creation apps."</p>
-</blockquote>
-
-<p>Apps in that category must include a method for filtering objectionable material from being
-posted, a mechanism to report offensive content and timely responses to concerns, the ability
-to block abusive users, and published contact information.</p>
-
-<p>The line is not "does it use AI" — it is what the output is for. A summariser, a
-code formatter, a private calculation: none of these produce shareable content. A
-"generate my study plan and share it" feature does, and it inherits all four controls at the
-moment it gains a share button. Deciding this at the feature boundary is far cheaper than
-discovering it from a rejection.</p>
-
-<h2>What I would do before writing a prompt</h2>
-
-<ol>
-  <li><strong>Write the deployment target down as an AI decision</strong>, and state the
-  consequence: no on-device model below iOS 26.0, no fallback by accident.</li>
-  <li><strong>Design the unavailable branch first.</strong> If it is a third-party model, the
-  disclosure and permission flow is part of the feature, not adjacent to it.</li>
-  <li><strong>Decide the output's purpose.</strong> Kept private, or shareable? If shareable,
-  budget the four controls before the first screenshot.</li>
-  <li><strong>Assume the model changes.</strong> Prompt and output shape are tied to a
-  version you do not control, so keep a small evaluation you can re-run.</li>
-</ol>
-
-<h2>How I am working, since the tooling is part of the story</h2>
-
-<p>The other half of "AI-native" is the workflow. I run an agent in the editor with skills and
-plugins, and the rules I have landed on are much less about the agent than about me:</p>
+<h2>Four things I write down before the first task</h2>
 
 <ul>
-  <li><strong>The spec comes first, in writing.</strong> An agent with a vague brief produces
-  confident code for the wrong problem, and the cost of that is not the code — it is that you
-  review it and keep it.</li>
-  <li><strong>Small diffs, verified by evidence, not by confidence.</strong> A hash, a byte
-  count, a test that was red and is now green. A claim I cannot check is a claim I do not
-  accept, from a person or a model.</li>
-  <li><strong>Ask what the change would break, then check that.</strong> The failure mode of
-  an agent is not a bad idea; it is an unexamined one that reads well.</li>
-  <li><strong>The boring parts stay mine.</strong> Anything touching a permission, a
-  credential, a payment or a privacy surface gets read line by line, and the decision gets
-  made by a person who will still be here next quarter.</li>
+  <li><strong>Conventions</strong> — what the compiler and the linter enforce and, more
+  usefully, what they cannot: which layer may depend on which, where a string comes from, what
+  an error is allowed to say.</li>
+  <li><strong>Boundaries</strong> — the files an agent may touch, and the ones it must stop at
+  and ask about. Credentials, permissions, payments, privacy surfaces and anything that leaves
+  the machine are on the second list, always.</li>
+  <li><strong>Definition of done</strong> — the exact command that proves the change. Not
+  "looks right": a build, or a test that was red and is now green.</li>
+  <li><strong>Stop conditions</strong> — after a few failed attempts, re-plan rather than try
+  harder; never delete or skip a test to reach green; never widen the scope of a change
+  without saying so.</li>
 </ul>
 
-<p>None of this is specific to agents. It is the same discipline as review — and it is the
-reason I like this particular shift: it moves the work toward judgement and away from typing,
-and judgement is the part that takes years.</p>
+<p>The shape, as a pattern rather than anyone's real file:</p>
+
+<pre><code>Conventions        language mode · deployment floor · layer rules · where strings live
+Boundaries         may touch: &lt;paths&gt; · must ask: credentials, permissions, payments
+Definition of done the one command that proves it
+Stop conditions    three failed attempts → re-plan · never skip a test · never widen scope
+Roles              who plans, who writes, who verifies, who is allowed to fix</code></pre>
+
+<h2>Two rules about what never goes into a prompt</h2>
+
+<p><strong>Secrets and paths.</strong> A key prefix or a home-directory path is not prose, so a
+word-by-word blocklist can never anticipate it — the check has to be shaped, not spelled. This
+site's own content check now fails the build on a key-shaped string or a
+<code>/Users/&lt;name&gt;/</code> path in the published output. Not because a blog post would
+contain one, but because that class is guessable, and a script can hold a guessable class.</p>
+
+<p><strong>Transcripts.</strong> A real transcript is a document about your job; a pattern is a
+document about your craft. So I show the structure of a brief — the invariant, the constraint,
+the evidence — and never the text. The text carries whatever the session happened to contain,
+and nobody can write the blocklist for a conversation in advance. This is the rule I broke most
+often before I wrote it down.</p>
+
+<h2>What stays a person's job</h2>
+
+<p><strong>Specificity.</strong> App Review is blunt about it: guideline 2.3.1(a) requires new
+features to be "described with specificity in the Notes for Review section of App Store Connect
+(generic descriptions will be rejected)". A generic description is exactly what a templated
+draft produces well — plausible, complete-looking, and about nothing. The model can draft; the
+specificity has to be mine.</p>
+
+<p><strong>The irreversible.</strong> Deployments, credentials, purchases, anything a revert
+cannot undo.</p>
+
+<p><strong>The shape of the whole.</strong> Whether the feature should exist, where the seam
+belongs, which of two working designs will still be right in a year. An empty context window
+does not make any of that easier to delegate.</p>
+
+<p>The pattern that keeps repeating: agents are good at the parts of engineering that are
+typing, and bad at the parts that are deciding. Most of the value of setting this up is the
+writing down — being forced to say, in plain language, which is which.</p>
 """,
         "sources": [
-            ("Foundation Models — Apple Developer Documentation (iOS 26.0+)", "https://developer.apple.com/documentation/foundationmodels"),
-            ("SystemLanguageModel — availability, device and region requirements", "https://developer.apple.com/documentation/foundationmodels/systemlanguagemodel"),
-            ("App Review Guidelines — 5.1.2 Data Use and Sharing", "https://developer.apple.com/app-store/review/guidelines/"),
-            ("App Review Guidelines — 1.2 User-Generated Content", "https://developer.apple.com/app-store/review/guidelines/"),
+            ("Xcode 26 Release Notes — coding intelligence, model choice, local models", "https://developer.apple.com/documentation/xcode-release-notes/xcode-26-release-notes"),
+            ("Xcode 27 Release Notes — plans as artifacts, Gemini, Xcode MCP server", "https://developer.apple.com/documentation/xcode-release-notes/xcode-27-release-notes"),
+            ("App Review Guidelines — 2.3.1(a)", "https://developer.apple.com/app-store/review/guidelines/"),
         ],
     },
 ]
@@ -1201,8 +1199,8 @@ def render_index():
     body = (
         '  <h1>Writing</h1>\n'
         '  <p class="lede lede--index">Notes on the craft of iOS — platform rules,\n'
-        '  modularisation, build health, migration, review practice and what it is like to\n'
-        '  build an AI-native app now. Eight pieces, written October 2026.</p>\n'
+        '  modularisation, build health, migration, review practice, and the development\n'
+        '  process I use with agents. Eight pieces, written October 2026.</p>\n'
         f'  <ul class="cards">\n{items}  </ul>\n'
         '  <p class="foot">Everything here is public and citable — no employer internals, no\n'
         '  colleague names, no unpublished metrics. If a claim needs a source it has one, and\n'
@@ -1211,13 +1209,17 @@ def render_index():
     return page(
         "Writing — Muhammad Ilham Rilambang",
         "Notes on the craft of iOS: platform rules, modularisation, build health, migration, "
-        "review practice and building an AI-native app.",
+        "review practice and the agent workflow I actually run.",
         f"{SITE}/blog/",
         body,
     )
 
 
 OUT.mkdir(parents=True, exist_ok=True)
+# Stale pages are worse than missing ones: rename a slug and the old post stays published,
+# still linked from wherever it was linked, with nothing to show that it is gone.
+for stale in OUT.glob("*.html"):
+    stale.unlink()
 (OUT / "blog.css").write_text(CSS.lstrip())
 (OUT / "index.html").write_text(render_index())
 for i, p in enumerate(POSTS):
