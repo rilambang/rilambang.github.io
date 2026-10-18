@@ -71,6 +71,23 @@ export const WORK = [
   },
 ]
 
+// Public App Store listing dates, pulled from itunes.apple.com/lookup?country=id.
+// No account data, no key, no ratings: the two biggest rating samples are the two
+// lowest scores, so a rating chart would argue with the page instead of supporting it.
+// Re-run the URL to check any row.
+export const TENURE = {
+  asOf: '2026-10-18',
+  source: 'itunes.apple.com/lookup?country=id',
+  rows: [
+    { name: 'MyPertamina', from: '2017-10-20', to: '2026-10-06', live: true },
+    { name: 'SATUSEHAT Mobile', from: '2020-04-13', to: '2026-10-10', live: true },
+    { name: 'IndiHome Eazy', from: '2019-12-05', to: '2024-07-02', live: false },
+    { name: 'Antares Eazy', from: '2023-04-11', to: '2026-09-18', live: true },
+    { name: 'Agree Mart', from: '2022-04-28', to: '2023-10-22', live: false },
+    { name: 'Pijar Sekolah', from: '2025-07-28', to: '2026-10-16', live: true },
+  ],
+}
+
 export const ROLES = [
   { role: 'Lead iOS Engineer — Pijar Sekolah', span: '2025 — now', where: 'Telkom Indonesia' },
   { role: 'iOS Engineer — Indihome Eazy, Antares Eazy', span: '2022 — 2025', where: 'Telkom Indonesia' },

@@ -1,6 +1,80 @@
-import { ME, FACTS, WORK, ROLES, ALSO, REPOS, CERTS, CONTACT } from './data.js'
+import { useLayoutEffect } from 'react'
+import { ME, FACTS, WORK, TENURE, ROLES, ALSO, REPOS, CERTS, CONTACT } from './data.js'
 
 const asset = (f) => `${import.meta.env.BASE_URL}shots/${f}`.replace(/\/+/g, '/')
+
+/* Reveal-on-scroll. Nothing is hidden until JS has armed it and started observing,
+   so a failed bundle shows the page, never a blank one. Reduced motion opts out. */
+function useReveal() {
+  useLayoutEffect(() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    if (!('IntersectionObserver' in window)) return
+    const els = Array.from(document.querySelectorAll('[data-reveal]'))
+    const io = new IntersectionObserver((entries) => {
+      for (const e of entries) {
+        if (!e.isIntersecting) continue
+        e.target.classList.add('in')
+        io.unobserve(e.target)
+      }
+    }, { threshold: 0.08 })
+    els.forEach((el, i) => {
+      el.style.setProperty('--i', String(i % 4))
+      el.dataset.armed = 'true'
+      io.observe(el)
+    })
+    // safety net: if the observer never fires (odd renderer, no paint, headless
+    // prerender), reveal everything rather than leave the page blank.
+    const t = window.setTimeout(() => els.forEach((el) => el.classList.add('in')), 1200)
+    return () => {
+      window.clearTimeout(t)
+      io.disconnect()
+    }
+  }, [])
+}
+
+const year = (iso) => Number(iso.slice(0, 4)) + (Number(iso.slice(5, 7)) - 1) / 12
+const AXIS = [2017, 2027]
+
+const Tenure = () => {
+  const pct = (n) => ((n - AXIS[0]) / (AXIS[1] - AXIS[0])) * 100
+  return (
+    <div className="tenure" data-reveal>
+      <div className="tenure__head">
+        <span className="tenure__label">First listed</span>
+        <span className="tenure__label tenure__label--end">Last update</span>
+      </div>
+      <ol className="tenure__rows">
+        {TENURE.rows.map((r) => {
+          const a = year(r.from)
+          const b = year(r.to)
+          return (
+            <li key={r.name}>
+              <span className="tenure__name">{r.name}</span>
+              <span className="tenure__track">
+                <span
+                  className={`tenure__bar${r.live ? ' is-live' : ''}`}
+                  style={{ left: `${pct(a)}%`, width: `${pct(b) - pct(a)}%` }}
+                />
+              </span>
+              <span className="tenure__years">
+                {r.from.slice(0, 4)}–{r.live ? 'now' : r.to.slice(0, 4)}
+              </span>
+            </li>
+          )
+        })}
+      </ol>
+      <div className="tenure__axis" aria-hidden="true">
+        {[2017, 2019, 2021, 2023, 2025, 2027].map((y) => (
+          <span key={y} style={{ left: `${pct(y)}%` }}>{y}</span>
+        ))}
+      </div>
+      <p className="tenure__note">
+        Public App Store listing dates, as of {TENURE.asOf} — {TENURE.source}.
+        No account analytics: installs, retention and crash rate are not public.
+      </p>
+    </div>
+  )
+}
 
 const Arrow = () => (
   <svg viewBox="0 0 16 16" width="12" height="12" aria-hidden="true">
@@ -9,6 +83,7 @@ const Arrow = () => (
 )
 
 export default function App() {
+  useReveal()
   return (
     <>
       <a className="skip" href="#main">Skip to content</a>
@@ -17,7 +92,8 @@ export default function App() {
         <a className="top__name" href="#top">{ME.name}</a>
         <nav className="top__nav" aria-label="Sections">
           <a href="#work">Work</a>
-          <a href="#path">Path</a>
+          <a href="#path">Shipping</a>
+          <a href="#roles">Path</a>
           <a href="#contact">Contact</a>
         </nav>
       </header>
@@ -40,7 +116,7 @@ export default function App() {
           </p>
         </section>
 
-        <section className="facts" aria-label="At a glance">
+        <section className="facts" aria-label="At a glance" data-reveal>
           {FACTS.map((f) => (
             <div className="fact" key={f.figure}>
               <strong>{f.figure}</strong>
@@ -50,10 +126,10 @@ export default function App() {
         </section>
 
         <section id="work" className="section">
-          <h2 className="section__title">Selected work</h2>
+          <h2 className="section__title" data-reveal>Selected work</h2>
           <div className="work">
             {WORK.map((w) => (
-              <article className="card" key={w.slug}>
+              <article className="card" key={w.slug} data-reveal>
                 <div className="card__shots">
                   {w.shots.map((s, i) => (
                     <img key={s} src={asset(s)} alt={`${w.name} screenshot ${i + 1}`} loading="lazy" decoding="async" />
@@ -74,8 +150,13 @@ export default function App() {
         </section>
 
         <section id="path" className="section">
-          <h2 className="section__title">Path</h2>
-          <ol className="roles">
+          <h2 className="section__title" data-reveal>Shipped, and still shipping</h2>
+          <Tenure />
+        </section>
+
+        <section id="roles" className="section">
+          <h2 className="section__title" data-reveal>Path</h2>
+          <ol className="roles" data-reveal>
             {ROLES.map((r) => (
               <li key={r.role}>
                 <span className="roles__span">{r.span}</span>
@@ -120,7 +201,7 @@ export default function App() {
           </ul>
         </section>
 
-        <section id="contact" className="contact">
+        <section id="contact" className="contact" data-reveal>
           <h2>{CONTACT.heading}</h2>
           <p>{CONTACT.body}</p>
           <a className="contact__mail" href={`mailto:${ME.email}`}>{ME.email}</a>

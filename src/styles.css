@@ -382,6 +382,146 @@ img { display: block; max-width: 100%; }
   .top__nav { gap: 16px; }
 }
 
+/* ── motion ──────────────────────────────────────────── */
+/* Armed by JS only. Transform-only on purpose: if the observer never fires the
+   content is 18px low, not invisible — no renderer can produce a blank page. */
+[data-armed] {
+  transform: translateY(18px);
+  transition: transform 0.55s cubic-bezier(0.22, 0.7, 0.3, 1);
+  transition-delay: calc(var(--i, 0) * 70ms);
+}
+
+[data-armed].in {
+  transform: none;
+}
+
+/* hero: transform only — a failed animation leaves it readable, just unshifted */
+@media (prefers-reduced-motion: no-preference) {
+  .hero > * {
+    animation: rise 0.7s cubic-bezier(0.22, 0.7, 0.3, 1) both;
+  }
+  .hero > :nth-child(2) { animation-delay: 0.06s; }
+  .hero > :nth-child(3) { animation-delay: 0.12s; }
+  .hero > :nth-child(4) { animation-delay: 0.18s; }
+}
+
+@keyframes rise {
+  from { transform: translateY(22px); }
+  to { transform: translateY(0); }
+}
+
+/* ── tenure chart ────────────────────────────────────── */
+.tenure {
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: #fff;
+  padding: 30px 30px 22px;
+}
+
+.tenure__head {
+  display: flex;
+  justify-content: space-between;
+  padding-left: 150px;
+  margin-bottom: 4px;
+}
+
+.tenure__label {
+  font-size: 12px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.tenure__rows {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.tenure__rows li {
+  display: grid;
+  grid-template-columns: 140px minmax(0, 1fr) 92px;
+  align-items: center;
+  gap: 16px;
+  padding: 9px 0;
+}
+
+.tenure__name {
+  font-size: 13px;
+  color: var(--ink);
+}
+
+.tenure__track {
+  position: relative;
+  height: 22px;
+  border-left: 1px solid var(--line);
+}
+
+.tenure__bar {
+  position: absolute;
+  top: 4px;
+  height: 14px;
+  border-radius: 7px;
+  background: linear-gradient(90deg, #c9c5b8, #a9a496);
+  transition: width 0.7s cubic-bezier(0.22, 0.7, 0.3, 1) 0.15s,
+              left 0.7s cubic-bezier(0.22, 0.7, 0.3, 1) 0.15s;
+}
+
+.tenure__bar.is-live {
+  background: linear-gradient(90deg, var(--accent), #6f8ff0);
+  box-shadow: 0 0 0 3px rgb(31 79 216 / 8%);
+}
+
+.tenure__years {
+  font-size: 12px;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+.tenure__axis {
+  position: relative;
+  height: 18px;
+  margin: 6px 92px 0 156px;
+  border-top: 1px solid var(--line);
+}
+
+.tenure__axis span {
+  position: absolute;
+  top: 5px;
+  transform: translateX(-50%);
+  font-size: 11px;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.tenure__note {
+  margin: 18px 0 0;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--muted);
+  max-width: 70ch;
+}
+
+@media (max-width: 720px) {
+  .tenure { padding: 22px 18px 18px; }
+  .tenure__head { display: none; }
+  .tenure__rows li { grid-template-columns: 1fr; gap: 2px; }
+  .tenure__axis { margin: 6px 0 0; }
+}
+
+/* ── reduced motion: ends visible, never paused mid-way ── */
+@media (prefers-reduced-motion: reduce) {
+  [data-armed],
+  [data-armed].in {
+    transform: none;
+    transition: none;
+  }
+  .tenure__bar {
+    transition: none;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
 }
