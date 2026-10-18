@@ -1,0 +1,8 @@
+node_modules/
+dist/
+.DS_Store
+*.local
+# Personal documents — never publish. Glob, not a filename: the filename would be
+# public in this repo, and it only guards that one document.
+*.docx
+*.pdf
