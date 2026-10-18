@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The iOS stack I actually reach for</title>
+<meta name="description" content="Not the stack I would pick on a greenfield project — the one I reach for on someone else&#x27;s codebase at 3am. Every choice is priced by the next engineer&#x27;s ability to debug it.">
+<link rel="canonical" href="https://rilambang.github.io/blog/the-ios-stack-i-actually-reach-for.html">
+<meta property="og:type" content="article">
+<meta property="og:title" content="The iOS stack I actually reach for">
+<meta property="og:description" content="Not the stack I would pick on a greenfield project — the one I reach for on someone else&#x27;s codebase at 3am. Every choice is priced by the next engineer&#x27;s ability to debug it.">
+<meta property="og:url" content="https://rilambang.github.io/blog/the-ios-stack-i-actually-reach-for.html">
+<meta property="og:image" content="https://rilambang.github.io/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/favicon.ico">
+<link rel="stylesheet" href="./blog.css">
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <a class="who" href="/">Muhammad Ilham Rilambang</a>
+    <a href="./index.html">Writing</a>
+  </div>
+  <p class="tag">Tooling</p>
+  <h1>The iOS stack I actually reach for</h1>
+<p class="lede">This is not the stack I would choose on a blank project. It is the one I reach
+for on a codebase I did not write, where the deciding question is who has to debug this at
+3am.</p>
+
+<h2>Language and concurrency</h2>
+
+<p>Swift, on the newest language mode the team can hold, with strict concurrency on rather than
+aspirational. Adopting it late costs more than adopting it early, because the cost is
+proportional to how much code you already have. Everything is main-actor by default and
+explicitly off it only where work is genuinely expensive — the opposite default produces code
+that is concurrent by accident.</p>
+
+<h2>UI</h2>
+
+<p>SwiftUI for new screens, UIKit where the platform still requires it or where a table or
+collection needs control the declarative layer does not yet give. That is an honest position
+rather than a religious one: a rewrite that ships is better than a purity that does not.</p>
+
+<p>Navigation has one owner. Always. Two systems that both think they own the stack produce the
+worst bugs to diagnose.</p>
+
+<h2>Structure</h2>
+
+<p>Local Swift packages per seam, the app target as a thin shell. The reason is not elegance —
+it is that an unchanged module does not get rebuilt, and a circular dependency becomes a
+compile error rather than a convention nobody follows.</p>
+
+<h2>Networking</h2>
+
+<p>Whatever the codebase already has, unless it is actively harmful. A second networking layer
+is a worse outcome than an imperfect first one. On a greenfield app I would reach for the
+platform's own concurrency tools over a reactive framework; on an existing app I leave the
+existing one alone until there is a reason to move it.</p>
+
+<h2>Persistence</h2>
+
+<p>The platform's own persistence before a hand-rolled SQL layer, and a real constraint in the
+schema before validation in the app. Constraints are enforced under concurrency and app bugs
+are not. Where the data matters, the second copy of the truth is the one that goes stale.</p>
+
+<h2>Strings</h2>
+
+<p>A single string catalogue, referenced by key. Never a literal in a view — not because of
+localisation, though that too, but because a literal in a view is unsearchable and permanent.
+This is the cheapest discipline on the list and the one most often skipped.</p>
+
+<h2>Testing</h2>
+
+<p>Tests for logic, first and always: parsers, state machines, anything with a branch. They run
+in seconds and they catch the regressions that matter. UI tests sparingly, on the flows that
+carry money or data, because they are slow and inherently flaky and a flaky suite gets ignored
+— which is worse than not having one.</p>
+
+<p>A test that cannot fail is not a test. If I cannot describe the change that would turn it
+red, it is decoration.</p>
+
+<h2>Third-party dependencies</h2>
+
+<p>Only for a problem the platform does not solve. The bar is not popularity, it is: can I read
+this library when it misbehaves, and is anyone still maintaining it in two years? A small
+dependency I understand beats a large one I do not, and "we might need it later" has never once
+been true.</p>
+
+<h2>Build health</h2>
+
+<p>Build warnings treated as a budget rather than as weather. A codebase with three hundred
+warnings cannot notice the fourth hundred, and one of those was going to tell you that a main
+thread write had just become an act of faith.</p>
+
+<h2>The meta-decision</h2>
+
+<p>I have changed stacks more than once, and each time the framework-specific knowledge expired
+faster than I expected. What survived is the habit underneath it: prefer the boring choice,
+prefer the platform's own tool, prefer the option a new hire can debug on their first weekend
+on call, and leave the codebase so that the next person's hard problem is the interesting one
+— not the one you set up for them by being clever.</p>
+  <div class="sources">
+    <h2>Sources</h2>
+    <ul>
+      <li><a href="https://www.swift.org/documentation/api-design-guidelines/" target="_blank" rel="noreferrer">Swift API Design Guidelines</a></li>
+      <li><a href="https://developer.apple.com/documentation/xcode/improving-the-speed-of-incremental-builds" target="_blank" rel="noreferrer">Improving the speed of incremental builds — Apple Developer Documentation</a></li>
+      <li><a href="https://developer.apple.com/design/human-interface-guidelines" target="_blank" rel="noreferrer">Human Interface Guidelines — Apple Developer</a></li>
+    </ul>
+  </div>
+  <p class="foot">Written from experience shipping iOS apps. No client names, no internal details, no unpublished numbers — everything citable here is public.</p>
+
+</div>
+</body>
+</html>

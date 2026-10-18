@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How I review iOS pull requests</title>
+<meta name="description" content="Risk before style, deletion before addition, and three questions I ask on every diff. What I refuse to merge, and why the comment that explains the failure mode is worth ten that state the rule.">
+<link rel="canonical" href="https://rilambang.github.io/blog/how-i-review-ios-pull-requests.html">
+<meta property="og:type" content="article">
+<meta property="og:title" content="How I review iOS pull requests">
+<meta property="og:description" content="Risk before style, deletion before addition, and three questions I ask on every diff. What I refuse to merge, and why the comment that explains the failure mode is worth ten that state the rule.">
+<meta property="og:url" content="https://rilambang.github.io/blog/how-i-review-ios-pull-requests.html">
+<meta property="og:image" content="https://rilambang.github.io/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/favicon.ico">
+<link rel="stylesheet" href="./blog.css">
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <a class="who" href="/">Muhammad Ilham Rilambang</a>
+    <a href="./index.html">Writing</a>
+  </div>
+  <p class="tag">Behaviour</p>
+  <h1>How I review iOS pull requests</h1>
+<p class="lede">A review that starts with naming has already wasted its most useful attention.
+Here is the order I read a diff in, and the things I refuse to merge.</p>
+
+<h2>The order</h2>
+
+<ol>
+  <li><strong>Does it do what the description says?</strong> Not what the code says — what the
+  description claims. If they diverge, that is the first comment, before anything else.</li>
+  <li><strong>Can it crash?</strong> Force unwraps, array indexing, casts, anything that
+  assumes a shape it has not checked.</li>
+  <li><strong>What is the failure path?</strong> Every network call fails. Every write can be
+  interrupted. A diff that only handles success is half a diff.</li>
+  <li><strong>What was deleted?</strong> Removed guards and removed tests first.</li>
+  <li><strong>Style.</strong> Last, and usually not at all.</li>
+</ol>
+
+<h2>Three questions, every time</h2>
+
+<ul>
+  <li><strong>What happens on a slow network?</strong> Not down — slow. That is the state
+  where double submissions, spinners that never resolve, and buttons that fire twice live.</li>
+  <li><strong>What happens if the user backgrounds the app mid-operation?</strong> Very few
+  diffs survive this question unconcerned, and the ones that do are the ones I trust.</li>
+  <li><strong>What happens the second time?</strong> Is this operation idempotent? Retrying a
+  payment, a submission, a sync — the second call is where data loss is born.</li>
+</ul>
+
+<h2>What I refuse to merge</h2>
+
+<ul>
+  <li>A skipped or disabled test. If it cannot pass, delete it and say so; a disabled test is a
+  lie that gets inherited.</li>
+  <li>A test that asserts nothing, or that asserts the mock.</li>
+  <li><code>try?</code> on a write. Swallowing a failed save is how a user loses an hour of work
+  and nobody finds out.</li>
+  <li>A new dependency for something the platform already does.</li>
+  <li>A control with no accessibility label. This is not a later ticket; it is an unfinished
+  control.</li>
+</ul>
+
+<h2>Concurrency, because that is where the crashes actually are</h2>
+
+<p>Most of the real defects I find in review are structural rather than logical:</p>
+
+<ul>
+  <li>A task started from a view that outlives the view, and writes to state after it is gone.</li>
+  <li>State mutated off the main actor that a view reads on it.</li>
+  <li>Two writes racing to the same store with no single owner.</li>
+</ul>
+
+<p>These do not need a deep read of the logic. They need one question: <em>who owns this state,
+and on which actor is it touched?</em> If the diff cannot answer in one sentence, that is the
+comment.</p>
+
+<h2>Two habits that pay</h2>
+
+<p><strong>I review the smallest possible unit, early.</strong> A large diff gets a shallow read
+and a rubber stamp, and both parties know it. Several small diffs get real attention. If a
+change is too big to review carefully, the review is not the problem to fix — the change is.</p>
+
+<p><strong>I explain the failure, not the rule.</strong> "This will double-submit if the user
+taps twice before the response" teaches something. "Don't allow double taps" produces a fix for
+this instance and the same bug next month. The comment that names the failure mode is worth ten
+that quote the standard — and it is the difference between a review and a gate.</p>
+
+<h2>What review is for</h2>
+
+<p>Not catching typos, and not demonstrating that the reviewer read the code. It is the last
+point at which the person who wrote something still remembers why, and someone else can ask
+"what happens when this goes wrong?" while the answer is cheap. Everything else about it is
+negotiable. That is not.</p>
+  <div class="sources">
+    <h2>Sources</h2>
+    <ul>
+      <li><a href="https://www.swift.org/documentation/api-design-guidelines/" target="_blank" rel="noreferrer">Swift API Design Guidelines</a></li>
+      <li><a href="https://developer.apple.com/design/human-interface-guidelines" target="_blank" rel="noreferrer">Human Interface Guidelines — Apple Developer</a></li>
+    </ul>
+  </div>
+  <p class="foot">Written from experience shipping iOS apps. No client names, no internal details, no unpublished numbers — everything citable here is public.</p>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Writing — Muhammad Ilham Rilambang</title>
+<meta name="description" content="Notes on the craft of iOS: platform rules, modularisation, build health, migration and review practice.">
+<link rel="canonical" href="https://rilambang.github.io/blog/">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Writing — Muhammad Ilham Rilambang">
+<meta property="og:description" content="Notes on the craft of iOS: platform rules, modularisation, build health, migration and review practice.">
+<meta property="og:url" content="https://rilambang.github.io/blog/">
+<meta property="og:image" content="https://rilambang.github.io/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/favicon.ico">
+<link rel="stylesheet" href="./blog.css">
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <a class="who" href="/">Muhammad Ilham Rilambang</a>
+    <a href="./index.html">Writing</a>
+  </div>
+  <h1>Writing</h1>
+  <p class="lede">Notes on the craft of iOS — platform rules, modularisation, build
+  health, migration and review practice. Seven pieces, written October 2026.</p>
+  <ul class="list">
+      <li>
+        <a href="./kiosk-and-assessment-apps.html"><h2>Kiosk and assessment apps: what Apple will and won&#x27;t let you lock</h2></a>
+        <p>The hardest problem in a proctored exam app is not the exam. It is that the OS owns the device, and your anti-cheat has to be something Apple agreed to.</p>
+      </li>
+      <li>
+        <a href="./splitting-an-app-into-local-packages.html"><h2>Splitting an app into local Swift packages: what breaks first</h2></a>
+        <p>The files move in a day. The boundaries take a quarter. Here is the order things actually break in, and the one rule that keeps the first week from turning into a public-API explosion.</p>
+      </li>
+      <li>
+        <a href="./build-time-is-a-dependency-graph-problem.html"><h2>Build time is a dependency-graph problem, not a machine problem</h2></a>
+        <p>Faster hardware buys you a constant factor. The graph is the exponent. Why the first fix is almost always deleting a script phase, and what to measure before you touch anything.</p>
+      </li>
+      <li>
+        <a href="./uikit-to-swiftui-without-a-rewrite.html"><h2>UIKit to SwiftUI without a rewrite</h2></a>
+        <p>The migration succeeds or fails on one decision: who owns navigation. Everything else is a sequence of small, reversible steps.</p>
+      </li>
+      <li>
+        <a href="./a-design-system-is-a-review-policy.html"><h2>A design system is a review policy, not a library</h2></a>
+        <p>Importing a token package changes nothing. The system holds when the correct choice is easier than the wrong one — and when review refuses the local override.</p>
+      </li>
+      <li>
+        <a href="./how-i-review-ios-pull-requests.html"><h2>How I review iOS pull requests</h2></a>
+        <p>Risk before style, deletion before addition, and three questions I ask on every diff. What I refuse to merge, and why the comment that explains the failure mode is worth ten that state the rule.</p>
+      </li>
+      <li>
+        <a href="./the-ios-stack-i-actually-reach-for.html"><h2>The iOS stack I actually reach for</h2></a>
+        <p>Not the stack I would pick on a greenfield project — the one I reach for on someone else&#x27;s codebase at 3am. Every choice is priced by the next engineer&#x27;s ability to debug it.</p>
+      </li>
+  </ul>
+  <p class="foot">Everything here is public and citable — no employer internals, no
+  colleague names, no unpublished metrics. If a claim needs a source it has one.</p>
+
+</div>
+</body>
+</html>

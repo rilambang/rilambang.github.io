@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kiosk and assessment apps: what Apple will and won&#x27;t let you lock</title>
+<meta name="description" content="The hardest problem in a proctored exam app is not the exam. It is that the OS owns the device, and your anti-cheat has to be something Apple agreed to.">
+<link rel="canonical" href="https://rilambang.github.io/blog/kiosk-and-assessment-apps.html">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Kiosk and assessment apps: what Apple will and won&#x27;t let you lock">
+<meta property="og:description" content="The hardest problem in a proctored exam app is not the exam. It is that the OS owns the device, and your anti-cheat has to be something Apple agreed to.">
+<meta property="og:url" content="https://rilambang.github.io/blog/kiosk-and-assessment-apps.html">
+<meta property="og:image" content="https://rilambang.github.io/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/favicon.ico">
+<link rel="stylesheet" href="./blog.css">
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <a class="who" href="/">Muhammad Ilham Rilambang</a>
+    <a href="./index.html">Writing</a>
+  </div>
+  <p class="tag">Platform rules</p>
+  <h1>Kiosk and assessment apps: what Apple will and won&#x27;t let you lock</h1>
+<p class="lede">The hardest problem in a proctored exam app is not the exam. It is that the
+operating system owns the device, and every restriction you want has to be one Apple already
+agreed to enforce.</p>
+
+<p>Every team building assessment software has the same first instinct: build the lock.
+Disable the home button, block the app switcher, kill notifications, watch for screenshots,
+detect a second screen. It is a long list of interesting engineering, and almost all of it
+is either impossible or unnecessary.</p>
+
+<h2>Two questions decide everything</h2>
+
+<p>Before writing a line of anti-cheat, answer these:</p>
+
+<ol>
+  <li><strong>Is the device supervised?</strong> A supervised device is enrolled and managed
+  by an organisation — the school or the testing centre owns it and can configure it
+  centrally. A student's own iPad is not supervised and never will be.</li>
+  <li><strong>Does the OS already have a mode for this?</strong> If it does, your job is to
+  turn it on correctly, not to reimplement it worse.</li>
+</ol>
+
+<p>Those two questions divide the problem cleanly, and they are the reason a kiosk app is a
+smaller engineering project than it looks.</p>
+
+<h2>What Apple actually provides</h2>
+
+<p>For assessment software specifically, Apple ships the <strong>Automatic Assessment
+Configuration</strong> framework. Its own summary is the clearest possible statement of
+scope: <em>"Enter single-app mode and prevent students from accessing specific system
+features while taking an exam."</em></p>
+
+<p>Three properties of it are worth knowing before you plan anything:</p>
+
+<ul>
+  <li><strong>It needs no device management.</strong> Apple's own support documentation says
+  securing an iPad or Mac for testing with a supported app "requires no additional setup or
+  management, such as a device management service." An app that adopts this framework locks
+  the device into itself automatically. That is the difference between shipping an exam mode
+  to every student and shipping it only to schools with an MDM.</li>
+  <li><strong>It is the app's decision, not the tester's.</strong> The app enables it, and
+  while it is active the user cannot switch to another app. There is no setup flow the exam
+  taker can skip, because there is nothing for them to do.</li>
+  <li><strong>Manual modes win, and that is a trap.</strong> If Single App Mode or Guided
+  Access is already enabled on the device, "that feature supersedes assessment mode
+  restrictions." A school that pre-locked the iPads by hand is not getting your app's
+  configuration — they are getting their own, and it may be stricter or looser than you
+  assume.</li>
+</ul>
+
+<p>Assessment mode on iPadOS is supported from iPadOS 9.3.2 onward, and the same framework
+covers macOS — which matters more than it first appears, because it is the same product
+decision for two platforms rather than two separate anti-cheat implementations.</p>
+
+<h2>The part that is a product decision, not a technical one</h2>
+
+<p>Once you know what the OS will do, the remaining work is a policy conversation dressed as
+engineering:</p>
+
+<p><strong>What do you do with a violation?</strong> A framework that prevents an action gives
+you a clean story. A framework that merely observes one does not. If you cannot prevent it,
+your options are to warn, to log, or to ignore — and each of those is a different product.
+Discovery after the exam is not prevention, and telling a candidate they failed because of
+telemetry they cannot see is not a defensible process.</p>
+
+<p><strong>What do you do when the lock fails?</strong> Exam mode is a state the app enters,
+which means it can also fail to enter — low battery, a crash, a force-quit, a device the OS
+decided to restart. The honest design assumes the lock will break at least once, and decides
+in advance what the exam does when it notices. An exam that silently continues in an unlocked
+state is worse than one that visibly halts.</p>
+
+<p><strong>Who is the fallback for?</strong> Assessment mode covers the app. It does not cover
+a second phone on the desk, a written answer sheet, or a person helping. Every proctoring
+system has a human layer eventually; deciding where your layer ends is cheaper than
+discovering it during an incident.</p>
+
+<h2>What I'd tell anyone starting this</h2>
+
+<p>Read Apple's platform capabilities before designing the countermeasure, because the
+countermeasures you invent yourself are the ones that get rejected, break on OS updates, or
+quietly stop working when a device is configured differently than you assumed. The interesting
+engineering in a proctored exam app is not the lock — it is the exam runtime: offline
+resilience, autosave that survives a crash, a submission that is idempotent, and a state
+machine that never loses a candidate's work. The lock is a configuration. Treat it like one,
+and spend the effort where the candidate actually feels it.</p>
+  <div class="sources">
+    <h2>Sources</h2>
+    <ul>
+      <li><a href="https://support.apple.com/101976" target="_blank" rel="noreferrer">Set up iPad and Mac to give tests and assessments — Apple Support</a></li>
+      <li><a href="https://developer.apple.com/documentation/automaticassessmentconfiguration" target="_blank" rel="noreferrer">Automatic Assessment Configuration — Apple Developer Documentation</a></li>
+      <li><a href="https://developer.apple.com/videos/play/wwdc2017/716/" target="_blank" rel="noreferrer">iOS Configuration and APIs for Kiosk and Assessment Apps — WWDC17 session 716</a></li>
+    </ul>
+  </div>
+  <p class="foot">Written from experience shipping iOS apps. No client names, no internal details, no unpublished numbers — everything citable here is public.</p>
+
+</div>
+</body>
+</html>

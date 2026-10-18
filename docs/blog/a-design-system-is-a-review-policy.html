@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>A design system is a review policy, not a library</title>
+<meta name="description" content="Importing a token package changes nothing. The system holds when the correct choice is easier than the wrong one — and when review refuses the local override.">
+<link rel="canonical" href="https://rilambang.github.io/blog/a-design-system-is-a-review-policy.html">
+<meta property="og:type" content="article">
+<meta property="og:title" content="A design system is a review policy, not a library">
+<meta property="og:description" content="Importing a token package changes nothing. The system holds when the correct choice is easier than the wrong one — and when review refuses the local override.">
+<meta property="og:url" content="https://rilambang.github.io/blog/a-design-system-is-a-review-policy.html">
+<meta property="og:image" content="https://rilambang.github.io/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/favicon.ico">
+<link rel="stylesheet" href="./blog.css">
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <a class="who" href="/">Muhammad Ilham Rilambang</a>
+    <a href="./index.html">Writing</a>
+  </div>
+  <p class="tag">Craft</p>
+  <h1>A design system is a review policy, not a library</h1>
+<p class="lede">A design system is not a package you import. It is a set of decisions that
+review enforces, and the package is only the place those decisions live.</p>
+
+<p>I have watched more than one design system die at screen three. The failure is always the
+same and never looks like a design problem at the time: someone had a deadline, the component
+almost fit, and they wrote the value inline. That file is now the precedent.</p>
+
+<h2>Three copies of every value</h2>
+
+<p>In a healthy system there are exactly two places a colour can come from: the design source,
+and the token that mirrors it. In a real codebase there is a third — the literal somebody
+pasted into a view — and that is the one that ages badly. It does not break. It just drifts,
+one hex at a time, until nobody can change the brand colour without a treasure hunt.</p>
+
+<h2>What makes it stick</h2>
+
+<ol>
+  <li><strong>Token names describe intent, not value.</strong> <code>surface</code>,
+  <code>danger</code>, <code>border-subtle</code> survive a redesign. <code>grey300</code>
+  does not, and it invites the next person to pick a neighbouring number by eye.</li>
+  <li><strong>The default has to be the correct one.</strong> If using the system is harder
+  than not using it, the system loses, every time, to someone under pressure. Convenience beats
+  policy.</li>
+  <li><strong>The component owns its own spacing.</strong> A system where every screen
+  re-specifies the padding of the same button is a component in name only.</li>
+  <li><strong>Review rejects the override.</strong> This is the actual enforcement. Not a lint
+  rule, not a guideline — a person saying no, in a review, with a reason. The first few of
+  those set the norm for the next hundred.</li>
+</ol>
+
+<h2>What I check in review</h2>
+
+<ul>
+  <li>No raw colour values outside the tokens file. None, including "just for the shadow".</li>
+  <li>No font sizes written as numbers in a view.</li>
+  <li>Spacing from the scale — not <code>13</code> because it looked right that afternoon.</li>
+  <li>A component not re-specifying spacing the component already defines.</li>
+  <li>New tokens: does an existing one already mean this? Duplicated intent is how a token file
+  becomes a colour palette.</li>
+</ul>
+
+<h2>The honest cost, said out loud</h2>
+
+<p>A design system slows down the first screen and speeds up the tenth. That is the entire trade,
+and it is a bad deal if you only ever build one screen. Teams abandon systems because nobody
+said the first half of that sentence, so the first screen feels like overhead and the tenth
+never arrives.</p>
+
+<p>Say it in the same breath as the plan. "This will be slower for a fortnight and faster after
+that" is a sentence a team can agree to. "We are adopting a design system" is not.</p>
+
+<h2>The design side is a person, not a handoff</h2>
+
+<p>The systems I have seen work have a designer who reads the diff, or a developer who has the
+design file open. The ones that fail have a Figma link and a prayer. The gap between the mock
+and the implementation is where defaults get invented — and invented defaults are the beginning
+of the third copy.</p>
+
+<p>None of this is about tooling. It is about which choice is the path of least resistance on a
+Thursday afternoon, and who is standing between the deadline and the hardcoded hex.</p>
+  <div class="sources">
+    <h2>Sources</h2>
+    <ul>
+      <li><a href="https://developer.apple.com/design/human-interface-guidelines" target="_blank" rel="noreferrer">Human Interface Guidelines — Apple Developer</a></li>
+      <li><a href="https://www.swift.org/documentation/api-design-guidelines/" target="_blank" rel="noreferrer">Swift API Design Guidelines</a></li>
+    </ul>
+  </div>
+  <p class="foot">Written from experience shipping iOS apps. No client names, no internal details, no unpublished numbers — everything citable here is public.</p>
+
+</div>
+</body>
+</html>

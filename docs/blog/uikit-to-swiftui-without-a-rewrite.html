@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>UIKit to SwiftUI without a rewrite</title>
+<meta name="description" content="The migration succeeds or fails on one decision: who owns navigation. Everything else is a sequence of small, reversible steps.">
+<link rel="canonical" href="https://rilambang.github.io/blog/uikit-to-swiftui-without-a-rewrite.html">
+<meta property="og:type" content="article">
+<meta property="og:title" content="UIKit to SwiftUI without a rewrite">
+<meta property="og:description" content="The migration succeeds or fails on one decision: who owns navigation. Everything else is a sequence of small, reversible steps.">
+<meta property="og:url" content="https://rilambang.github.io/blog/uikit-to-swiftui-without-a-rewrite.html">
+<meta property="og:image" content="https://rilambang.github.io/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/favicon.ico">
+<link rel="stylesheet" href="./blog.css">
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <a class="who" href="/">Muhammad Ilham Rilambang</a>
+    <a href="./index.html">Writing</a>
+  </div>
+  <p class="tag">Migration</p>
+  <h1>UIKit to SwiftUI without a rewrite</h1>
+<p class="lede">The migration succeeds or fails on one decision: who owns navigation. Get that
+right and the rest is a sequence of small, reversible steps. Get it wrong and you end up with
+two systems that each half-know where you are.</p>
+
+<p>I have taken more than one shipped app across this boundary. Nobody regrets the destination.
+People regret the order.</p>
+
+<h2>Do not start with the app shell</h2>
+
+<p>The instinct is to rewrite the root and let the screens follow. That inverts the risk: the
+shell is the part every screen depends on, and it is the part you cannot ship incrementally.</p>
+
+<p>Start with leaf screens — a detail view, a settings page, a form. Screens that do not own
+navigation are the safe unit of migration, because failure costs you one screen rather than
+the app.</p>
+
+<h2>Pick one direction of interop at a time</h2>
+
+<p>The two directions are not symmetric and should not be started together:</p>
+
+<ul>
+  <li><strong>UIKit shell, SwiftUI leaves</strong> — a UIKit view controller hosts a SwiftUI
+  view. This is the low-risk direction, and it is where a migration should begin.</li>
+  <li><strong>SwiftUI shell, UIKit leaves</strong> — a SwiftUI view wraps a UIKit component.
+  Necessary for the handful of things SwiftUI still does not do well, and the direction that
+  tends to accumulate if you are careless.</li>
+</ul>
+
+<p>Whichever you are in, know which one it is. A codebase that is doing both, everywhere, with
+no rule, has no migration at all.</p>
+
+<h2>Navigation is the seam, so give it exactly one owner</h2>
+
+<p>This is the decision that determines whether the migration is a project or a permanent tax.
+Two systems that both believe they own the stack produce bugs that are extremely hard to
+diagnose: a screen that appears twice, a back button that does nothing, state that resets on
+pop.</p>
+
+<p>Keep navigation in one place for the whole migration — whether that is the UIKit navigation
+controller or a SwiftUI stack driven by a coordinator. The other side renders content and
+reports events. It does not push.</p>
+
+<h2>State ownership: pass data in, events out</h2>
+
+<p>Do not let the two worlds observe each other's state. A view controller watching a SwiftUI
+observable object, or a SwiftUI view holding a reference to a view controller and polling it,
+is a future bug in both directions.</p>
+
+<p>The contract that survives: the parent passes a value in and receives callbacks out. That is
+enough for almost every screen, and it keeps either side replaceable.</p>
+
+<h2>What actually bites</h2>
+
+<ul>
+  <li><strong>Keyboard avoidance.</strong> Two systems, two opinions, one screen. This is the
+  most common source of visual regressions during the swap and it is worth a dedicated pass.</li>
+  <li><strong>List identity.</strong> A list that reuses cells and a list that keys on identity
+  behave differently on update. Missing or unstable identity produces animations and state loss
+  that look like a rendering bug and are not.</li>
+  <li><strong>Lifecycle timing.</strong> "Appeared" does not mean the same instant in both
+  systems. Code that kicks off work on appear and cancels on disappear will behave differently,
+  and the difference shows up under a slow network, not on your desk.</li>
+  <li><strong>Measurement.</strong> Geometry readers used for layout maths are a smell in a
+  declarative system. Most of the time the layout you were computing by hand is a two-line
+  native layout, and the manual version is the expensive one.</li>
+</ul>
+
+<h2>Availability is part of the plan, not an afterthought</h2>
+
+<p>Everything you adopt has to exist on your deployment target, and anything newer needs a
+working fallback — not an <code>#available</code> that silently renders nothing. Write down the
+minimum supported version and treat every adoption above it as a decision with a cost.</p>
+
+<h2>How you know it is finished</h2>
+
+<p>The app target compiles without importing the old UI framework outside the places the
+platform genuinely requires it. Until then, you have a mixed app, which is a perfectly good
+state to ship from — but it is a state, not an outcome. Name the finish line, or the migration
+becomes the architecture.</p>
+  <div class="sources">
+    <h2>Sources</h2>
+    <ul>
+      <li><a href="https://developer.apple.com/videos/play/wwdc2019/204/" target="_blank" rel="noreferrer">Introducing SwiftUI: Building Your First App — WWDC19 session 204</a></li>
+      <li><a href="https://developer.apple.com/videos/play/wwdc2019/216/" target="_blank" rel="noreferrer">SwiftUI Essentials — WWDC19 session 216</a></li>
+      <li><a href="https://developer.apple.com/design/human-interface-guidelines" target="_blank" rel="noreferrer">Human Interface Guidelines — Apple Developer</a></li>
+    </ul>
+  </div>
+  <p class="foot">Written from experience shipping iOS apps. No client names, no internal details, no unpublished numbers — everything citable here is public.</p>
+
+</div>
+</body>
+</html>

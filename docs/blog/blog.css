@@ -1,0 +1,40 @@
+:root{--bg:#fbfaf7;--ink:#14140f;--muted:#6d6b62;--line:#e6e3da;--accent:#1f4fd8}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);
+  font:16px/1.65 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  -webkit-font-smoothing:antialiased}
+.wrap{max-width:720px;margin:0 auto;padding:40px 24px 80px}
+.top{display:flex;justify-content:space-between;align-items:baseline;
+  border-bottom:1px solid var(--line);padding-bottom:14px;margin-bottom:40px;font-size:14px}
+.top a{color:var(--muted);text-decoration:none}
+.top a:hover{color:var(--accent)}
+.top .who{font-weight:600;color:var(--ink);text-decoration:none}
+h1{font-size:32px;line-height:1.2;letter-spacing:-0.02em;margin:0 0 10px}
+h2{font-size:19px;letter-spacing:-0.01em;margin:34px 0 10px}
+h3{font-size:16px;margin:24px 0 6px}
+p,li{color:#22221b}
+.lede{font-size:18px;color:var(--muted);margin:0 0 34px}
+ul,ol{padding-left:20px}
+li{margin:6px 0}
+a{color:var(--accent)}
+code{font:14px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace;
+  background:#f1efe8;padding:1px 5px;border-radius:4px}
+pre{background:#f1efe8;border:1px solid var(--line);border-radius:10px;
+  padding:14px 16px;overflow-x:auto}
+pre code{background:none;padding:0}
+blockquote{margin:22px 0;padding:2px 0 2px 18px;border-left:3px solid var(--line);color:var(--muted)}
+.sources{margin-top:48px;border-top:1px solid var(--line);padding-top:18px;font-size:14px}
+.sources h2{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin:0 0 10px}
+.sources li{margin:6px 0}
+.foot{margin-top:56px;border-top:1px solid var(--line);padding-top:18px;font-size:14px;color:var(--muted)}
+/* index */
+.list{list-style:none;padding:0;margin:0}
+.list li{border-top:1px solid var(--line);padding:20px 0}
+.list h2{margin:0 0 6px;font-size:20px}
+.list a{text-decoration:none}
+.list a:hover h2{color:var(--accent)}
+.list p{margin:0;color:var(--muted);font-size:15px}
+.tag{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
+@media (max-width:600px){.wrap{padding:28px 18px 60px}h1{font-size:26px}}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}

@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Build time is a dependency-graph problem, not a machine problem</title>
+<meta name="description" content="Faster hardware buys you a constant factor. The graph is the exponent. Why the first fix is almost always deleting a script phase, and what to measure before you touch anything.">
+<link rel="canonical" href="https://rilambang.github.io/blog/build-time-is-a-dependency-graph-problem.html">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Build time is a dependency-graph problem, not a machine problem">
+<meta property="og:description" content="Faster hardware buys you a constant factor. The graph is the exponent. Why the first fix is almost always deleting a script phase, and what to measure before you touch anything.">
+<meta property="og:url" content="https://rilambang.github.io/blog/build-time-is-a-dependency-graph-problem.html">
+<meta property="og:image" content="https://rilambang.github.io/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/favicon.ico">
+<link rel="stylesheet" href="./blog.css">
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <a class="who" href="/">Muhammad Ilham Rilambang</a>
+    <a href="./index.html">Writing</a>
+  </div>
+  <p class="tag">Build systems</p>
+  <h1>Build time is a dependency-graph problem, not a machine problem</h1>
+<p class="lede">When builds get slow, the first proposal is always a better machine. A faster
+Mac buys a constant factor. The dependency graph is the exponent.</p>
+
+<p>Apple's own guidance on incremental build performance is worth reading before optimising
+anything, and it is refreshingly blunt: the things that break incrementality are the things
+that make the build redo work it did not need to redo. That is a graph problem.</p>
+
+<h2>Measure the build, not the vibe</h2>
+
+<p>Before changing a setting, get the timing summary from a build and look at where the time
+actually goes. Two facts usually fall out immediately:</p>
+
+<ul>
+  <li>One or two tasks dominate, and they are not the compiler.</li>
+  <li>The build is compiling far more than the change touched.</li>
+</ul>
+
+<p>Both point at structure rather than at hardware.</p>
+
+<h2>The most common culprit is a Run Script phase</h2>
+
+<p>A script phase with no declared inputs and outputs runs on <em>every</em> build. It does not
+matter that the script is quick. The cost is not the script's runtime, it is that it invalidates
+downstream work and forces the build to redo it. A five-line script can be responsible for
+minutes.</p>
+
+<p>Three responses, in order of preference:</p>
+
+<ol>
+  <li><strong>Delete it.</strong> A surprising share of script phases exist to do something the
+  build system already does, or to copy a file that should be a build setting.</li>
+  <li><strong>Declare inputs and outputs.</strong> If the script genuinely generates something,
+  tell the build system what it reads and what it writes, so it can be skipped when neither
+  changed.</li>
+  <li><strong>Move it somewhere it is not on the critical path</strong> — earlier in the
+  pipeline, or out of the build entirely.</li>
+</ol>
+
+<h2>Then look at what a change actually invalidates</h2>
+
+<p>In a single-target app, the answer is usually "everything downstream", which is to say
+"most of the app". A change to a shared file in a large target can recompile a majority of the
+codebase — not because the compiler is slow, but because the unit of work is the target.</p>
+
+<p>Splitting the target is the fix, and the reason it works is not micro-optimisation. It is
+that an unchanged module is genuinely unchanged, and the build system can skip it. The
+incremental case — which is the case you live in, hundreds of times a day — gets faster by an
+order of magnitude rather than by a percentage.</p>
+
+<h2>Whole-module optimisation, and the debug/release asymmetry</h2>
+
+<p>Whole-module compilation is faster for a clean build and much worse for an incremental one,
+because the module is the unit that must be redone. The interesting consequence is that your
+debug builds and your release builds want opposite things, and a configuration that is right
+for one is wrong for the other. Decide per configuration rather than applying one global
+preference.</p>
+
+<h2>Type-checking hot spots are real and they are local</h2>
+
+<p>A single expression that the type checker cannot resolve quickly — a large literal, a deep
+nesting of operators, a long chain of overloaded calls — can take longer to compile than the
+file around it. The compiler will tell you if you ask it, and the fix is to make the expression
+simpler or to name the type explicitly. It is a small, contained edit with an outsize effect.</p>
+
+<h2>Asset catalogs</h2>
+
+<p>Assets are compiled, and a large catalog that changes often is a step you pay for repeatedly.
+Keeping generated or throwaway assets out of the catalog is not a style preference; it is
+build time.</p>
+
+<h2>What I'd tell a team staring at a slow build</h2>
+
+<ol>
+  <li>Get the timing summary. Guess nothing.</li>
+  <li>Delete or declare script phases. Cheapest win available, almost always.</li>
+  <li>Split the target so unchanged code can be skipped.</li>
+  <li>Fix the one or two type-checking hot spots the compiler names.</li>
+  <li>Only then consider hardware or caching, and expect a constant factor rather than a step
+  change.</li>
+</ol>
+
+<p>The uncomfortable part is that the first four are all structural. The build is slow because
+the code is shaped in a way that makes it slow, and no amount of machine fixes a shape.</p>
+  <div class="sources">
+    <h2>Sources</h2>
+    <ul>
+      <li><a href="https://developer.apple.com/documentation/xcode/improving-the-speed-of-incremental-builds" target="_blank" rel="noreferrer">Improving the speed of incremental builds — Apple Developer Documentation</a></li>
+      <li><a href="https://developer.apple.com/videos/play/wwdc2019/410/" target="_blank" rel="noreferrer">Creating Swift Packages — WWDC19 session 410</a></li>
+    </ul>
+  </div>
+  <p class="foot">Written from experience shipping iOS apps. No client names, no internal details, no unpublished numbers — everything citable here is public.</p>
+
+</div>
+</body>
+</html>

@@ -94,6 +94,7 @@ export default function App() {
           <a href="#work">Work</a>
           <a href="#path">Shipping</a>
           <a href="#roles">Path</a>
+          <a href="blog/">Writing</a>
           <a href="#contact">Contact</a>
         </nav>
       </header>

@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Splitting an app into local Swift packages: what breaks first</title>
+<meta name="description" content="The files move in a day. The boundaries take a quarter. Here is the order things actually break in, and the one rule that keeps the first week from turning into a public-API explosion.">
+<link rel="canonical" href="https://rilambang.github.io/blog/splitting-an-app-into-local-packages.html">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Splitting an app into local Swift packages: what breaks first">
+<meta property="og:description" content="The files move in a day. The boundaries take a quarter. Here is the order things actually break in, and the one rule that keeps the first week from turning into a public-API explosion.">
+<meta property="og:url" content="https://rilambang.github.io/blog/splitting-an-app-into-local-packages.html">
+<meta property="og:image" content="https://rilambang.github.io/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/favicon.ico">
+<link rel="stylesheet" href="./blog.css">
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <a class="who" href="/">Muhammad Ilham Rilambang</a>
+    <a href="./index.html">Writing</a>
+  </div>
+  <p class="tag">Modularisation</p>
+  <h1>Splitting an app into local Swift packages: what breaks first</h1>
+<p class="lede">Moving files into packages takes a day. Getting the boundaries right takes a
+quarter. The gap between those two numbers is where most modularisation projects quietly
+stall.</p>
+
+<p>I have done this on more than one app now, and the failures are consistent enough to
+predict. This is the order things actually break in.</p>
+
+<h2>1. Resources, and the fact that they fail at runtime</h2>
+
+<p>The first casualty is anything that reads from the bundle. A JSON fixture, a font, a
+string file, an asset catalog image. Inside a package, the code needs
+<code>Bundle.module</code>. Code that still reaches for <code>Bundle.main</code> compiles
+perfectly and returns nil at runtime.</p>
+
+<p>This is the worst class of breakage in the whole migration: it is invisible to the compiler,
+invisible in code review, and usually caught by a user rather than a test. Sweep for
+<code>Bundle.main</code> and <code>UIImage(named:)</code> <em>before</em> moving anything, and
+decide per call site whether it belongs to the package or to the app.</p>
+
+<h2>2. <code>internal</code> becomes <code>public</code>, and everything gets worse</h2>
+
+<p>The moment code lives in another module, <code>internal</code> stops being enough. The
+tempting response is to add <code>public</code> until it compiles. That is how a codebase ends
+up with a package that exposes forty types and enforces nothing — the boundary exists
+physically and not at all conceptually.</p>
+
+<blockquote>The test I use: if a package needs more than a handful of public symbols, it is
+not a module. It is a folder that happens to have a manifest.</blockquote>
+
+<p>So the real work is not moving code, it is <em>designing the API you wish existed</em> and
+then making the code fit behind it. Write the interface first. If it is awkward to write, the
+boundary is in the wrong place, and you have found that out before the expensive part.</p>
+
+<h2>3. Build settings stop being inherited</h2>
+
+<p>A package does not inherit your app target's build settings. The Swift language version, the
+warnings you had silenced, optimisation flags, the deployment target — all of it is declared in
+the manifest and is now a decision someone has to make deliberately. Do it in one pass, or you
+will spend a fortnight on warnings that appear in one module and not the adjacent one.</p>
+
+<h2>4. Names collide immediately</h2>
+
+<p>Every modular codebase has a <code>User</code>, a <code>Config</code>, an
+<code>Extensions</code>, a <code>Logger</code>. Once they are in separate modules they are all
+legal and all ambiguous at every call site. Type names have to say what they are now — which
+sounds like a nit and is actually a boundary leaking into every file that touches two modules.</p>
+
+<h2>5. Tests cannot see across the wall either</h2>
+
+<p><code>@testable import</code> works for a package's own tests. It does not let a test in one
+module reach into another's internals. That is the point, but it means tests that were quietly
+testing implementation details have to be rewritten against the public surface — or the surface
+has to grow to make the behaviour testable. The second option is usually correct, and it is a
+useful signal that something is missing from the API.</p>
+
+<h2>6. The awkward middle, and why people quit here</h2>
+
+<p>For a while, everything is public, nothing is faster, and there are more files than before.
+That is not the design failing; it is the design being incomplete. The end state — narrow
+public surfaces, small rebuilds, obvious ownership — is what pays. Judge it at the end, not in
+week two.</p>
+
+<h2>7. Cycles surface, which is the whole point</h2>
+
+<p>The first genuinely valuable thing modularisation does is make circular dependencies
+<em>compile errors</em>. In a single target, A using B and B using A is invisible. Across
+module boundaries it cannot exist.</p>
+
+<p>That error is not an obstacle in your way. It is the design bug you had been hiding,
+finally unable to hide. The wrong fix is to merge the two modules so it compiles again.</p>
+
+<h2>The sequencing I'd use again</h2>
+
+<ol>
+  <li><strong>Leaves first.</strong> The things that depend on nothing: design tokens, models,
+  a networking core, a logger. Low risk, immediate proof that the tooling works.</li>
+  <li><strong>Then the middle.</strong> Shared UI, shared services. This is where the API
+  design conversation actually happens.</li>
+  <li><strong>Feature modules last.</strong> They are the ones that need the seams below them
+  to be settled, and the ones most likely to move again if they are not.</li>
+  <li><strong>The app target ends up a shell.</strong> Composition, navigation, configuration.
+  If the app target still contains business logic, the split is not finished.</li>
+</ol>
+
+<p>The thing I would do differently: agree the vocabulary <em>and</em> the public surface
+before anyone starts moving code, in writing, and treat a change to either as a design
+decision rather than a refactor. Moving files is mechanical. Everything that made the project
+worth doing is not.</p>
+  <div class="sources">
+    <h2>Sources</h2>
+    <ul>
+      <li><a href="https://developer.apple.com/videos/play/wwdc2019/410/" target="_blank" rel="noreferrer">Creating Swift Packages — WWDC19 session 410</a></li>
+      <li><a href="https://developer.apple.com/videos/play/wwdc2019/416/" target="_blank" rel="noreferrer">Binary Frameworks in Swift — WWDC19 session 416</a></li>
+      <li><a href="https://www.swift.org/documentation/api-design-guidelines/" target="_blank" rel="noreferrer">Swift API Design Guidelines</a></li>
+    </ul>
+  </div>
+  <p class="foot">Written from experience shipping iOS apps. No client names, no internal details, no unpublished numbers — everything citable here is public.</p>
+
+</div>
+</body>
+</html>
