@@ -1,40 +1,88 @@
-:root{--bg:#fbfaf7;--ink:#14140f;--muted:#6d6b62;--line:#e6e3da;--accent:#1f4fd8}
+:root{--bg:#fbfaf7;--ink:#14140f;--muted:#6d6b62;--line:#e2dfd5;--accent:#1f4fd8;
+  --tint:#eef2fd;--warm:#f6f4ec;--sans:-apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Helvetica, Arial, sans-serif}
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
 body{margin:0;background:var(--bg);color:var(--ink);
-  font:16px/1.65 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
-  -webkit-font-smoothing:antialiased}
-.wrap{max-width:720px;margin:0 auto;padding:40px 24px 80px}
+  font:16px/1.68 -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Helvetica, Arial, sans-serif;-webkit-font-smoothing:antialiased}
+.wrap{max-width:720px;margin:0 auto;padding:36px 24px 72px}
 .top{display:flex;justify-content:space-between;align-items:baseline;
-  border-bottom:1px solid var(--line);padding-bottom:14px;margin-bottom:40px;font-size:14px}
+  border-bottom:1px solid var(--line);padding-bottom:14px;margin-bottom:36px;font-size:14px}
 .top a{color:var(--muted);text-decoration:none}
 .top a:hover{color:var(--accent)}
-.top .who{font-weight:600;color:var(--ink);text-decoration:none}
-h1{font-size:32px;line-height:1.2;letter-spacing:-0.02em;margin:0 0 10px}
-h2{font-size:19px;letter-spacing:-0.01em;margin:34px 0 10px}
+.top .who{font-weight:600;color:var(--ink)}
+h1{font-size:33px;line-height:1.18;letter-spacing:-0.022em;margin:0 0 12px}
+h2{font-size:19.5px;letter-spacing:-0.012em;margin:36px 0 10px}
 h3{font-size:16px;margin:24px 0 6px}
-p,li{color:#22221b}
-.lede{font-size:18px;color:var(--muted);margin:0 0 34px}
+p,li{color:#221f1a}
+.lede{font-size:18.5px;line-height:1.55;color:#3d3a32;margin:0 0 32px}
 ul,ol{padding-left:20px}
 li{margin:6px 0}
 a{color:var(--accent)}
 code{font:14px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace;
-  background:#f1efe8;padding:1px 5px;border-radius:4px}
-pre{background:#f1efe8;border:1px solid var(--line);border-radius:10px;
+  background:var(--warm);padding:1px 5px;border-radius:4px}
+pre{background:var(--warm);border:1px solid var(--line);border-radius:10px;
   padding:14px 16px;overflow-x:auto}
 pre code{background:none;padding:0}
-blockquote{margin:22px 0;padding:2px 0 2px 18px;border-left:3px solid var(--line);color:var(--muted)}
-.sources{margin-top:48px;border-top:1px solid var(--line);padding-top:18px;font-size:14px}
+blockquote{margin:26px 0;padding:4px 0 4px 20px;border-left:3px solid var(--accent);
+  font-size:17px;color:#3d3a32}
+blockquote p{margin:0}
+.chip{display:inline-block;font-size:11.5px;letter-spacing:.09em;text-transform:uppercase;
+  color:var(--accent);background:var(--tint);border-radius:999px;padding:4px 11px;margin-bottom:14px}
+.meta{font-size:13px;color:var(--muted);margin:0 0 34px}
+.fig{margin:30px 0 34px;border:1px solid var(--line);border-radius:14px;background:#fff;
+  padding:20px 20px 14px}
+.fig svg{display:block;width:100%;height:auto}
+.fig figcaption{font-size:13px;line-height:1.5;color:var(--muted);margin-top:12px}
+.sources{margin-top:52px;border-top:1px solid var(--line);padding-top:18px;font-size:14px}
 .sources h2{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin:0 0 10px}
-.sources li{margin:6px 0}
-.foot{margin-top:56px;border-top:1px solid var(--line);padding-top:18px;font-size:14px;color:var(--muted)}
+.sources li{margin:6px 0;color:var(--muted)}
+.foot{margin-top:44px;border-top:1px solid var(--line);padding-top:18px;font-size:13.5px;color:var(--muted)}
+.pager{display:flex;justify-content:space-between;gap:16px;margin-top:26px;font-size:14px}
+.pager a{text-decoration:none}
+.pager span{color:var(--muted)}
 /* index */
-.list{list-style:none;padding:0;margin:0}
-.list li{border-top:1px solid var(--line);padding:20px 0}
-.list h2{margin:0 0 6px;font-size:20px}
-.list a{text-decoration:none}
-.list a:hover h2{color:var(--accent)}
-.list p{margin:0;color:var(--muted);font-size:15px}
-.tag{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
-@media (max-width:600px){.wrap{padding:28px 18px 60px}h1{font-size:26px}}
-@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+.lede--index{margin-bottom:40px}
+.cards{list-style:none;padding:0;margin:0}
+.cards li{border-top:1px solid var(--line);padding:22px 0;display:grid;
+  grid-template-columns:56px 1fr;gap:18px}
+.cards h2{margin:0 0 6px;font-size:20px}
+.cards a{text-decoration:none}
+.cards a:hover h2{color:var(--accent)}
+.cards p{margin:0;color:var(--muted);font-size:15px}
+.num{font:600 13px/1 ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--accent);
+  border:1px solid var(--line);border-radius:10px;padding:10px 0;text-align:center;
+  background:var(--tint);height:fit-content}
+/* ── motion ────────────────────────────────────────────────────────────────
+   Transform only, never opacity, on anything a reader needs. Diagrams draw their
+   connectors, which are decoration: if an animation never runs, a box is a few
+   pixels low and a line is already there, and nothing is ever invisible.        */
+@keyframes rise{from{transform:translateY(16px)}to{transform:none}}
+@keyframes draw{to{stroke-dashoffset:0}}
+.post-head > *{animation:rise .6s cubic-bezier(.22,.7,.3,1) both}
+.post-head > :nth-child(2){animation-delay:.05s}
+.post-head > :nth-child(3){animation-delay:.1s}
+.fig .d{stroke-dasharray:var(--len,320);stroke-dashoffset:var(--len,320);
+  animation:draw .9s ease-out .2s both}
+.fig .n{animation:rise .7s cubic-bezier(.22,.7,.3,1) both}
+.fig .n:nth-child(2){animation-delay:.06s}
+.fig .n:nth-child(3){animation-delay:.12s}
+.fig .n:nth-child(4){animation-delay:.18s}
+.fig .n:nth-child(5){animation-delay:.24s}
+.fig .n:nth-child(6){animation-delay:.3s}
+/* scroll-reveal, guarded: unsupported engine applies nothing and shows everything */
+@supports (animation-timeline:view()){
+  article > h2,article > p,article > ul,article > ol,article > blockquote,
+  article > pre,article > figure{
+    animation:rise linear both;animation-timeline:view();
+    animation-range:entry 4% cover 26%}
+}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  .post-head > *,.fig .d,.fig .n,article > h2,article > p,article > ul,article > ol,
+  article > blockquote,article > pre,article > figure{animation:none}
+  .fig .d{stroke-dasharray:none;stroke-dashoffset:0}
+}
+@media (max-width:600px){
+  .wrap{padding:26px 18px 56px}h1{font-size:26px}
+  .cards li{grid-template-columns:1fr}.num{display:none}
+}

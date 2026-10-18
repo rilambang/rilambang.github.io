@@ -21,11 +21,20 @@
     <a class="who" href="/">Muhammad Ilham Rilambang</a>
     <a href="./index.html">Writing</a>
   </div>
-  <p class="tag">Tooling</p>
-  <h1>The iOS stack I actually reach for</h1>
+  <header class="post-head">
+    <p class="chip">Tooling</p>
+    <h1>The iOS stack I actually reach for</h1>
+    <p class="meta">3 min read · Muhammad Ilham Rilambang</p>
+  </header>
+  <article>
 <p class="lede">This is not the stack I would choose on a blank project. It is the one I reach
 for on a codebase I did not write, where the deciding question is who has to debug this at
 3am.</p>
+
+  <figure class="fig"><svg viewBox='0 0 640 300' width='640' height='300' role='img' aria-label='The iOS stack as five layers, each with the rule that decides it' font-family='Helvetica Neue,Helvetica,Arial,sans-serif' xmlns='http://www.w3.org/2000/svg'><g class='n'><rect x='20' y='16' width='600' height='42' rx='10' fill='#fff' stroke='#e2dfd5'/><rect x='20' y='16' width='3' height='42' rx='1.5' fill='#1f4fd8'/><text x='34' y='42.0' font-size='13' font-weight='600' fill='#14140f'></text></g><text x='38' y='43' font-size='13' fill='#1f4fd8' text-anchor='start' font-weight='600'>UI</text><text x='210' y='43' font-size='12.5' fill='#6d6b62' text-anchor='start' font-weight='400'>SwiftUI first, UIKit where the platform still requires it</text><g class='n'><rect x='20' y='66' width='600' height='42' rx='10' fill='#fff' stroke='#e2dfd5'/><rect x='20' y='66' width='3' height='42' rx='1.5' fill='#1f4fd8'/><text x='34' y='92.0' font-size='13' font-weight='600' fill='#14140f'></text></g><text x='38' y='93' font-size='13' fill='#1f4fd8' text-anchor='start' font-weight='600'>Navigation</text><text x='210' y='93' font-size='12.5' fill='#6d6b62' text-anchor='start' font-weight='400'>one owner, always</text><g class='n'><rect x='20' y='116' width='600' height='42' rx='10' fill='#fff' stroke='#e2dfd5'/><rect x='20' y='116' width='3' height='42' rx='1.5' fill='#1f4fd8'/><text x='34' y='142.0' font-size='13' font-weight='600' fill='#14140f'></text></g><text x='38' y='143' font-size='13' fill='#1f4fd8' text-anchor='start' font-weight='600'>Feature modules</text><text x='210' y='143' font-size='12.5' fill='#6d6b62' text-anchor='start' font-weight='400'>local packages, narrow public surfaces</text><g class='n'><rect x='20' y='166' width='600' height='42' rx='10' fill='#fff' stroke='#e2dfd5'/><rect x='20' y='166' width='3' height='42' rx='1.5' fill='#1f4fd8'/><text x='34' y='192.0' font-size='13' font-weight='600' fill='#14140f'></text></g><text x='38' y='193' font-size='13' fill='#1f4fd8' text-anchor='start' font-weight='600'>Data</text><text x='210' y='193' font-size='12.5' fill='#6d6b62' text-anchor='start' font-weight='400'>the platform&#x27;s own persistence, constraints before validation</text><g class='n'><rect x='20' y='216' width='600' height='42' rx='10' fill='#fff' stroke='#e2dfd5'/><rect x='20' y='216' width='3' height='42' rx='1.5' fill='#1f4fd8'/><text x='34' y='242.0' font-size='13' font-weight='600' fill='#14140f'></text></g><text x='38' y='243' font-size='13' fill='#1f4fd8' text-anchor='start' font-weight='600'>Platform</text><text x='210' y='243' font-size='12.5' fill='#6d6b62' text-anchor='start' font-weight='400'>the OS before a dependency</text><text x='20' y='288' font-size='11.5' fill='#6d6b62' text-anchor='start' font-weight='400'>Every choice priced by the next engineer&#x27;s ability to debug it at 3am.</text></svg>
+    <figcaption>Not preferences — the rule each layer is chosen by.</figcaption>
+  </figure>
+
 
 <h2>Language and concurrency</h2>
 
@@ -99,15 +108,20 @@ faster than I expected. What survived is the habit underneath it: prefer the bor
 prefer the platform's own tool, prefer the option a new hire can debug on their first weekend
 on call, and leave the codebase so that the next person's hard problem is the interesting one
 — not the one you set up for them by being clever.</p>
-  <div class="sources">
-    <h2>Sources</h2>
-    <ul>
+    <div class="sources">
+      <h2>Sources</h2>
+      <ul>
       <li><a href="https://www.swift.org/documentation/api-design-guidelines/" target="_blank" rel="noreferrer">Swift API Design Guidelines</a></li>
       <li><a href="https://developer.apple.com/documentation/xcode/improving-the-speed-of-incremental-builds" target="_blank" rel="noreferrer">Improving the speed of incremental builds — Apple Developer Documentation</a></li>
       <li><a href="https://developer.apple.com/design/human-interface-guidelines" target="_blank" rel="noreferrer">Human Interface Guidelines — Apple Developer</a></li>
-    </ul>
-  </div>
+      </ul>
+    </div>
+  </article>
   <p class="foot">Written from experience shipping iOS apps. No client names, no internal details, no unpublished numbers — everything citable here is public.</p>
+  <nav class="pager">
+    <a href="./how-i-review-ios-pull-requests.html">← How I review iOS pull requests</a>
+    <a href="./on-device-ai-decisions.html">Shipping on-device AI in an iOS app: the decisions that cost you a rewrite →</a>
+  </nav>
 
 </div>
 </body>

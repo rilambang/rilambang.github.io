@@ -21,10 +21,19 @@
     <a class="who" href="/">Muhammad Ilham Rilambang</a>
     <a href="./index.html">Writing</a>
   </div>
-  <p class="tag">Build systems</p>
-  <h1>Build time is a dependency-graph problem, not a machine problem</h1>
+  <header class="post-head">
+    <p class="chip">Build systems</p>
+    <h1>Build time is a dependency-graph problem, not a machine problem</h1>
+    <p class="meta">3 min read · Muhammad Ilham Rilambang</p>
+  </header>
+  <article>
 <p class="lede">When builds get slow, the first proposal is always a better machine. A faster
 Mac buys a constant factor. The dependency graph is the exponent.</p>
+
+  <figure class="fig"><svg viewBox='0 0 640 268' width='640' height='268' role='img' aria-label='The same one-file change rebuilding almost a whole single target, against rebuilding one module of several' font-family='Helvetica Neue,Helvetica,Arial,sans-serif' xmlns='http://www.w3.org/2000/svg'><g class='n'><rect x='20' y='16' width='600' height='40' rx='10' fill='#fff' stroke='#e2dfd5'/><rect x='20' y='16' width='3' height='40' rx='1.5' fill='#1f4fd8'/><text x='34' y='41.0' font-size='13' font-weight='600' fill='#14140f'>One target: a change recompiles its neighbours</text></g><text x='40' y='84' font-size='12.5' fill='#14140f' text-anchor='start' font-weight='600'>one file changed</text><rect x='40' y='96' width='28' height='24' rx='5' fill='#f6f4ec' stroke='#e2dfd5'/><rect x='40' y='126' width='28' height='24' rx='5' fill='#f6f4ec' stroke='#e2dfd5'/><rect x='40' y='156' width='28' height='24' rx='5' fill='#f6f4ec' stroke='#e2dfd5'/><rect x='74' y='96' width='28' height='24' rx='5' fill='#f6f4ec' stroke='#e2dfd5'/><rect x='74' y='126' width='28' height='24' rx='5' fill='#f6f4ec' stroke='#e2dfd5'/><rect x='74' y='156' width='28' height='24' rx='5' fill='#1f4fd8' stroke='#e2dfd5'/><rect x='108' y='96' width='28' height='24' rx='5' fill='#f6f4ec' stroke='#e2dfd5'/><rect x='108' y='126' width='28' height='24' rx='5' fill='#f6f4ec' stroke='#e2dfd5'/><rect x='108' y='156' width='28' height='24' rx='5' fill='#f6f4ec' stroke='#e2dfd5'/><rect x='142' y='96' width='28' height='24' rx='5' fill='#f6f4ec' stroke='#e2dfd5'/><rect x='142' y='126' width='28' height='24' rx='5' fill='#f6f4ec' stroke='#e2dfd5'/><rect x='142' y='156' width='28' height='24' rx='5' fill='#f6f4ec' stroke='#e2dfd5'/><text x='40' y='214' font-size='11.5' fill='#6d6b62' text-anchor='start' font-weight='400'>eleven boxes rebuild anyway</text><text x='360' y='84' font-size='12.5' fill='#14140f' text-anchor='start' font-weight='600'>the same change, split</text><rect x='360' y='96' width='28' height='24' rx='5' fill='#f6f4ec' stroke='#e2dfd5'/><rect x='360' y='126' width='28' height='24' rx='5' fill='#f6f4ec' stroke='#e2dfd5'/><rect x='360' y='156' width='28' height='24' rx='5' fill='#f6f4ec' stroke='#e2dfd5'/><rect x='394' y='96' width='28' height='24' rx='5' fill='#f6f4ec' stroke='#e2dfd5'/><rect x='394' y='126' width='28' height='24' rx='5' fill='#f6f4ec' stroke='#e2dfd5'/><rect x='394' y='156' width='28' height='24' rx='5' fill='#1f4fd8' stroke='#e2dfd5'/><rect x='428' y='96' width='28' height='24' rx='5' fill='#f6f4ec' stroke='#e2dfd5'/><rect x='428' y='126' width='28' height='24' rx='5' fill='#f6f4ec' stroke='#e2dfd5'/><rect x='428' y='156' width='28' height='24' rx='5' fill='#f6f4ec' stroke='#e2dfd5'/><rect x='462' y='96' width='28' height='24' rx='5' fill='#f6f4ec' stroke='#e2dfd5'/><rect x='462' y='126' width='28' height='24' rx='5' fill='#f6f4ec' stroke='#e2dfd5'/><rect x='462' y='156' width='28' height='24' rx='5' fill='#f6f4ec' stroke='#e2dfd5'/><text x='360' y='214' font-size='11.5' fill='#6d6b62' text-anchor='start' font-weight='400'>one group rebuilds</text><text x='20' y='250' font-size='11.5' fill='#6d6b62' text-anchor='start' font-weight='400'>Same edit, same machine. The unit of work is the only thing that moved.</text></svg>
+    <figcaption>One edit, two build graphs. The machine is identical in both.</figcaption>
+  </figure>
+
 
 <p>Apple's own guidance on incremental build performance is worth reading before optimising
 anything, and it is refreshingly blunt: the things that break incrementality are the things
@@ -106,14 +115,19 @@ build time.</p>
 
 <p>The uncomfortable part is that the first four are all structural. The build is slow because
 the code is shaped in a way that makes it slow, and no amount of machine fixes a shape.</p>
-  <div class="sources">
-    <h2>Sources</h2>
-    <ul>
+    <div class="sources">
+      <h2>Sources</h2>
+      <ul>
       <li><a href="https://developer.apple.com/documentation/xcode/improving-the-speed-of-incremental-builds" target="_blank" rel="noreferrer">Improving the speed of incremental builds — Apple Developer Documentation</a></li>
       <li><a href="https://developer.apple.com/videos/play/wwdc2019/410/" target="_blank" rel="noreferrer">Creating Swift Packages — WWDC19 session 410</a></li>
-    </ul>
-  </div>
+      </ul>
+    </div>
+  </article>
   <p class="foot">Written from experience shipping iOS apps. No client names, no internal details, no unpublished numbers — everything citable here is public.</p>
+  <nav class="pager">
+    <a href="./splitting-an-app-into-local-packages.html">← Splitting an app into local Swift packages: what breaks first</a>
+    <a href="./uikit-to-swiftui-without-a-rewrite.html">UIKit to SwiftUI without a rewrite →</a>
+  </nav>
 
 </div>
 </body>

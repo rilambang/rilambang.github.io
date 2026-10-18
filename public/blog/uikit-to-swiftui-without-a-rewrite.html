@@ -21,11 +21,20 @@
     <a class="who" href="/">Muhammad Ilham Rilambang</a>
     <a href="./index.html">Writing</a>
   </div>
-  <p class="tag">Migration</p>
-  <h1>UIKit to SwiftUI without a rewrite</h1>
+  <header class="post-head">
+    <p class="chip">Migration</p>
+    <h1>UIKit to SwiftUI without a rewrite</h1>
+    <p class="meta">3 min read · Muhammad Ilham Rilambang</p>
+  </header>
+  <article>
 <p class="lede">The migration succeeds or fails on one decision: who owns navigation. Get that
 right and the rest is a sequence of small, reversible steps. Get it wrong and you end up with
 two systems that each half-know where you are.</p>
+
+  <figure class="fig"><svg viewBox='0 0 640 230' width='640' height='230' role='img' aria-label='A UIKit to SwiftUI migration as four ordered steps, with a single owner of navigation underneath the whole sequence' font-family='Helvetica Neue,Helvetica,Arial,sans-serif' xmlns='http://www.w3.org/2000/svg'><g class='n'><rect x='20' y='30' width='140' height='58' rx='10' fill='#eef2fd' stroke='#1f4fd8'/><rect x='20' y='30' width='3' height='58' rx='1.5' fill='#1f4fd8'/><text x='34' y='64.0' font-size='13' font-weight='600' fill='#14140f'>Leaf screens</text></g><line x1='160' y1='59' x2='175' y2='59' stroke='#e2dfd5' stroke-width='1.5' class='d'/><polygon points='175,59 167.8,54.5 167.8,63.5' fill='#e2dfd5'/><g class='n'><rect x='175' y='30' width='140' height='58' rx='10' fill='#fff' stroke='#e2dfd5'/><rect x='175' y='30' width='3' height='58' rx='1.5' fill='#1f4fd8'/><text x='189' y='64.0' font-size='13' font-weight='600' fill='#14140f'>Shared services</text></g><line x1='315' y1='59' x2='330' y2='59' stroke='#e2dfd5' stroke-width='1.5' class='d'/><polygon points='330,59 322.8,54.5 322.8,63.5' fill='#e2dfd5'/><g class='n'><rect x='330' y='30' width='140' height='58' rx='10' fill='#fff' stroke='#e2dfd5'/><rect x='330' y='30' width='3' height='58' rx='1.5' fill='#1f4fd8'/><text x='344' y='64.0' font-size='13' font-weight='600' fill='#14140f'>App shell</text></g><line x1='470' y1='59' x2='485' y2='59' stroke='#e2dfd5' stroke-width='1.5' class='d'/><polygon points='485,59 477.8,54.5 477.8,63.5' fill='#e2dfd5'/><g class='n'><rect x='485' y='30' width='140' height='58' rx='10' fill='#fff' stroke='#e2dfd5'/><rect x='485' y='30' width='3' height='58' rx='1.5' fill='#1f4fd8'/><text x='499' y='64.0' font-size='13' font-weight='600' fill='#14140f'>Navigation last</text></g><g class='n'><rect x='20' y='130' width='600' height='58' rx='10' fill='#fff' stroke='#e2dfd5'/><rect x='20' y='130' width='3' height='58' rx='1.5' fill='#1f4fd8'/><text x='34' y='156' font-size='13' font-weight='600' fill='#14140f'>One owner of the stack, for the whole migration</text><text x='34' y='176' font-size='11.5' fill='#6d6b62'>the other side renders content and reports events — it does not push</text></g><text x='20' y='216' font-size='11.5' fill='#6d6b62' text-anchor='start' font-weight='400'>Availability is a plan, not an afterthought: every adoption above your floor needs a fallback.</text></svg>
+    <figcaption>Progress in one direction, with the navigation seam held still.</figcaption>
+  </figure>
+
 
 <p>I have taken more than one shipped app across this boundary. Nobody regrets the destination.
 People regret the order.</p>
@@ -102,15 +111,20 @@ minimum supported version and treat every adoption above it as a decision with a
 platform genuinely requires it. Until then, you have a mixed app, which is a perfectly good
 state to ship from — but it is a state, not an outcome. Name the finish line, or the migration
 becomes the architecture.</p>
-  <div class="sources">
-    <h2>Sources</h2>
-    <ul>
+    <div class="sources">
+      <h2>Sources</h2>
+      <ul>
       <li><a href="https://developer.apple.com/videos/play/wwdc2019/204/" target="_blank" rel="noreferrer">Introducing SwiftUI: Building Your First App — WWDC19 session 204</a></li>
       <li><a href="https://developer.apple.com/videos/play/wwdc2019/216/" target="_blank" rel="noreferrer">SwiftUI Essentials — WWDC19 session 216</a></li>
       <li><a href="https://developer.apple.com/design/human-interface-guidelines" target="_blank" rel="noreferrer">Human Interface Guidelines — Apple Developer</a></li>
-    </ul>
-  </div>
+      </ul>
+    </div>
+  </article>
   <p class="foot">Written from experience shipping iOS apps. No client names, no internal details, no unpublished numbers — everything citable here is public.</p>
+  <nav class="pager">
+    <a href="./build-time-is-a-dependency-graph-problem.html">← Build time is a dependency-graph problem, not a machine problem</a>
+    <a href="./a-design-system-is-a-review-policy.html">A design system is a review policy, not a library →</a>
+  </nav>
 
 </div>
 </body>

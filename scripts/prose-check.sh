@@ -47,5 +47,30 @@ if grep -rnoE '[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}' $targets \
   status=1
 fi
 
+# Every image filename is a published URL, and cameras name files with a timestamp and
+# an OS version. Check the *shape* of every tracked asset name — an allowlist, not a
+# denylist, because the words worth blocking are the ones nobody can enumerate.
+img_ext='webp|svg|png|jpe?g|gif|avif|mp4|webm'
+shapes=$(git ls-files public docs | grep -iE "\.($img_ext)\$" \
+         | grep -vE "/[a-z0-9]+(-[a-z0-9]+)*\.($img_ext)\$" || true)
+if [ -n "$shapes" ]; then
+  echo "✗ asset filename is not lowercase-hyphen, and it is a published URL:"
+  echo "$shapes"
+  status=1
+fi
+
+# Orphan check: an asset nothing references is either dead weight or a leak nobody sees.
+# Read from a file, not a pipe — a piped while loop runs in a subshell and loses $status.
+assets=$(mktemp)
+git ls-files public | grep -iE "\.($img_ext)\$" > "$assets" || true
+while IFS= read -r f; do
+  n=$(basename "$f")
+  if ! grep -rqF "$n" public docs --include='*.html' --include='*.js' --include='*.css' 2>/dev/null; then
+    echo "✗ $f is referenced by no page — delete it or link it"
+    status=1
+  fi
+done < "$assets"
+rm -f "$assets"
+
 [ "$status" -eq 0 ] && echo "✓ prose check clean"
 exit $status

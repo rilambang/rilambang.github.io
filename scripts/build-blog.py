@@ -7,58 +7,361 @@ served file. A pasted link resolves cold, works with JS off, and is greppable in
 deployed bundle. No dependency, no router, no history-mode trap.
 """
 import html
-import os
 import pathlib
+import re
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 OUT = ROOT / "public" / "blog"
 SITE = "https://rilambang.github.io"
 CARD = f"{SITE}/og.png"
 
+# Palette comes from the app stylesheet, not from a copy of it. Diana's point: two hardcoded
+# copies of the accent drift silently the first time the site is re-themed.
+def read_tokens():
+    css = (ROOT / "src" / "styles.css").read_text()
+    block = css.split(":root {", 1)[1].split("}", 1)[0]
+    out = {}
+    for line in block.splitlines():
+        if ":" not in line:
+            continue
+        k, v = line.strip().rstrip(";").split(":", 1)
+        out[k.strip().lstrip('-')] = v.strip()
+    return out
+
+
+TOK = read_tokens()
+
 CSS = """
-:root{--bg:#fbfaf7;--ink:#14140f;--muted:#6d6b62;--line:#e6e3da;--accent:#1f4fd8}
-*{box-sizing:border-box}
-html{scroll-behavior:smooth}
-body{margin:0;background:var(--bg);color:var(--ink);
-  font:16px/1.65 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
-  -webkit-font-smoothing:antialiased}
-.wrap{max-width:720px;margin:0 auto;padding:40px 24px 80px}
-.top{display:flex;justify-content:space-between;align-items:baseline;
-  border-bottom:1px solid var(--line);padding-bottom:14px;margin-bottom:40px;font-size:14px}
-.top a{color:var(--muted);text-decoration:none}
-.top a:hover{color:var(--accent)}
-.top .who{font-weight:600;color:var(--ink);text-decoration:none}
-h1{font-size:32px;line-height:1.2;letter-spacing:-0.02em;margin:0 0 10px}
-h2{font-size:19px;letter-spacing:-0.01em;margin:34px 0 10px}
-h3{font-size:16px;margin:24px 0 6px}
-p,li{color:#22221b}
-.lede{font-size:18px;color:var(--muted);margin:0 0 34px}
-ul,ol{padding-left:20px}
-li{margin:6px 0}
-a{color:var(--accent)}
-code{font:14px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace;
-  background:#f1efe8;padding:1px 5px;border-radius:4px}
-pre{background:#f1efe8;border:1px solid var(--line);border-radius:10px;
-  padding:14px 16px;overflow-x:auto}
-pre code{background:none;padding:0}
-blockquote{margin:22px 0;padding:2px 0 2px 18px;border-left:3px solid var(--line);color:var(--muted)}
-.sources{margin-top:48px;border-top:1px solid var(--line);padding-top:18px;font-size:14px}
-.sources h2{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin:0 0 10px}
-.sources li{margin:6px 0}
-.foot{margin-top:56px;border-top:1px solid var(--line);padding-top:18px;font-size:14px;color:var(--muted)}
+:root{{--bg:{bg};--ink:{ink};--muted:{muted};--line:{line};--accent:{accent};
+  --tint:#eef2fd;--warm:#f6f4ec;--sans:{sans}}}
+*{{box-sizing:border-box}}
+html{{scroll-behavior:smooth}}
+body{{margin:0;background:var(--bg);color:var(--ink);
+  font:16px/1.68 {sans};-webkit-font-smoothing:antialiased}}
+.wrap{{max-width:720px;margin:0 auto;padding:36px 24px 72px}}
+.top{{display:flex;justify-content:space-between;align-items:baseline;
+  border-bottom:1px solid var(--line);padding-bottom:14px;margin-bottom:36px;font-size:14px}}
+.top a{{color:var(--muted);text-decoration:none}}
+.top a:hover{{color:var(--accent)}}
+.top .who{{font-weight:600;color:var(--ink)}}
+h1{{font-size:33px;line-height:1.18;letter-spacing:-0.022em;margin:0 0 12px}}
+h2{{font-size:19.5px;letter-spacing:-0.012em;margin:36px 0 10px}}
+h3{{font-size:16px;margin:24px 0 6px}}
+p,li{{color:#221f1a}}
+.lede{{font-size:18.5px;line-height:1.55;color:#3d3a32;margin:0 0 32px}}
+ul,ol{{padding-left:20px}}
+li{{margin:6px 0}}
+a{{color:var(--accent)}}
+code{{font:14px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace;
+  background:var(--warm);padding:1px 5px;border-radius:4px}}
+pre{{background:var(--warm);border:1px solid var(--line);border-radius:10px;
+  padding:14px 16px;overflow-x:auto}}
+pre code{{background:none;padding:0}}
+blockquote{{margin:26px 0;padding:4px 0 4px 20px;border-left:3px solid var(--accent);
+  font-size:17px;color:#3d3a32}}
+blockquote p{{margin:0}}
+.chip{{display:inline-block;font-size:11.5px;letter-spacing:.09em;text-transform:uppercase;
+  color:var(--accent);background:var(--tint);border-radius:999px;padding:4px 11px;margin-bottom:14px}}
+.meta{{font-size:13px;color:var(--muted);margin:0 0 34px}}
+.fig{{margin:30px 0 34px;border:1px solid var(--line);border-radius:14px;background:#fff;
+  padding:20px 20px 14px}}
+.fig svg{{display:block;width:100%;height:auto}}
+.fig figcaption{{font-size:13px;line-height:1.5;color:var(--muted);margin-top:12px}}
+.sources{{margin-top:52px;border-top:1px solid var(--line);padding-top:18px;font-size:14px}}
+.sources h2{{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin:0 0 10px}}
+.sources li{{margin:6px 0;color:var(--muted)}}
+.foot{{margin-top:44px;border-top:1px solid var(--line);padding-top:18px;font-size:13.5px;color:var(--muted)}}
+.pager{{display:flex;justify-content:space-between;gap:16px;margin-top:26px;font-size:14px}}
+.pager a{{text-decoration:none}}
+.pager span{{color:var(--muted)}}
 /* index */
-.list{list-style:none;padding:0;margin:0}
-.list li{border-top:1px solid var(--line);padding:20px 0}
-.list h2{margin:0 0 6px;font-size:20px}
-.list a{text-decoration:none}
-.list a:hover h2{color:var(--accent)}
-.list p{margin:0;color:var(--muted);font-size:15px}
-.tag{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
-@media (max-width:600px){.wrap{padding:28px 18px 60px}h1{font-size:26px}}
-@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
-"""
+.lede--index{{margin-bottom:40px}}
+.cards{{list-style:none;padding:0;margin:0}}
+.cards li{{border-top:1px solid var(--line);padding:22px 0;display:grid;
+  grid-template-columns:56px 1fr;gap:18px}}
+.cards h2{{margin:0 0 6px;font-size:20px}}
+.cards a{{text-decoration:none}}
+.cards a:hover h2{{color:var(--accent)}}
+.cards p{{margin:0;color:var(--muted);font-size:15px}}
+.num{{font:600 13px/1 ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--accent);
+  border:1px solid var(--line);border-radius:10px;padding:10px 0;text-align:center;
+  background:var(--tint);height:fit-content}}
+/* ── motion ────────────────────────────────────────────────────────────────
+   Transform only, never opacity, on anything a reader needs. Diagrams draw their
+   connectors, which are decoration: if an animation never runs, a box is a few
+   pixels low and a line is already there, and nothing is ever invisible.        */
+@keyframes rise{{from{{transform:translateY(16px)}}to{{transform:none}}}}
+@keyframes draw{{to{{stroke-dashoffset:0}}}}
+.post-head > *{{animation:rise .6s cubic-bezier(.22,.7,.3,1) both}}
+.post-head > :nth-child(2){{animation-delay:.05s}}
+.post-head > :nth-child(3){{animation-delay:.1s}}
+.fig .d{{stroke-dasharray:var(--len,320);stroke-dashoffset:var(--len,320);
+  animation:draw .9s ease-out .2s both}}
+.fig .n{{animation:rise .7s cubic-bezier(.22,.7,.3,1) both}}
+.fig .n:nth-child(2){{animation-delay:.06s}}
+.fig .n:nth-child(3){{animation-delay:.12s}}
+.fig .n:nth-child(4){{animation-delay:.18s}}
+.fig .n:nth-child(5){{animation-delay:.24s}}
+.fig .n:nth-child(6){{animation-delay:.3s}}
+/* scroll-reveal, guarded: unsupported engine applies nothing and shows everything */
+@supports (animation-timeline:view()){{
+  article > h2,article > p,article > ul,article > ol,article > blockquote,
+  article > pre,article > figure{{
+    animation:rise linear both;animation-timeline:view();
+    animation-range:entry 4% cover 26%}}
+}}
+@media (prefers-reduced-motion:reduce){{
+  html{{scroll-behavior:auto}}
+  .post-head > *,.fig .d,.fig .n,article > h2,article > p,article > ul,article > ol,
+  article > blockquote,article > pre,article > figure{{animation:none}}
+  .fig .d{{stroke-dasharray:none;stroke-dashoffset:0}}
+}}
+@media (max-width:600px){{
+  .wrap{{padding:26px 18px 56px}}h1{{font-size:26px}}
+  .cards li{{grid-template-columns:1fr}}.num{{display:none}}
+}}
+""".format(**TOK)
+
+# ── figures ───────────────────────────────────────────────────────────────────
+# Diagrams are SVG, drawn from text. That keeps them inside every existing guard:
+# the prose deny-list reads them, they carry no EXIF, no screenshot of a product or
+# a source tree is involved, and the filename never becomes a published URL that
+# names something. They are also the only illustrations that stay exactly as general
+# as the paragraph next to them.
+
+F_INK = TOK["ink"]
+F_MUTED = TOK["muted"]
+F_LINE = TOK["line"]
+F_ACC = TOK["accent"]
+F_TINT = "#eef2fd"
+F_WARM = "#f6f4ec"
+FONT = "font-family='Helvetica Neue,Helvetica,Arial,sans-serif'"
+
+
+def _box(x, y, w, h, title, sub="", accent=False, n=0):
+    fill = F_TINT if accent else "#fff"
+    stroke = F_ACC if accent else F_LINE
+    t = (f"<text x='{x + 14}' y='{y + (26 if sub else h / 2 + 5)}' font-size='13' "
+         f"font-weight='600' fill='{F_INK}'>{html.escape(title)}</text>")
+    s = ""
+    if sub:
+        s = (f"<text x='{x + 14}' y='{y + 46}' font-size='11.5' fill='{F_MUTED}'>"
+             f"{html.escape(sub)}</text>")
+    return (f"<g class='n'><rect x='{x}' y='{y}' width='{w}' height='{h}' rx='10' "
+            f"fill='{fill}' stroke='{stroke}'/>"
+            f"<rect x='{x}' y='{y}' width='3' height='{h}' rx='1.5' fill='{F_ACC}'/>"
+            f"{t}{s}</g>")
+
+
+def _line(x1, y1, x2, y2, draw=True):
+    cls = " class='d'" if draw else ""
+    return (f"<line x1='{x1}' y1='{y1}' x2='{x2}' y2='{y2}' stroke='{F_LINE}' "
+            f"stroke-width='1.5'{cls}/>")
+
+
+def _arrow(x1, y1, x2, y2):
+    """Vertical or horizontal only, so the head is trivial to place."""
+    head = 4.5
+    if x1 == x2:
+        d = -1 if y2 < y1 else 1
+        tip = (f"<polygon points='{x2},{y2} {x2 - head},{y2 - d * head * 1.6} "
+               f"{x2 + head},{y2 - d * head * 1.6}' fill='{F_LINE}'/>")
+    else:
+        d = -1 if x2 < x1 else 1
+        tip = (f"<polygon points='{x2},{y2} {x2 - d * head * 1.6},{y2 - head} "
+               f"{x2 - d * head * 1.6},{y2 + head}' fill='{F_LINE}'/>")
+    return _line(x1, y1, x2, y2) + tip
+
+
+def _cap(x, y, text, size=11.5, color=None, anchor="start", weight="400"):
+    return (f"<text x='{x}' y='{y}' font-size='{size}' fill='{color or F_MUTED}' "
+            f"text-anchor='{anchor}' font-weight='{weight}'>{html.escape(text)}</text>")
+
+
+def _svg(label, h, body, w=640):
+    return (f"<svg viewBox='0 0 {w} {h}' width='{w}' height='{h}' role='img' "
+            f"aria-label='{html.escape(label)}' {FONT} "
+            f"xmlns='http://www.w3.org/2000/svg'>{body}</svg>")
+
+
+def fig_two_questions():
+    b = _box(20, 16, 280, 62, "Is the device supervised?",
+             "MDM or Apple Configurator")
+    b += _box(340, 16, 280, 62, "Does the OS already have a mode?",
+              "before you design a countermeasure")
+    for x in (160, 480):
+        b += _arrow(x, 78, x, 132)
+    b += _line(110, 132, 520, 132)
+    for x in (110, 310, 520):
+        b += _arrow(x, 132, x, 168)
+    b += _box(20, 170, 180, 72, "Assessment mode", "the app locks itself", accent=True)
+    b += _box(220, 170, 180, 72, "Single app mode", "and it supersedes")
+    b += _box(420, 170, 200, 72, "A human proctor", "where every system ends up")
+    b += _cap(20, 272, "The framework covers the app. It does not cover the room.")
+    return _svg("Two questions decide what a proctored exam app can enforce, "
+                "and three outcomes they lead to", 286, b)
+
+
+def fig_layers():
+    rows = [
+        (90, 44, "App shell", "composition, navigation, configuration"),
+        (170, 44, "Feature modules", "the screens and their state"),
+        (250, 44, "Shared services", "networking, persistence, logging"),
+        (330, 44, "Leaves", "tokens and models — nothing depends on them"),
+    ]
+    b = ""
+    for i, (y, h, t, s) in enumerate(rows):
+        x = 20 + i * 6
+        b += _box(x, y, 530 + i * 22, h, t, s)
+    for i in range(3):
+        x = 20 + i * 6 + (530 + i * 22) / 2
+        b += _arrow(x, rows[i][0] + 44, x, rows[i + 1][0] - 4)
+    b += _cap(20, 400, "depends on ↓   A cycle used to be invisible; here it is a compile error.")
+    return _svg("A modular app as four layers from a thin app shell down to leaf packages, "
+                "with dependencies pointing downward", 414, b)
+
+
+def fig_incremental():
+    def grid(x, y, accent_col, label, sub):
+        g = ""
+        for i in range(4):
+            for j in range(3):
+                cx, cy = x + i * 34, y + j * 30
+                on = (i * 3 + j) == accent_col
+                g += (f"<rect x='{cx}' y='{cy}' width='28' height='24' rx='5' "
+                      f"fill='{F_ACC if on else F_WARM}' stroke='{F_LINE}'/>")
+        return _cap(x, y - 12, label, 12.5, F_INK, weight="600") + g + _cap(x, y + 118, sub)
+    b = _box(20, 16, 600, 40, "One target: a change recompiles its neighbours")
+    b += grid(40, 96, 5, "one file changed", "eleven boxes rebuild anyway")
+    b += grid(360, 96, 5, "the same change, split", "one group rebuilds")
+    b += _cap(20, 250, "Same edit, same machine. The unit of work is the only thing that moved.")
+    return _svg("The same one-file change rebuilding almost a whole single target, "
+                "against rebuilding one module of several", 268, b)
+
+
+def fig_migration():
+    steps = ["Leaf screens", "Shared services", "App shell", "Navigation last"]
+    b = ""
+    for i, s in enumerate(steps):
+        x = 20 + i * 155
+        b += _box(x, 30, 140, 58, s, "", accent=(i == 0))
+        if i < 3:
+            b += _arrow(x + 140, 59, x + 155, 59)
+    b += _box(20, 130, 600, 58, "One owner of the stack, for the whole migration",
+              "the other side renders content and reports events — it does not push")
+    b += _cap(20, 216, "Availability is a plan, not an afterthought: every adoption "
+                       "above your floor needs a fallback.")
+    return _svg("A UIKit to SwiftUI migration as four ordered steps, with a single owner "
+                "of navigation underneath the whole sequence", 230, b)
+
+
+def fig_three_copies():
+    b = _box(20, 16, 190, 62, "Design source", "where the value is decided")
+    b += _box(225, 16, 190, 62, "Token file", "the name that carries intent")
+    b += _box(430, 16, 190, 62, "A literal", "added at 6pm, on a deadline")
+    b += _arrow(115, 78, 115, 122)
+    b += _arrow(320, 78, 320, 122)
+    b += _line(115, 122, 320, 122)
+    b += _arrow(217, 122, 217, 150)
+    b += _box(20, 152, 395, 62, "One value, two owners",
+              "a rename is a two-file change and review can see it", accent=True)
+    b += _arrow(525, 78, 525, 150)
+    b += _box(430, 152, 190, 62, "Drift", "it just ages badly")
+    b += _cap(20, 246, "The third box is the one that decides whether the system survives screen three.")
+    return _svg("A design value with two traceable owners and a third copy that drifts "
+                "away from both", 260, b)
+
+
+def fig_review_order():
+    rows = [
+        ("1", "Does it do what the description says?", False),
+        ("2", "Can it crash?", False),
+        ("3", "What is the failure path?", False),
+        ("4", "What was deleted?", False),
+        ("5", "Style — and usually not at all", True),
+    ]
+    b = ""
+    for i, (n, t, last) in enumerate(rows):
+        y = 16 + i * 46
+        b += _box(20, y, 600, 38, "")
+        b += _cap(40, y + 25, n, 12.5, F_ACC, weight="600")
+        b += _cap(64, y + 25, t, 13, F_MUTED if last else F_INK)
+    b += _cap(20, 268, "Read in this order. Starting at 5 wastes the attention that 2 needed.")
+    return _svg("The order an iOS pull request is read in, from intent through crash risk "
+                "to style last", 282, b)
+
+
+def fig_stack():
+    rows = [
+        ("UI", "SwiftUI first, UIKit where the platform still requires it"),
+        ("Navigation", "one owner, always"),
+        ("Feature modules", "local packages, narrow public surfaces"),
+        ("Data", "the platform's own persistence, constraints before validation"),
+        ("Platform", "the OS before a dependency"),
+    ]
+    b = ""
+    for i, (t, s) in enumerate(rows):
+        y = 16 + i * 50
+        b += _box(20, y, 600, 42, "")
+        b += _cap(38, y + 27, t, 13, F_ACC, weight="600")
+        b += _cap(210, y + 27, s, 12.5, F_MUTED)
+    b += _cap(20, 288, "Every choice priced by the next engineer's ability to debug it at 3am.")
+    return _svg("The iOS stack as five layers, each with the rule that decides it", 300, b)
+
+
+def fig_ai_gate():
+    b = _box(20, 16, 600, 64, "SystemLanguageModel.availability",
+             "iOS 26.0+ · watchOS 27.0 — the branch you have to write", accent=True)
+    b += _arrow(320, 80, 320, 114)
+    b += _line(160, 114, 480, 114)
+    b += _arrow(160, 114, 160, 146)
+    b += _arrow(480, 114, 480, 146)
+    b += _box(20, 148, 280, 64, "On-device model",
+              "no data leaves the device", accent=True)
+    b += _box(340, 148, 280, 64, "A third-party model",
+              "the branch with an obligation")
+    b += _arrow(480, 212, 480, 246)
+    b += _box(340, 248, 280, 64, "Guideline 5.1.2(i)",
+              "disclose it, get permission")
+    b += _cap(20, 348, "The unavailable branch is a product decision — it is also the "
+                       "code path that carries the rule.")
+    return _svg("The availability branch of the on-device language model, where the "
+                "unavailable path leads to a third-party model and a disclosure "
+                "obligation", 362, b)
+
+
+FIGURES = {
+    "kiosk-and-assessment-apps": (
+        fig_two_questions(),
+        "What the platform will enforce, and what is left to a person. Apple's "
+        "documentation says Single App Mode and Guided Access supersede assessment mode."),
+    "splitting-an-app-into-local-packages": (
+        fig_layers(),
+        "The shape that pays: leaves that depend on nothing, a thin shell that owns "
+        "composition, and a cycle that cannot compile."),
+    "build-time-is-a-dependency-graph-problem": (
+        fig_incremental(),
+        "One edit, two build graphs. The machine is identical in both."),
+    "uikit-to-swiftui-without-a-rewrite": (
+        fig_migration(),
+        "Progress in one direction, with the navigation seam held still."),
+    "a-design-system-is-a-review-policy": (
+        fig_three_copies(),
+        "Two owners is a system. Three is a countdown."),
+    "how-i-review-ios-pull-requests": (
+        fig_review_order(),
+        "Cheapest questions first, taste last."),
+    "the-ios-stack-i-actually-reach-for": (
+        fig_stack(),
+        "Not preferences — the rule each layer is chosen by."),
+    "on-device-ai-decisions": (
+        fig_ai_gate(),
+        "Availability decides the architecture, and it also decides whether Apple's "
+        "third-party AI clause applies to you."),
+}
 
 POSTS = [
+
     {
         "slug": "kiosk-and-assessment-apps",
         "tag": "Platform rules",
@@ -688,6 +991,118 @@ on call, and leave the codebase so that the next person's hard problem is the in
             ("Human Interface Guidelines — Apple Developer", "https://developer.apple.com/design/human-interface-guidelines"),
         ],
     },
+    {
+        "slug": "on-device-ai-decisions",
+        "tag": "AI-native",
+        "title": "Shipping on-device AI in an iOS app: the decisions that cost you a rewrite",
+        "summary": "Availability decides your architecture before you write a prompt, and it also decides whether Apple's third-party AI clause applies to you. Plus the workflow rules I use with an agent in the editor.",
+        "body": """
+<p class="lede">Two decisions get made in week one that decide whether your AI feature is a
+weekend or a rewrite: the deployment target, and the shape of the branch you write when the
+model is unavailable.</p>
+
+<p>I am building an AI-native iOS app now — which means learning this in public rather than
+recalling it, and writing down the parts that turned out to be structural.</p>
+
+<h2>Availability is architecture, not error handling</h2>
+
+<p>Apple's on-device language model arrives through the <strong>Foundation Models</strong>
+framework, which is <strong>iOS 26.0+</strong> and <strong>watchOS 27.0+</strong>. That number
+is not a preference. Below it, the framework is not degraded — it is absent, at compile time.</p>
+
+<p>So a deployment target is an AI decision now. If your floor is older, "add on-device AI" means
+either raising the floor for everyone, or maintaining two inference paths from the first commit.</p>
+
+<p>The second half is worse. Apple's documentation is explicit that <em>availability depends on
+whether the device and region supports Apple Intelligence</em> — and it also documents support
+for new model versions, which is the polite way of saying the model under you can change without
+you shipping. Every prompt, every output shape and every evaluation is therefore tied to
+something you do not version.</p>
+
+<p>That is the argument for treating the unavailable branch as a first-class product path.
+It is not a spinner and a retry. It is a decision about what the feature becomes on the devices
+your users actually hold.</p>
+
+<h2>The fallback is where the obligation lives</h2>
+
+<p>Here is the part that surprised me, and it is a sentence from Apple's review guidelines
+rather than an inference. Guideline 5.1.2(i):</p>
+
+<blockquote>
+<p>"You must clearly disclose where personal data will be shared with third parties,
+<strong>including with third-party AI</strong>, and obtain explicit permission before doing so."</p>
+</blockquote>
+
+<p>The operative word is <em>third-party</em>. On-device inference never touches that clause —
+nothing leaves the device. The moment your availability branch sends a prompt containing
+anything the user typed to a hosted model, you have entered it: in-app disclosure, explicit
+permission, the matching App Privacy answers, and the privacy policy to go with them.</p>
+
+<p>Which means the fallback path is not an engineering detail you add in week six. It is the
+path that carries the legal obligation, and designing it in week one is the difference between
+a feature and a submission-week problem.</p>
+
+<h2>If your feature generates anything, you have four new controls</h2>
+
+<p>Guideline 1.2 is about user-generated content, and it names the category explicitly:</p>
+
+<blockquote>
+<p>"This includes social media, user-generated content platforms, and AI content creation apps."</p>
+</blockquote>
+
+<p>Apps in that category must include a method for filtering objectionable material from being
+posted, a mechanism to report offensive content and timely responses to concerns, the ability
+to block abusive users, and published contact information.</p>
+
+<p>The line is not "does it use AI" — it is what the output is for. A summariser, a
+code formatter, a private calculation: none of these produce shareable content. A
+"generate my study plan and share it" feature does, and it inherits all four controls at the
+moment it gains a share button. Deciding this at the feature boundary is far cheaper than
+discovering it from a rejection.</p>
+
+<h2>What I would do before writing a prompt</h2>
+
+<ol>
+  <li><strong>Write the deployment target down as an AI decision</strong>, and state the
+  consequence: no on-device model below iOS 26.0, no fallback by accident.</li>
+  <li><strong>Design the unavailable branch first.</strong> If it is a third-party model, the
+  disclosure and permission flow is part of the feature, not adjacent to it.</li>
+  <li><strong>Decide the output's purpose.</strong> Kept private, or shareable? If shareable,
+  budget the four controls before the first screenshot.</li>
+  <li><strong>Assume the model changes.</strong> Prompt and output shape are tied to a
+  version you do not control, so keep a small evaluation you can re-run.</li>
+</ol>
+
+<h2>How I am working, since the tooling is part of the story</h2>
+
+<p>The other half of "AI-native" is the workflow. I run an agent in the editor with skills and
+plugins, and the rules I have landed on are much less about the agent than about me:</p>
+
+<ul>
+  <li><strong>The spec comes first, in writing.</strong> An agent with a vague brief produces
+  confident code for the wrong problem, and the cost of that is not the code — it is that you
+  review it and keep it.</li>
+  <li><strong>Small diffs, verified by evidence, not by confidence.</strong> A hash, a byte
+  count, a test that was red and is now green. A claim I cannot check is a claim I do not
+  accept, from a person or a model.</li>
+  <li><strong>Ask what the change would break, then check that.</strong> The failure mode of
+  an agent is not a bad idea; it is an unexamined one that reads well.</li>
+  <li><strong>The boring parts stay mine.</strong> Anything touching a permission, a
+  credential, a payment or a privacy surface gets read line by line, and the decision gets
+  made by a person who will still be here next quarter.</li>
+</ul>
+
+<p>None of this is specific to agents. It is the same discipline as review — and it is the
+reason I like this particular shift: it moves the work toward judgement and away from typing,
+and judgement is the part that takes years.</p>
+""",
+        "sources": [
+            ("Foundation Models — Apple Developer Documentation (iOS 26.0+)", "https://developer.apple.com/documentation/foundationmodels"),
+            ("SystemLanguageModel — availability, device and region requirements", "https://developer.apple.com/documentation/foundationmodels/systemlanguagemodel"),
+            ("App Review Guidelines — 5.1.2 Data Use and Sharing", "https://developer.apple.com/app-store/review/guidelines/"),
+            ("App Review Guidelines — 1.2 User-Generated Content", "https://developer.apple.com/app-store/review/guidelines/"),
+        ],
+    },
 ]
 
 
@@ -722,42 +1137,81 @@ def page(title, description, url, body, extra_head=""):
 """
 
 
-def render_post(p):
+LEDE_RE = re.compile(r'(<p class="lede">.*?</p>)', re.S)
+
+
+def minutes(body_html):
+    words = len(re.sub(r"<[^>]+>", " ", body_html).split())
+    return max(1, round(words / 220))
+
+
+def render_post(p, i):
+    svg, cap = FIGURES[p["slug"]]
+    figure = (f'\n  <figure class="fig">{svg}\n'
+              f'    <figcaption>{html.escape(cap)}</figcaption>\n  </figure>\n')
+    body_src = p["body"].strip()
+    body = (LEDE_RE.sub(lambda m: m.group(1) + "\n" + figure, body_src, count=1)
+            if LEDE_RE.search(body_src) else figure + body_src)
+
     src = "".join(
         f'      <li><a href="{u}" target="_blank" rel="noreferrer">{html.escape(t)}</a></li>\n'
         for t, u in p["sources"]
     )
-    body = (
-        f'  <p class="tag">{html.escape(p["tag"])}</p>\n'
-        f'  <h1>{html.escape(p["title"])}</h1>\n'
-        f'{p["body"].strip()}\n'
-        f'  <div class="sources">\n    <h2>Sources</h2>\n    <ul>\n{src}    </ul>\n  </div>\n'
-        f'  <p class="foot">Written from experience shipping iOS apps. No client names, no '
-        f'internal details, no unpublished numbers — everything citable here is public.</p>\n'
+    prev = POSTS[i - 1] if i else None
+    nxt = POSTS[i + 1] if i < len(POSTS) - 1 else None
+    left = (f'<a href="./{prev["slug"]}.html">← {html.escape(prev["title"])}</a>'
+            if prev else "<span></span>")
+    right = (f'<a href="./{nxt["slug"]}.html">{html.escape(nxt["title"])} →</a>'
+             if nxt else "<span></span>")
+    pager = ('  <nav class="pager">\n'
+             f'    {left}\n'
+             f'    {right}\n'
+             '  </nav>\n')
+
+    out = (
+        '  <header class="post-head">\n'
+        f'    <p class="chip">{html.escape(p["tag"])}</p>\n'
+        f'    <h1>{html.escape(p["title"])}</h1>\n'
+        f'    <p class="meta">{minutes(body_src)} min read · Muhammad Ilham Rilambang</p>\n'
+        '  </header>\n'
+        '  <article>\n'
+        f'{body}\n'
+        f'    <div class="sources">\n      <h2>Sources</h2>\n      <ul>\n{src}      </ul>\n    </div>\n'
+        '  </article>\n'
+        '  <p class="foot">Written from experience shipping iOS apps. No client names, no '
+        'internal details, no unpublished numbers — everything citable here is public.</p>\n'
+        f'{pager}'
     )
-    url = f"{SITE}/blog/{p['slug']}.html"
-    return page(p["title"], p["summary"], url, body)
+    return page(p["title"], p["summary"], f"{SITE}/blog/{p['slug']}.html", out)
 
 
 def render_index():
     items = "".join(
         f'      <li>\n'
-        f'        <a href="./{p["slug"]}.html"><h2>{html.escape(p["title"])}</h2></a>\n'
-        f'        <p>{html.escape(p["summary"])}</p>\n'
+        f'        <span class="num">{i + 1:02d}</span>\n'
+        f'        <div>\n'
+        f'          <a href="./{p["slug"]}.html"><h2>{html.escape(p["title"])}</h2></a>\n'
+        f'          <p>{html.escape(p["summary"])}</p>\n'
+        f'          <p class="meta" style="margin:8px 0 0">{html.escape(p["tag"])} · '
+        f'{minutes(p["body"])} min read</p>\n'
+        f'        </div>\n'
         f'      </li>\n'
-        for p in POSTS
+        for i, p in enumerate(POSTS)
     )
     body = (
         '  <h1>Writing</h1>\n'
-        '  <p class="lede">Notes on the craft of iOS — platform rules, modularisation, build\n'
-        '  health, migration and review practice. Seven pieces, written October 2026.</p>\n'
-        f'  <ul class="list">\n{items}  </ul>\n'
+        '  <p class="lede lede--index">Notes on the craft of iOS — platform rules,\n'
+        '  modularisation, build health, migration, review practice and what it is like to\n'
+        '  build an AI-native app now. Eight pieces, written October 2026.</p>\n'
+        f'  <ul class="cards">\n{items}  </ul>\n'
         '  <p class="foot">Everything here is public and citable — no employer internals, no\n'
-        '  colleague names, no unpublished metrics. If a claim needs a source it has one.</p>\n'
+        '  colleague names, no unpublished metrics. If a claim needs a source it has one, and\n'
+        '  every diagram here is drawn from text rather than a screenshot of anything.</p>\n'
     )
     return page(
         "Writing — Muhammad Ilham Rilambang",
-        "Notes on the craft of iOS: platform rules, modularisation, build health, migration and review practice.",
+        "Notes on the craft of iOS: platform rules, modularisation, build health, migration, "
+        "review practice and building an AI-native app.",
         f"{SITE}/blog/",
         body,
     )
@@ -766,6 +1220,6 @@ def render_index():
 OUT.mkdir(parents=True, exist_ok=True)
 (OUT / "blog.css").write_text(CSS.lstrip())
 (OUT / "index.html").write_text(render_index())
-for p in POSTS:
-    (OUT / f"{p['slug']}.html").write_text(render_post(p))
+for i, p in enumerate(POSTS):
+    (OUT / f"{p['slug']}.html").write_text(render_post(p, i))
 print(f"{len(POSTS)} posts + index + css -> {OUT}")
