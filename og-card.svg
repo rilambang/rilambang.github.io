@@ -1,13 +1,14 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
-  <rect width="1200" height="630" fill="#08090b"/>
-  <rect x="0" y="0" width="1200" height="6" fill="#ffb057"/>
-  <g font-family="Georgia, 'Times New Roman', serif" fill="#f5f2ec">
-    <text x="80" y="286" font-size="70">Muhammad Ilham Rilambang</text>
-    <text x="80" y="356" font-size="34" fill="#ffb057">iOS Engineer</text>
+  <rect width="1200" height="630" fill="#fbfaf7"/>
+  <rect x="0" y="0" width="1200" height="6" fill="#1f4fd8"/>
+  <g font-family="Helvetica Neue, Helvetica, Arial, sans-serif" fill="#14140f">
+    <text x="80" y="112" font-size="24" letter-spacing="2" fill="#6d6b62">MUHAMMAD ILHAM RILAMBANG</text>
+    <text x="80" y="290" font-size="68" font-weight="600" letter-spacing="-2">I ship iOS for products</text>
+    <text x="80" y="368" font-size="68" font-weight="600" letter-spacing="-2">that people depend on.</text>
   </g>
-  <rect x="80" y="404" width="120" height="2" fill="#3a3d42"/>
-  <g font-family="Helvetica Neue, Helvetica, Arial, sans-serif" fill="#9499a1">
-    <text x="80" y="466" font-size="26">Telkom Indonesia</text>
-    <text x="80" y="508" font-size="26">SwiftUI · Clean Architecture · leading the teams that ship</text>
+  <rect x="80" y="424" width="140" height="2" fill="#e2dfd5"/>
+  <g font-family="Helvetica Neue, Helvetica, Arial, sans-serif" fill="#6d6b62">
+    <text x="80" y="486" font-size="26">iOS engineer · Jakarta, Indonesia · Telkom Indonesia</text>
+    <text x="80" y="530" font-size="26">1M+ students · 99.5% crash-free · 8 years</text>
   </g>
 </svg>
