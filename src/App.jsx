@@ -14,7 +14,6 @@ function Portrait({ src = `${import.meta.env.BASE_URL}me.jpg`, name }) {
       {broken ? (
         <div className="portrait__fallback" aria-hidden="true">
           {ME.initials}
-          <small>add photo</small>
         </div>
       ) : (
         <img src={src} alt={`${name}, iOS engineer`} onError={() => setBroken(true)} />
