@@ -194,7 +194,7 @@ def fig_two_questions():
     b += _line(110, 132, 520, 132)
     for x in (110, 310, 520):
         b += _arrow(x, 132, x, 168)
-    b += _box(20, 170, 180, 72, "Assessment mode", "the app locks itself", accent=True)
+    b += _box(20, 170, 180, 72, "Assessment mode", "after Apple grants it", accent=True)
     b += _box(220, 170, 180, 72, "Single app mode", "and it supersedes")
     b += _box(420, 170, 200, 72, "A human proctor", "where every system ends up")
     b += _cap(20, 272, "The framework covers the app. It does not cover the room.")
@@ -417,9 +417,17 @@ features while taking an exam."</em></p>
   assume.</li>
 </ul>
 
-<p>Assessment mode on iPadOS is supported from iPadOS 9.3.2 onward, and the same framework
-covers macOS — which matters more than it first appears, because it is the same product
-decision for two platforms rather than two separate anti-cheat implementations.</p>
+<p><strong>And it is gated by an entitlement you have to ask Apple for.</strong> The framework
+requires <code>com.apple.developer.automatic-assessment-configuration</code> — "a Boolean value
+that indicates whether an app may create an assessment session" — and Apple's documentation is
+explicit that you "must first get permission to use it" by submitting a request form. Without
+it the assessment session does not begin and the app is just an app. That is lead time on a
+product schedule, and it is the one item here that no amount of engineering removes. Ask for it
+in week one.</p>
+
+<p>Assessment mode arrived in iOS and iPadOS 13.4, and in macOS 10.15.4 — the same framework
+answering the same product question on two platforms, rather than two separate anti-cheat
+implementations.</p>
 
 <h2>The part that is a product decision, not a technical one</h2>
 
@@ -456,6 +464,7 @@ and spend the effort where the candidate actually feels it.</p>
         "sources": [
             ("Set up iPad and Mac to give tests and assessments — Apple Support", "https://support.apple.com/101976"),
             ("Automatic Assessment Configuration — Apple Developer Documentation", "https://developer.apple.com/documentation/automaticassessmentconfiguration"),
+            ("com.apple.developer.automatic-assessment-configuration — entitlement and request form", "https://developer.apple.com/documentation/bundleresources/entitlements/com.apple.developer.automatic-assessment-configuration"),
             ("iOS Configuration and APIs for Kiosk and Assessment Apps — WWDC17 session 716", "https://developer.apple.com/videos/play/wwdc2017/716/"),
         ],
     },
