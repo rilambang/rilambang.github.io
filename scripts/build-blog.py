@@ -381,6 +381,24 @@ def fig_agent_loop():
                 "per task, the evidence accepted, and what stays a person's decision", 394, b)
 
 
+def fig_pinning():
+    b = _box(20, 16, 180, 64, "App commit", "what the repository records")
+    b += _box(230, 16, 180, 64, "Dependency row", "ref: main", accent=True)
+    b += _box(440, 16, 180, 64, "Code compiled", "whatever main was")
+    b += _arrow(200, 48, 230, 48)
+    b += _arrow(410, 48, 440, 48)
+    b += _cap(20, 108, "Two of the three are pinned. The build is only as "
+                       "reproducible as the loosest one.")
+    b += _arrow(320, 80, 320, 132)
+    b += _box(20, 134, 600, 64, "Log the resolved revision of every dependency",
+              "and put the revision in the row instead of a branch name", accent=True)
+    b += _cap(20, 222, "The log line costs nothing. The pin is what makes the "
+                       "log line mean something.")
+    return _svg("A build's inputs: the app commit, a dependency row that names a moving "
+                "branch, and the code that was actually compiled — resolved by printing "
+                "revisions and pinning them", 236, b)
+
+
 FIGURES = {
     "kiosk-and-assessment-apps": (
         fig_two_questions(),
@@ -409,6 +427,9 @@ FIGURES = {
         fig_agent_loop(),
         "Four checkpoints. Two are writing, and the two that matter most are the ones I "
         "will not take on trust."),
+    "what-a-green-build-does-not-prove": (
+        fig_pinning(),
+        "Three inputs, one of them moving. The fix is one column and one log line."),
 }
 
 POSTS = [
@@ -1161,6 +1182,116 @@ writing down — being forced to say, in plain language, which is which.</p>
             ("App Review Guidelines — 2.3.1(a)", "https://developer.apple.com/app-store/review/guidelines/"),
         ],
     },
+    {
+        "slug": "what-a-green-build-does-not-prove",
+        "tag": "Build systems",
+        "title": "What a green build does not prove",
+        "summary": "Four things I described as verified this week that were not — a pipeline that compiled a working copy, a lock file that pinned a branch, a push I said would deploy once, and a release that changed nothing. Same mistake each time: a colour accepted as evidence about inputs.",
+        "body": """
+<p class="lede">A green pipeline says a build succeeded. It says nothing about what went into
+it. This week four claims I had called verified turned out not to be, and all four were the
+same mistake: a colour accepted as evidence about inputs.</p>
+
+<h2>The build that compiled a working copy</h2>
+
+<p>The pipeline went green and I reported what I believed it proved: CI read the committed
+dependency list, fetched each dependency at the revision the list named, and compiled against
+it. It proved the build succeeded. The input was wrong.</p>
+
+<p>The runner was a shell executor whose build directory sits inside a developer's home
+directory — one level below the folder holding the dependency checkouts. So the code the build
+compiled was not fetched from the list at all. It was the local copies already on that disk, in
+whatever state the last person left them. No commit was required for an uncommitted edit to
+reach a build. The dirty-tree guard in the sync script existed and was correct; nothing on the
+publishing path called it.</p>
+
+<p>The lesson is not "configure your runner properly", though that too. It is that a pipeline's
+inputs are a claim, and the only way to hold that claim is to print them. A build that does not
+name its inputs in its own log is a build nobody can reproduce — including the person who
+pressed the button.</p>
+
+<h2>The lock file that pins a branch</h2>
+
+<p>The dependency list had one row per package and every row named a branch. Zero rows named a
+revision. That file looks like a lock and behaves like a wish: on one afternoon the branch on a
+single dependency moved twice, so the same app commit resolved to two different sets of code on
+two runs, and neither build's log said which one it got.</p>
+
+<p>This is a cheap bug to have and a cheap bug to fix, which is why it is worth writing down. The
+script already supported a revision in that column — it falls back to a plain checkout when the
+name is not a remote branch. So the fix is one column, and the cost is honest: bumping a pinned
+dependency becomes an explicit commit, and you cannot fast-forward a pinned checkout any more.
+That is the trade you are buying. It is the whole point of the file.</p>
+
+<h2>The push that deploys twice</h2>
+
+<p>I said pushing the branch would deploy once. It deployed twice: once from the push, and again
+from the merge into the default branch. What I had actually verified was that the merge-request
+pipeline does not deploy — the rules exclude every source that is not a push, in as many
+words — and I had quietly stopped counting there. Two, and the second one arrives after the
+review, when nobody is watching for it.</p>
+
+<pre><code>- if: '$CI_PIPELINE_SOURCE != "push"'
+  when: never</code></pre>
+
+<p>The rule is a good design: a branch that has not been merged should not ship. But "the MR
+cannot deploy" and "this work deploys once" are different sentences, and only the second one
+tells a tester how many builds are coming.</p>
+
+<h2>The release that changed nothing</h2>
+
+<p>Two builds went out carrying the same version and the same build number, both identical in
+content to a build testers already had. The version strings had been lost in a merge — three
+files quietly disagreeing about what the app was called — and restoring them was the right fix.
+It also meant an entire release whose only real change was a string.</p>
+
+<p>Nothing in the store tells a tester that. The two releases are distinguishable only by an
+internal release id, which is exactly the kind of identifier nobody outside the console ever
+sees. The only artifact that can say "you have already tested this, there is nothing here" is
+the release note. So the note is hand-written, per release, and it is the one piece of writing
+in the process I will not generate: a changelog derived from commits would have said "fix
+version strings", which is accurate and useless.</p>
+
+<h2>The analytics change that was almost free</h2>
+
+<p>Identity handling moved from a per-event parameter to a first-class user property, and three
+custom parameters were dropped along the way. I called that free. A colleague checked the
+documentation instead of agreeing: one of the three is collected automatically with every
+event, and the other two are not.</p>
+
+<p>So the precise statement is narrower than "nothing was lost". The information survives, because
+the platform's own Platform and Operating system dimensions collect it. What dies is the custom
+dimension names — any report built on those literal parameter names goes blank on the next
+release. That is a five-minute console check, not a code change, and it is the sort of removal
+that stays unused right up until a chart proves otherwise.</p>
+
+<h2>What I do differently now</h2>
+
+<ul>
+  <li><strong>Print the revisions.</strong> Every job dumps the resolved revision of every
+  dependency next to the app commit. If the inputs are not in the log, the claim about the
+  binary is not evidence.</li>
+  <li><strong>Pin revisions, not branches.</strong> In anything whose output ships. A branch in
+  a lock file records intent; a revision records a build.</li>
+  <li><strong>Count deploys from the rules file.</strong> Not from memory, and not from "the MR
+  can't ship". Read what each pipeline shape does and add them up.</li>
+  <li><strong>Put the purpose in the release note.</strong> Two identical builds and a tester
+  who cannot tell them apart is a documentation defect, not a testing plan.</li>
+  <li><strong>Check "unused" against the documentation.</strong> Before deleting a field, find
+  out whether something was already collecting it. "We never used that" and "the SDK always
+  did" look identical in a diff.</li>
+</ul>
+
+<p>The habit underneath all five is the cheapest one available: verify with a command, not with
+a colour. A green check is a statement about the past tense of a machine I cannot see. One
+<code>rev-parse</code> is a statement about now.</p>
+""",
+        "sources": [
+            ("GitLab CI/CD — control when jobs run: rules and when: never", "https://docs.gitlab.com/ci/jobs/job_control/"),
+            ("Writing custom build scripts — Xcode Cloud", "https://developer.apple.com/documentation/xcode/writing-custom-build-scripts"),
+            ("Automatically collected events — Analytics Help", "https://support.google.com/analytics/answer/9234069"),
+        ],
+    },
 ]
 
 
@@ -1260,7 +1391,7 @@ def render_index():
         '  <h1>Writing</h1>\n'
         '  <p class="lede lede--index">Notes on the craft of iOS — platform rules,\n'
         '  modularisation, build health, migration, review practice, and the development\n'
-        '  process I use with agents. Eight pieces, written October 2026.</p>\n'
+        '  process I use with agents. Nine pieces, written October 2026.</p>\n'
         f'  <ul class="cards">\n{items}  </ul>\n'
         '  <p class="foot">Everything here is public and citable — no employer internals, no\n'
         '  colleague names, no unpublished metrics. If a claim needs a source it has one, and\n'

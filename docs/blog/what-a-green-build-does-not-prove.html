@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>What a green build does not prove</title>
+<meta name="description" content="Four things I described as verified this week that were not — a pipeline that compiled a working copy, a lock file that pinned a branch, a push I said would deploy once, and a release that changed nothing. Same mistake each time: a colour accepted as evidence about inputs.">
+<link rel="canonical" href="https://rilambang.github.io/blog/what-a-green-build-does-not-prove.html">
+<meta property="og:type" content="article">
+<meta property="og:title" content="What a green build does not prove">
+<meta property="og:description" content="Four things I described as verified this week that were not — a pipeline that compiled a working copy, a lock file that pinned a branch, a push I said would deploy once, and a release that changed nothing. Same mistake each time: a colour accepted as evidence about inputs.">
+<meta property="og:url" content="https://rilambang.github.io/blog/what-a-green-build-does-not-prove.html">
+<meta property="og:image" content="https://rilambang.github.io/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%231f4fd8'/><text x='16' y='23' font-family='Georgia,serif' font-size='20' fill='%23fbfaf7' text-anchor='middle'>R</text></svg>">
+<link rel="stylesheet" href="./blog.css">
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <a class="who" href="/">Muhammad Ilham Rilambang</a>
+    <a href="./index.html">Writing</a>
+  </div>
+  <header class="post-head">
+    <p class="chip">Build systems</p>
+    <h1>What a green build does not prove</h1>
+    <p class="meta">5 min read · Muhammad Ilham Rilambang</p>
+  </header>
+  <article>
+<p class="lede">A green pipeline says a build succeeded. It says nothing about what went into
+it. This week four claims I had called verified turned out not to be, and all four were the
+same mistake: a colour accepted as evidence about inputs.</p>
+
+  <figure class="fig"><svg viewBox='0 0 640 236' width='640' height='236' role='img' aria-label='A build&#x27;s inputs: the app commit, a dependency row that names a moving branch, and the code that was actually compiled — resolved by printing revisions and pinning them' font-family='Helvetica Neue,Helvetica,Arial,sans-serif' xmlns='http://www.w3.org/2000/svg'><g class='n'><rect x='20' y='16' width='180' height='64' rx='10' fill='#fff' stroke='#e2dfd5'/><rect x='20' y='16' width='3' height='64' rx='1.5' fill='#1f4fd8'/><text x='34' y='42' font-size='13' font-weight='600' fill='#14140f'>App commit</text><text x='34' y='62' font-size='11.5' fill='#6d6b62'>what the repository records</text></g><g class='n'><rect x='230' y='16' width='180' height='64' rx='10' fill='#eef2fd' stroke='#1f4fd8'/><rect x='230' y='16' width='3' height='64' rx='1.5' fill='#1f4fd8'/><text x='244' y='42' font-size='13' font-weight='600' fill='#14140f'>Dependency row</text><text x='244' y='62' font-size='11.5' fill='#6d6b62'>ref: main</text></g><g class='n'><rect x='440' y='16' width='180' height='64' rx='10' fill='#fff' stroke='#e2dfd5'/><rect x='440' y='16' width='3' height='64' rx='1.5' fill='#1f4fd8'/><text x='454' y='42' font-size='13' font-weight='600' fill='#14140f'>Code compiled</text><text x='454' y='62' font-size='11.5' fill='#6d6b62'>whatever main was</text></g><line x1='200' y1='48' x2='230' y2='48' stroke='#e2dfd5' stroke-width='1.5' class='d'/><polygon points='230,48 222.8,43.5 222.8,52.5' fill='#e2dfd5'/><line x1='410' y1='48' x2='440' y2='48' stroke='#e2dfd5' stroke-width='1.5' class='d'/><polygon points='440,48 432.8,43.5 432.8,52.5' fill='#e2dfd5'/><text x='20' y='108' font-size='11.5' fill='#6d6b62' text-anchor='start' font-weight='400'>Two of the three are pinned. The build is only as reproducible as the loosest one.</text><line x1='320' y1='80' x2='320' y2='132' stroke='#e2dfd5' stroke-width='1.5' class='d'/><polygon points='320,132 315.5,124.8 324.5,124.8' fill='#e2dfd5'/><g class='n'><rect x='20' y='134' width='600' height='64' rx='10' fill='#eef2fd' stroke='#1f4fd8'/><rect x='20' y='134' width='3' height='64' rx='1.5' fill='#1f4fd8'/><text x='34' y='160' font-size='13' font-weight='600' fill='#14140f'>Log the resolved revision of every dependency</text><text x='34' y='180' font-size='11.5' fill='#6d6b62'>and put the revision in the row instead of a branch name</text></g><text x='20' y='222' font-size='11.5' fill='#6d6b62' text-anchor='start' font-weight='400'>The log line costs nothing. The pin is what makes the log line mean something.</text></svg>
+    <figcaption>Three inputs, one of them moving. The fix is one column and one log line.</figcaption>
+  </figure>
+
+
+<h2>The build that compiled a working copy</h2>
+
+<p>The pipeline went green and I reported what I believed it proved: CI read the committed
+dependency list, fetched each dependency at the revision the list named, and compiled against
+it. It proved the build succeeded. The input was wrong.</p>
+
+<p>The runner was a shell executor whose build directory sits inside a developer's home
+directory — one level below the folder holding the dependency checkouts. So the code the build
+compiled was not fetched from the list at all. It was the local copies already on that disk, in
+whatever state the last person left them. No commit was required for an uncommitted edit to
+reach a build. The dirty-tree guard in the sync script existed and was correct; nothing on the
+publishing path called it.</p>
+
+<p>The lesson is not "configure your runner properly", though that too. It is that a pipeline's
+inputs are a claim, and the only way to hold that claim is to print them. A build that does not
+name its inputs in its own log is a build nobody can reproduce — including the person who
+pressed the button.</p>
+
+<h2>The lock file that pins a branch</h2>
+
+<p>The dependency list had one row per package and every row named a branch. Zero rows named a
+revision. That file looks like a lock and behaves like a wish: on one afternoon the branch on a
+single dependency moved twice, so the same app commit resolved to two different sets of code on
+two runs, and neither build's log said which one it got.</p>
+
+<p>This is a cheap bug to have and a cheap bug to fix, which is why it is worth writing down. The
+script already supported a revision in that column — it falls back to a plain checkout when the
+name is not a remote branch. So the fix is one column, and the cost is honest: bumping a pinned
+dependency becomes an explicit commit, and you cannot fast-forward a pinned checkout any more.
+That is the trade you are buying. It is the whole point of the file.</p>
+
+<h2>The push that deploys twice</h2>
+
+<p>I said pushing the branch would deploy once. It deployed twice: once from the push, and again
+from the merge into the default branch. What I had actually verified was that the merge-request
+pipeline does not deploy — the rules exclude every source that is not a push, in as many
+words — and I had quietly stopped counting there. Two, and the second one arrives after the
+review, when nobody is watching for it.</p>
+
+<pre><code>- if: '$CI_PIPELINE_SOURCE != "push"'
+  when: never</code></pre>
+
+<p>The rule is a good design: a branch that has not been merged should not ship. But "the MR
+cannot deploy" and "this work deploys once" are different sentences, and only the second one
+tells a tester how many builds are coming.</p>
+
+<h2>The release that changed nothing</h2>
+
+<p>Two builds went out carrying the same version and the same build number, both identical in
+content to a build testers already had. The version strings had been lost in a merge — three
+files quietly disagreeing about what the app was called — and restoring them was the right fix.
+It also meant an entire release whose only real change was a string.</p>
+
+<p>Nothing in the store tells a tester that. The two releases are distinguishable only by an
+internal release id, which is exactly the kind of identifier nobody outside the console ever
+sees. The only artifact that can say "you have already tested this, there is nothing here" is
+the release note. So the note is hand-written, per release, and it is the one piece of writing
+in the process I will not generate: a changelog derived from commits would have said "fix
+version strings", which is accurate and useless.</p>
+
+<h2>The analytics change that was almost free</h2>
+
+<p>Identity handling moved from a per-event parameter to a first-class user property, and three
+custom parameters were dropped along the way. I called that free. A colleague checked the
+documentation instead of agreeing: one of the three is collected automatically with every
+event, and the other two are not.</p>
+
+<p>So the precise statement is narrower than "nothing was lost". The information survives, because
+the platform's own Platform and Operating system dimensions collect it. What dies is the custom
+dimension names — any report built on those literal parameter names goes blank on the next
+release. That is a five-minute console check, not a code change, and it is the sort of removal
+that stays unused right up until a chart proves otherwise.</p>
+
+<h2>What I do differently now</h2>
+
+<ul>
+  <li><strong>Print the revisions.</strong> Every job dumps the resolved revision of every
+  dependency next to the app commit. If the inputs are not in the log, the claim about the
+  binary is not evidence.</li>
+  <li><strong>Pin revisions, not branches.</strong> In anything whose output ships. A branch in
+  a lock file records intent; a revision records a build.</li>
+  <li><strong>Count deploys from the rules file.</strong> Not from memory, and not from "the MR
+  can't ship". Read what each pipeline shape does and add them up.</li>
+  <li><strong>Put the purpose in the release note.</strong> Two identical builds and a tester
+  who cannot tell them apart is a documentation defect, not a testing plan.</li>
+  <li><strong>Check "unused" against the documentation.</strong> Before deleting a field, find
+  out whether something was already collecting it. "We never used that" and "the SDK always
+  did" look identical in a diff.</li>
+</ul>
+
+<p>The habit underneath all five is the cheapest one available: verify with a command, not with
+a colour. A green check is a statement about the past tense of a machine I cannot see. One
+<code>rev-parse</code> is a statement about now.</p>
+    <div class="sources">
+      <h2>Sources</h2>
+      <ul>
+      <li><a href="https://docs.gitlab.com/ci/jobs/job_control/" target="_blank" rel="noreferrer">GitLab CI/CD — control when jobs run: rules and when: never</a></li>
+      <li><a href="https://developer.apple.com/documentation/xcode/writing-custom-build-scripts" target="_blank" rel="noreferrer">Writing custom build scripts — Xcode Cloud</a></li>
+      <li><a href="https://support.google.com/analytics/answer/9234069" target="_blank" rel="noreferrer">Automatically collected events — Analytics Help</a></li>
+      </ul>
+    </div>
+  </article>
+  <p class="foot">Written from experience shipping iOS apps. No client names, no internal details, no unpublished numbers — everything citable here is public.</p>
+  <nav class="pager">
+    <a href="./ai-native-development-process.html">← AI-native development is a process, not a feature</a>
+    <span></span>
+  </nav>
+
+</div>
+</body>
+</html>
