@@ -527,11 +527,11 @@ POSTS = [
         "slug": "kiosk-and-assessment-apps",
         "tag": "Platform rules",
         "title": "Kiosk and assessment apps: what Apple will and won't let you lock",
-        "summary": "The hardest problem in a proctored exam app is not the exam. It is that the OS owns the device, and your anti-cheat has to be something Apple agreed to.",
+        "summary": "You don't own the device — iOS does. What an exam app can actually lock, what Apple already enforces, and the entitlement to ask for in week one.",
         "body": """
-<p class="lede">The hardest problem in a proctored exam app is not the exam. It is that the
-operating system owns the device, and every restriction you want has to be one Apple already
-agreed to enforce.</p>
+<p class="lede">In a proctored exam app, the exam is the easy part. The hard part is that you don't own
+the device — iOS does — and every restriction you want has to be one Apple already agreed
+to enforce.</p>
 
 <p>Every team building assessment software has the same first instinct: build the lock.
 Disable the home button, block the app switcher, kill notifications, watch for screenshots,
@@ -545,12 +545,12 @@ is either impossible or unnecessary.</p>
 <ol>
   <li><strong>Is the device supervised?</strong> A supervised device is enrolled and managed
   by an organisation — the school or the testing centre owns it and can configure it
-  centrally. A student's own iPad is not supervised and never will be.</li>
+  centrally. A student's own iPad isn't supervised and never will be.</li>
   <li><strong>Does the OS already have a mode for this?</strong> If it does, your job is to
   turn it on correctly, not to reimplement it worse.</li>
 </ol>
 
-<p>Those two questions divide the problem cleanly, and they are the reason a kiosk app is a
+<p>Those two questions divide the problem cleanly, and they're the reason a kiosk app is a
 smaller engineering project than it looks.</p>
 
 <h2>What Apple actually provides</h2>
@@ -569,37 +569,37 @@ features while taking an exam."</em></p>
   the device into itself automatically. That is the difference between shipping an exam mode
   to every student and shipping it only to schools with an MDM.</li>
   <li><strong>It is the app's decision, not the tester's.</strong> The app enables it, and
-  while it is active the user cannot switch to another app. There is no setup flow the exam
+  while it's active the user can't switch to another app. There is no setup flow the exam
   taker can skip, because there is nothing for them to do.</li>
-  <li><strong>Manual modes win, and that is a trap.</strong> If Single App Mode or Guided
+  <li><strong>Manual modes win, and that's a trap.</strong> If Single App Mode or Guided
   Access is already enabled on the device, "that feature supersedes assessment mode
-  restrictions." A school that pre-locked the iPads by hand is not getting your app's
-  configuration — they are getting their own, and it may be stricter or looser than you
+  restrictions." A school that pre-locked the iPads by hand isn't getting your app's
+  configuration — they're getting their own, and it may be stricter or looser than you
   assume.</li>
 </ul>
 
-<p><strong>And it is gated by an entitlement you have to ask Apple for.</strong> The framework
+<p><strong>And it's gated by an entitlement you have to ask Apple for.</strong> The framework
 requires <code>com.apple.developer.automatic-assessment-configuration</code> — "a Boolean value
 that indicates whether an app may create an assessment session" — and Apple's documentation is
 explicit that you "must first get permission to use it" by submitting a request form. Without
-it the assessment session does not begin and the app is just an app. That is lead time on a
-product schedule, and it is the one item here that no amount of engineering removes. Ask for it
+it the assessment session doesn't begin and the app is just an app. That is lead time on a
+product schedule, and it's the one item here that no amount of engineering removes. Ask for it
 in week one.</p>
 
 <p>Assessment mode arrived in iOS and iPadOS 13.4, and in macOS 10.15.4 — the same framework
 answering the same product question on two platforms, rather than two separate anti-cheat
 implementations.</p>
 
-<h2>The part that is a product decision, not a technical one</h2>
+<h2>The part that's a product decision, not a technical one</h2>
 
 <p>Once you know what the OS will do, the remaining work is a policy conversation dressed as
 engineering:</p>
 
 <p><strong>What do you do with a violation?</strong> A framework that prevents an action gives
-you a clean story. A framework that merely observes one does not. If you cannot prevent it,
+you a clean story. A framework that merely observes one doesn't. If you can't prevent it,
 your options are to warn, to log, or to ignore — and each of those is a different product.
-Discovery after the exam is not prevention, and telling a candidate they failed because of
-telemetry they cannot see is not a defensible process.</p>
+Discovery after the exam isn't prevention, and telling a candidate they failed because of
+telemetry they can't see isn't a defensible process.</p>
 
 <p><strong>What do you do when the lock fails?</strong> Exam mode is a state the app enters,
 which means it can also fail to enter — low battery, a crash, a force-quit, a device the OS
@@ -607,7 +607,7 @@ decided to restart. The honest design assumes the lock will break at least once,
 in advance what the exam does when it notices. An exam that silently continues in an unlocked
 state is worse than one that visibly halts.</p>
 
-<p><strong>Who is the fallback for?</strong> Assessment mode covers the app. It does not cover
+<p><strong>Who is the fallback for?</strong> Assessment mode covers the app. It doesn't cover
 a second phone on the desk, a written answer sheet, or a person helping. Every proctoring
 system has a human layer eventually; deciding where your layer ends is cheaper than
 discovering it during an incident.</p>
@@ -617,8 +617,8 @@ discovering it during an incident.</p>
 <p>Read Apple's platform capabilities before designing the countermeasure, because the
 countermeasures you invent yourself are the ones that get rejected, break on OS updates, or
 quietly stop working when a device is configured differently than you assumed. The interesting
-engineering in a proctored exam app is not the lock — it is the exam runtime: offline
-resilience, autosave that survives a crash, a submission that is idempotent, and a state
+engineering in a proctored exam app isn't the lock — it's the exam runtime: offline
+resilience, autosave that survives a crash, a submission that's idempotent, and a state
 machine that never loses a candidate's work. The lock is a configuration. Treat it like one,
 and spend the effort where the candidate actually feels it.</p>
 """,
@@ -639,7 +639,7 @@ and spend the effort where the candidate actually feels it.</p>
 quarter. The gap between those two numbers is where most modularisation projects quietly
 stall.</p>
 
-<p>I have done this on more than one app now, and the failures are consistent enough to
+<p>I've done this on more than one app now, and the failures are consistent enough to
 predict. This is the order things actually break in.</p>
 
 <h2>1. Resources, and the fact that they fail at runtime</h2>
@@ -649,7 +649,7 @@ string file, an asset catalog image. Inside a package, the code needs
 <code>Bundle.module</code>. Code that still reaches for <code>Bundle.main</code> compiles
 perfectly and returns nil at runtime.</p>
 
-<p>This is the worst class of breakage in the whole migration: it is invisible to the compiler,
+<p>This is the worst class of breakage in the whole migration: it's invisible to the compiler,
 invisible in code review, and usually caught by a user rather than a test. Sweep for
 <code>Bundle.main</code> and <code>UIImage(named:)</code> <em>before</em> moving anything, and
 decide per call site whether it belongs to the package or to the app.</p>
@@ -664,36 +664,36 @@ physically and not at all conceptually.</p>
 <blockquote>The test I use: if a package needs more than a handful of public symbols, it is
 not a module. It is a folder that happens to have a manifest.</blockquote>
 
-<p>So the real work is not moving code, it is <em>designing the API you wish existed</em> and
-then making the code fit behind it. Write the interface first. If it is awkward to write, the
+<p>So the real work isn't moving code, it's <em>designing the API you wish existed</em> and
+then making the code fit behind it. Write the interface first. If it's awkward to write, the
 boundary is in the wrong place, and you have found that out before the expensive part.</p>
 
 <h2>3. Build settings stop being inherited</h2>
 
-<p>A package does not inherit your app target's build settings. The Swift language version, the
-warnings you had silenced, optimisation flags, the deployment target — all of it is declared in
-the manifest and is now a decision someone has to make deliberately. Do it in one pass, or you
+<p>A package doesn't inherit your app target's build settings. The Swift language version, the
+warnings you had silenced, optimisation flags, the deployment target — it's all declared in the
+manifest and is now a decision someone has to make deliberately. Do it in one pass, or you
 will spend a fortnight on warnings that appear in one module and not the adjacent one.</p>
 
 <h2>4. Names collide immediately</h2>
 
 <p>Every modular codebase has a <code>User</code>, a <code>Config</code>, an
-<code>Extensions</code>, a <code>Logger</code>. Once they are in separate modules they are all
+<code>Extensions</code>, a <code>Logger</code>. Once they're in separate modules they're all
 legal and all ambiguous at every call site. Type names have to say what they are now — which
 sounds like a nit and is actually a boundary leaking into every file that touches two modules.</p>
 
-<h2>5. Tests cannot see across the wall either</h2>
+<h2>5. Tests can't see across the wall either</h2>
 
-<p><code>@testable import</code> works for a package's own tests. It does not let a test in one
+<p><code>@testable import</code> works for a package's own tests. It doesn't let a test in one
 module reach into another's internals. That is the point, but it means tests that were quietly
 testing implementation details have to be rewritten against the public surface — or the surface
-has to grow to make the behaviour testable. The second option is usually correct, and it is a
+has to grow to make the behaviour testable. The second option is usually correct, and it's a
 useful signal that something is missing from the API.</p>
 
 <h2>6. The awkward middle, and why people quit here</h2>
 
 <p>For a while, everything is public, nothing is faster, and there are more files than before.
-That is not the design failing; it is the design being incomplete. The end state — narrow
+That isn't the design failing; it's the design being incomplete. The end state — narrow
 public surfaces, small rebuilds, obvious ownership — is what pays. Judge it at the end, not in
 week two.</p>
 
@@ -701,9 +701,9 @@ week two.</p>
 
 <p>The first genuinely valuable thing modularisation does is make circular dependencies
 <em>compile errors</em>. In a single target, A using B and B using A is invisible. Across
-module boundaries it cannot exist.</p>
+module boundaries it can't exist.</p>
 
-<p>That error is not an obstacle in your way. It is the design bug you had been hiding,
+<p>That error isn't an obstacle in your way. It is the design bug you had been hiding,
 finally unable to hide. The wrong fix is to merge the two modules so it compiles again.</p>
 
 <h2>The sequencing I'd use again</h2>
@@ -714,15 +714,15 @@ finally unable to hide. The wrong fix is to merge the two modules so it compiles
   <li><strong>Then the middle.</strong> Shared UI, shared services. This is where the API
   design conversation actually happens.</li>
   <li><strong>Feature modules last.</strong> They are the ones that need the seams below them
-  to be settled, and the ones most likely to move again if they are not.</li>
+  to be settled, and the ones most likely to move again if they aren't.</li>
   <li><strong>The app target ends up a shell.</strong> Composition, navigation, configuration.
-  If the app target still contains business logic, the split is not finished.</li>
+  If the app target still contains business logic, the split isn't finished.</li>
 </ol>
 
 <p>The thing I would do differently: agree the vocabulary <em>and</em> the public surface
 before anyone starts moving code, in writing, and treat a change to either as a design
 decision rather than a refactor. Moving files is mechanical. Everything that made the project
-worth doing is not.</p>
+worth doing isn't.</p>
 """,
         "sources": [
             ("Creating Swift Packages — WWDC19 session 410", "https://developer.apple.com/videos/play/wwdc2019/410/"),
@@ -736,12 +736,12 @@ worth doing is not.</p>
         "title": "Build time is a dependency-graph problem, not a machine problem",
         "summary": "Faster hardware buys you a constant factor. The graph is the exponent. Why the first fix is almost always deleting a script phase, and what to measure before you touch anything.",
         "body": """
-<p class="lede">When builds get slow, the first proposal is always a better machine. A faster
-Mac buys a constant factor. The dependency graph is the exponent.</p>
+<p class="lede">Every slow-build meeting starts with somebody proposing a faster Mac. A faster Mac buys a
+constant factor, and a constant factor is the cheap half of the problem. What multiplies it is the dependency graph.</p>
 
 <p>Apple's own guidance on incremental build performance is worth reading before optimising
-anything, and it is refreshingly blunt: the things that break incrementality are the things
-that make the build redo work it did not need to redo. That is a graph problem.</p>
+anything, and it's refreshingly blunt: the things that break incrementality are the things
+that make the build redo work it didn't need to redo. That is a graph problem.</p>
 
 <h2>Measure the build, not the vibe</h2>
 
@@ -749,7 +749,7 @@ that make the build redo work it did not need to redo. That is a graph problem.<
 actually goes. Two facts usually fall out immediately:</p>
 
 <ul>
-  <li>One or two tasks dominate, and they are not the compiler.</li>
+  <li>One or two tasks dominate, and they aren't the compiler.</li>
   <li>The build is compiling far more than the change touched.</li>
 </ul>
 
@@ -757,8 +757,8 @@ actually goes. Two facts usually fall out immediately:</p>
 
 <h2>The most common culprit is a Run Script phase</h2>
 
-<p>A script phase with no declared inputs and outputs runs on <em>every</em> build. It does not
-matter that the script is quick. The cost is not the script's runtime, it is that it invalidates
+<p>A script phase with no declared inputs and outputs runs on <em>every</em> build. It doesn't
+matter that the script is quick. The cost isn't the script's runtime, it's that it invalidates
 downstream work and forces the build to redo it. A five-line script can be responsible for
 minutes.</p>
 
@@ -770,7 +770,7 @@ minutes.</p>
   <li><strong>Declare inputs and outputs.</strong> If the script genuinely generates something,
   tell the build system what it reads and what it writes, so it can be skipped when neither
   changed.</li>
-  <li><strong>Move it somewhere it is not on the critical path</strong> — earlier in the
+  <li><strong>Move it somewhere it isn't on the critical path</strong> — earlier in the
   pipeline, or out of the build entirely.</li>
 </ol>
 
@@ -780,7 +780,7 @@ minutes.</p>
 "most of the app". A change to a shared file in a large target can recompile a majority of the
 codebase — not because the compiler is slow, but because the unit of work is the target.</p>
 
-<p>Splitting the target is the fix, and the reason it works is not micro-optimisation. It is
+<p>Splitting the target is the fix, and the reason it works isn't micro-optimisation. It is
 that an unchanged module is genuinely unchanged, and the build system can skip it. The
 incremental case — which is the case you live in, hundreds of times a day — gets faster by an
 order of magnitude rather than by a percentage.</p>
@@ -789,13 +789,13 @@ order of magnitude rather than by a percentage.</p>
 
 <p>Whole-module compilation is faster for a clean build and much worse for an incremental one,
 because the module is the unit that must be redone. The interesting consequence is that your
-debug builds and your release builds want opposite things, and a configuration that is right
+debug builds and your release builds want opposite things, and a configuration that's right
 for one is wrong for the other. Decide per configuration rather than applying one global
 preference.</p>
 
-<h2>Type-checking hot spots are real and they are local</h2>
+<h2>Type-checking hot spots are real and they're local</h2>
 
-<p>A single expression that the type checker cannot resolve quickly — a large literal, a deep
+<p>A single expression that the type checker can't resolve quickly — a large literal, a deep
 nesting of operators, a long chain of overloaded calls — can take longer to compile than the
 file around it. The compiler will tell you if you ask it, and the fix is to make the expression
 simpler or to name the type explicitly. It is a small, contained edit with an outsize effect.</p>
@@ -803,7 +803,7 @@ simpler or to name the type explicitly. It is a small, contained edit with an ou
 <h2>Asset catalogs</h2>
 
 <p>Assets are compiled, and a large catalog that changes often is a step you pay for repeatedly.
-Keeping generated or throwaway assets out of the catalog is not a style preference; it is
+Keeping generated or throwaway assets out of the catalog isn't a style preference; it's
 build time.</p>
 
 <h2>What I'd tell a team staring at a slow build</h2>
@@ -835,31 +835,31 @@ the code is shaped in a way that makes it slow, and no amount of machine fixes a
 right and the rest is a sequence of small, reversible steps. Get it wrong and you end up with
 two systems that each half-know where you are.</p>
 
-<p>I have taken more than one shipped app across this boundary. Nobody regrets the destination.
+<p>I've taken more than one shipped app across this boundary. Nobody regrets the destination.
 People regret the order.</p>
 
-<h2>Do not start with the app shell</h2>
+<h2>Don't start with the app shell</h2>
 
 <p>The instinct is to rewrite the root and let the screens follow. That inverts the risk: the
-shell is the part every screen depends on, and it is the part you cannot ship incrementally.</p>
+shell is the part every screen depends on, and it's the part you can't ship incrementally.</p>
 
-<p>Start with leaf screens — a detail view, a settings page, a form. Screens that do not own
+<p>Start with leaf screens — a detail view, a settings page, a form. Screens that don't own
 navigation are the safe unit of migration, because failure costs you one screen rather than
 the app.</p>
 
 <h2>Pick one direction of interop at a time</h2>
 
-<p>The two directions are not symmetric and should not be started together:</p>
+<p>The two directions aren't symmetric and should not be started together:</p>
 
 <ul>
   <li><strong>UIKit shell, SwiftUI leaves</strong> — a UIKit view controller hosts a SwiftUI
-  view. This is the low-risk direction, and it is where a migration should begin.</li>
+  view. This is the low-risk direction, and it's where a migration should begin.</li>
   <li><strong>SwiftUI shell, UIKit leaves</strong> — a SwiftUI view wraps a UIKit component.
-  Necessary for the handful of things SwiftUI still does not do well, and the direction that
-  tends to accumulate if you are careless.</li>
+  Necessary for the handful of things SwiftUI still doesn't do well, and the direction that
+  tends to accumulate if you're careless.</li>
 </ul>
 
-<p>Whichever you are in, know which one it is. A codebase that is doing both, everywhere, with
+<p>Whichever you're in, know which one it is. A codebase that's doing both, everywhere, with
 no rule, has no migration at all.</p>
 
 <h2>Navigation is the seam, so give it exactly one owner</h2>
@@ -869,13 +869,13 @@ Two systems that both believe they own the stack produce bugs that are extremely
 diagnose: a screen that appears twice, a back button that does nothing, state that resets on
 pop.</p>
 
-<p>Keep navigation in one place for the whole migration — whether that is the UIKit navigation
+<p>Keep navigation in one place for the whole migration — whether that's the UIKit navigation
 controller or a SwiftUI stack driven by a coordinator. The other side renders content and
-reports events. It does not push.</p>
+reports events. It doesn't push.</p>
 
 <h2>State ownership: pass data in, events out</h2>
 
-<p>Do not let the two worlds observe each other's state. A view controller watching a SwiftUI
+<p>Don't let the two worlds observe each other's state. A view controller watching a SwiftUI
 observable object, or a SwiftUI view holding a reference to a view controller and polling it,
 is a future bug in both directions.</p>
 
@@ -886,11 +886,11 @@ enough for almost every screen, and it keeps either side replaceable.</p>
 
 <ul>
   <li><strong>Keyboard avoidance.</strong> Two systems, two opinions, one screen. This is the
-  most common source of visual regressions during the swap and it is worth a dedicated pass.</li>
+  most common source of visual regressions during the swap and it's worth a dedicated pass.</li>
   <li><strong>List identity.</strong> A list that reuses cells and a list that keys on identity
   behave differently on update. Missing or unstable identity produces animations and state loss
-  that look like a rendering bug and are not.</li>
-  <li><strong>Lifecycle timing.</strong> "Appeared" does not mean the same instant in both
+  that look like a rendering bug and aren't.</li>
+  <li><strong>Lifecycle timing.</strong> "Appeared" doesn't mean the same instant in both
   systems. Code that kicks off work on appear and cancels on disappear will behave differently,
   and the difference shows up under a slow network, not on your desk.</li>
   <li><strong>Measurement.</strong> Geometry readers used for layout maths are a smell in a
@@ -904,11 +904,11 @@ enough for almost every screen, and it keeps either side replaceable.</p>
 working fallback — not an <code>#available</code> that silently renders nothing. Write down the
 minimum supported version and treat every adoption above it as a decision with a cost.</p>
 
-<h2>How you know it is finished</h2>
+<h2>How you know it's finished</h2>
 
 <p>The app target compiles without importing the old UI framework outside the places the
 platform genuinely requires it. Until then, you have a mixed app, which is a perfectly good
-state to ship from — but it is a state, not an outcome. Name the finish line, or the migration
+state to ship from — but it's a state, not an outcome. Name the finish line, or the migration
 becomes the architecture.</p>
 """,
         "sources": [
@@ -923,10 +923,11 @@ becomes the architecture.</p>
         "title": "A design system is a review policy, not a library",
         "summary": "Importing a token package changes nothing. The system holds when the correct choice is easier than the wrong one — and when review refuses the local override.",
         "body": """
-<p class="lede">A design system is not a package you import. It is a set of decisions that
-review enforces, and the package is only the place those decisions live.</p>
+<p class="lede">A design system is a set of decisions, and review is what enforces them. The package is
+just where the decisions live. Once those two separate — and they separate quietly —
+what's left is a colour palette with a README.</p>
 
-<p>I have watched more than one design system die at screen three. The failure is always the
+<p>I've watched more than one design system die at screen three. The failure is always the
 same and never looks like a design problem at the time: someone had a deadline, the component
 almost fit, and they wrote the value inline. That file is now the precedent.</p>
 
@@ -934,7 +935,7 @@ almost fit, and they wrote the value inline. That file is now the precedent.</p>
 
 <p>In a healthy system there are exactly two places a colour can come from: the design source,
 and the token that mirrors it. In a real codebase there is a third — the literal somebody
-pasted into a view — and that is the one that ages badly. It does not break. It just drifts,
+pasted into a view — and that's the one that ages badly. It doesn't break. It just drifts,
 one hex at a time, until nobody can change the brand colour without a treasure hunt.</p>
 
 <h2>What makes it stick</h2>
@@ -942,7 +943,7 @@ one hex at a time, until nobody can change the brand colour without a treasure h
 <ol>
   <li><strong>Token names describe intent, not value.</strong> <code>surface</code>,
   <code>danger</code>, <code>border-subtle</code> survive a redesign. <code>grey300</code>
-  does not, and it invites the next person to pick a neighbouring number by eye.</li>
+  doesn't, and it invites the next person to pick a neighbouring number by eye.</li>
   <li><strong>The default has to be the correct one.</strong> If using the system is harder
   than not using it, the system loses, every time, to someone under pressure. Convenience beats
   policy.</li>
@@ -967,16 +968,16 @@ one hex at a time, until nobody can change the brand colour without a treasure h
 <h2>The honest cost, said out loud</h2>
 
 <p>A design system slows down the first screen and speeds up the tenth. That is the entire trade,
-and it is a bad deal if you only ever build one screen. Teams abandon systems because nobody
+and it's a bad deal if you only ever build one screen. Teams abandon systems because nobody
 said the first half of that sentence, so the first screen feels like overhead and the tenth
 never arrives.</p>
 
 <p>Say it in the same breath as the plan. "This will be slower for a fortnight and faster after
-that" is a sentence a team can agree to. "We are adopting a design system" is not.</p>
+that" is a sentence a team can agree to. "We are adopting a design system" isn't.</p>
 
 <h2>The design side is a person, not a handoff</h2>
 
-<p>The systems I have seen work have a designer who reads the diff, or a developer who has the
+<p>The systems I've seen work have a designer who reads the diff, or a developer who has the
 design file open. The ones that fail have a Figma link and a prayer. The gap between the mock
 and the implementation is where defaults get invented — and invented defaults are the beginning
 of the third copy.</p>
@@ -995,16 +996,16 @@ Thursday afternoon, and who is standing between the deadline and the hardcoded h
         "title": "How I review iOS pull requests",
         "summary": "Risk before style, deletion before addition, and three questions I ask on every diff. What I refuse to merge, and why the comment that explains the failure mode is worth ten that state the rule.",
         "body": """
-<p class="lede">A review that starts with naming has already wasted its most useful attention.
-Here is the order I read a diff in, and the things I refuse to merge.</p>
+<p class="lede">If a review opens with naming, the most useful attention is already spent. This is the
+order I read a diff in, and the things I won't merge.</p>
 
 <h2>The order</h2>
 
 <ol>
   <li><strong>Does it do what the description says?</strong> Not what the code says — what the
-  description claims. If they diverge, that is the first comment, before anything else.</li>
+  description claims. If they diverge, that's the first comment, before anything else.</li>
   <li><strong>Can it crash?</strong> Force unwraps, array indexing, casts, anything that
-  assumes a shape it has not checked.</li>
+  assumes a shape it hasn't checked.</li>
   <li><strong>What is the failure path?</strong> Every network call fails. Every write can be
   interrupted. A diff that only handles success is half a diff.</li>
   <li><strong>What was deleted?</strong> Removed guards and removed tests first.</li>
@@ -1025,47 +1026,47 @@ Here is the order I read a diff in, and the things I refuse to merge.</p>
 <h2>What I refuse to merge</h2>
 
 <ul>
-  <li>A skipped or disabled test. If it cannot pass, delete it and say so; a disabled test is a
+  <li>A skipped or disabled test. If it can't pass, delete it and say so; a disabled test is a
   lie that gets inherited.</li>
   <li>A test that asserts nothing, or that asserts the mock.</li>
   <li><code>try?</code> on a write. Swallowing a failed save is how a user loses an hour of work
   and nobody finds out.</li>
   <li>A new dependency for something the platform already does.</li>
-  <li>A control with no accessibility label. This is not a later ticket; it is an unfinished
+  <li>A control with no accessibility label. This isn't a later ticket; it's an unfinished
   control.</li>
 </ul>
 
-<h2>Concurrency, because that is where the crashes actually are</h2>
+<h2>Concurrency, because that's where the crashes actually are</h2>
 
 <p>Most of the real defects I find in review are structural rather than logical:</p>
 
 <ul>
-  <li>A task started from a view that outlives the view, and writes to state after it is gone.</li>
+  <li>A task started from a view that outlives the view, and writes to state after it's gone.</li>
   <li>State mutated off the main actor that a view reads on it.</li>
   <li>Two writes racing to the same store with no single owner.</li>
 </ul>
 
-<p>These do not need a deep read of the logic. They need one question: <em>who owns this state,
-and on which actor is it touched?</em> If the diff cannot answer in one sentence, that is the
+<p>These don't need a deep read of the logic. They need one question: <em>who owns this state,
+and on which actor is it touched?</em> If the diff can't answer in one sentence, that's the
 comment.</p>
 
 <h2>Two habits that pay</h2>
 
 <p><strong>I review the smallest possible unit, early.</strong> A large diff gets a shallow read
 and a rubber stamp, and both parties know it. Several small diffs get real attention. If a
-change is too big to review carefully, the review is not the problem to fix — the change is.</p>
+change is too big to review carefully, the review isn't the problem to fix — the change is.</p>
 
 <p><strong>I explain the failure, not the rule.</strong> "This will double-submit if the user
 taps twice before the response" teaches something. "Don't allow double taps" produces a fix for
 this instance and the same bug next month. The comment that names the failure mode is worth ten
-that quote the standard — and it is the difference between a review and a gate.</p>
+that quote the standard — and it's the difference between a review and a gate.</p>
 
 <h2>What review is for</h2>
 
 <p>Not catching typos, and not demonstrating that the reviewer read the code. It is the last
 point at which the person who wrote something still remembers why, and someone else can ask
 "what happens when this goes wrong?" while the answer is cheap. Everything else about it is
-negotiable. That is not.</p>
+negotiable. That isn't.</p>
 """,
         "sources": [
             ("Swift API Design Guidelines", "https://www.swift.org/documentation/api-design-guidelines/"),
@@ -1076,11 +1077,11 @@ negotiable. That is not.</p>
         "slug": "the-ios-stack-i-actually-reach-for",
         "tag": "Tooling",
         "title": "The iOS stack I actually reach for",
-        "summary": "Not the stack I would pick on a greenfield project — the one I reach for on someone else's codebase at 3am. Every choice is priced by the next engineer's ability to debug it.",
+        "summary": "The stack I reach for on someone else's codebase, where every choice is priced by whether the next engineer can debug it at 3am.",
         "body": """
-<p class="lede">This is not the stack I would choose on a blank project. It is the one I reach
-for on a codebase I did not write, where the deciding question is who has to debug this at
-3am.</p>
+<p class="lede">Nobody hands you a blank project. You get a five-year-old codebase, a team, and one
+question that decides everything else: who's on call when this breaks at 3am? This is the
+stack I reach for then.</p>
 
 <h2>Language and concurrency</h2>
 
@@ -1088,26 +1089,26 @@ for on a codebase I did not write, where the deciding question is who has to deb
 aspirational. Adopting it late costs more than adopting it early, because the cost is
 proportional to how much code you already have. Everything is main-actor by default and
 explicitly off it only where work is genuinely expensive — the opposite default produces code
-that is concurrent by accident.</p>
+that's concurrent by accident.</p>
 
 <h2>UI</h2>
 
 <p>SwiftUI for new screens, UIKit where the platform still requires it or where a table or
-collection needs control the declarative layer does not yet give. That is an honest position
-rather than a religious one: a rewrite that ships is better than a purity that does not.</p>
+collection needs control the declarative layer doesn't yet give. That is an honest position
+rather than a religious one: a rewrite that ships is better than a purity that doesn't.</p>
 
 <p>Navigation has one owner. Always. Two systems that both think they own the stack produce the
 worst bugs to diagnose.</p>
 
 <h2>Structure</h2>
 
-<p>Local Swift packages per seam, the app target as a thin shell. The reason is not elegance —
-it is that an unchanged module does not get rebuilt, and a circular dependency becomes a
+<p>Local Swift packages per seam, the app target as a thin shell. The reason isn't elegance —
+it's that an unchanged module doesn't get rebuilt, and a circular dependency becomes a
 compile error rather than a convention nobody follows.</p>
 
 <h2>Networking</h2>
 
-<p>Whatever the codebase already has, unless it is actively harmful. A second networking layer
+<p>Whatever the codebase already has, unless it's actively harmful. A second networking layer
 is a worse outcome than an imperfect first one. On a greenfield app I would reach for the
 platform's own concurrency tools over a reactive framework; on an existing app I leave the
 existing one alone until there is a reason to move it.</p>
@@ -1116,7 +1117,7 @@ existing one alone until there is a reason to move it.</p>
 
 <p>The platform's own persistence before a hand-rolled SQL layer, and a real constraint in the
 schema before validation in the app. Constraints are enforced under concurrency and app bugs
-are not. Where the data matters, the second copy of the truth is the one that goes stale.</p>
+aren't. Where the data matters, the second copy of the truth is the one that goes stale.</p>
 
 <h2>Strings</h2>
 
@@ -1128,28 +1129,28 @@ This is the cheapest discipline on the list and the one most often skipped.</p>
 
 <p>Tests for logic, first and always: parsers, state machines, anything with a branch. They run
 in seconds and they catch the regressions that matter. UI tests sparingly, on the flows that
-carry money or data, because they are slow and inherently flaky and a flaky suite gets ignored
+carry money or data, because they're slow and inherently flaky and a flaky suite gets ignored
 — which is worse than not having one.</p>
 
-<p>A test that cannot fail is not a test. If I cannot describe the change that would turn it
-red, it is decoration.</p>
+<p>A test that can't fail isn't a test. If I can't describe the change that would turn it
+red, it's decoration.</p>
 
 <h2>Third-party dependencies</h2>
 
-<p>Only for a problem the platform does not solve. The bar is not popularity, it is: can I read
+<p>Only for a problem the platform doesn't solve. The bar isn't popularity. Can I read
 this library when it misbehaves, and is anyone still maintaining it in two years? A small
-dependency I understand beats a large one I do not, and "we might need it later" has never once
+dependency I understand beats a large one I don't, and "we might need it later" has never once
 been true.</p>
 
 <h2>Build health</h2>
 
 <p>Build warnings treated as a budget rather than as weather. A codebase with three hundred
-warnings cannot notice the fourth hundred, and one of those was going to tell you that a main
+warnings can't notice the fourth hundred, and one of those was going to tell you that a main
 thread write had just become an act of faith.</p>
 
 <h2>The meta-decision</h2>
 
-<p>I have changed stacks more than once, and each time the framework-specific knowledge expired
+<p>I've changed stacks more than once, and each time the framework-specific knowledge expired
 faster than I expected. What survived is the habit underneath it: prefer the boring choice,
 prefer the platform's own tool, prefer the option a new hire can debug on their first weekend
 on call, and leave the codebase so that the next person's hard problem is the interesting one
@@ -1167,11 +1168,11 @@ on call, and leave the codebase so that the next person's hard problem is the in
         "title": "AI-native development is a process, not a feature",
         "summary": "What I write down so an agent is useful inside a real codebase: the conventions file, the brief, the one piece of evidence I accept — and the parts I refuse to hand over.",
         "body": """
-<p class="lede">"AI-native" describes how an app gets built, not something that ships inside it.
-The interesting engineering is not the model. It is the document you write so a stateless tool
-can work inside a codebase that took years to shape.</p>
+<p class="lede">"AI-native" describes how an app gets built. Nothing about it ships inside the app. The
+engineering that matters isn't the model either — it's the document you write so a tool
+with an empty context window can work inside a codebase that took years to shape.</p>
 
-<p>I have spent the last weeks setting this up on my own projects — an agent harness in the
+<p>I've spent the last weeks setting this up on my own projects — an agent harness in the
 editor, skills, plugins — and the installation is the easy half. These are the rules that
 survived contact.</p>
 
@@ -1186,7 +1187,7 @@ dozen pull requests. A tool with an empty context window can read neither. Writt
 they become the thing every task is briefed from — which is why that file matters more than
 the prompt, and why "I run an agent in my editor" describes almost none of the work.</p>
 
-<h2>What the IDE now gives you, and what it does not</h2>
+<h2>What the IDE now gives you, and what it doesn't</h2>
 
 <p>This stopped being a bolt-on. The Xcode 26 release notes describe "coding intelligence
 features that help you write code, generate tests and documentation, fix errors, refactor
@@ -1205,14 +1206,14 @@ miniature. A plan you must approve before work starts is a review gate placed at
 possible moment. Entitlements and Info.plist behind a tool call means the blast radius of a
 careless instruction now includes your signing configuration.</p>
 
-<p>What the platform still does not ship is the part specific to your codebase. The harness is
-general; the conventions are not. That asymmetry is where a person's leverage sits.</p>
+<p>What the platform still doesn't ship is the part specific to your codebase. The harness is
+general; the conventions aren't. That asymmetry is where a person's leverage sits.</p>
 
 <h2>Four things I write down before the first task</h2>
 
 <ul>
   <li><strong>Conventions</strong> — what the compiler and the linter enforce and, more
-  usefully, what they cannot: which layer may depend on which, where a string comes from, what
+  usefully, what they can't: which layer may depend on which, where a string comes from, what
   an error is allowed to say.</li>
   <li><strong>Boundaries</strong> — the files an agent may touch, and the ones it must stop at
   and ask about. Credentials, permissions, payments, privacy surfaces and anything that leaves
@@ -1234,7 +1235,7 @@ Roles              who plans, who writes, who verifies, who is allowed to fix</c
 
 <h2>Two rules about what never goes into a prompt</h2>
 
-<p><strong>Secrets and paths.</strong> A key prefix or a home-directory path is not prose, so a
+<p><strong>Secrets and paths.</strong> A key prefix or a home-directory path isn't prose, so a
 word-by-word blocklist can never anticipate it — the check has to be shaped, not spelled. This
 site's own content check now fails the build on a key-shaped string or a
 <code>/Users/&lt;name&gt;/</code> path in the published output. Not because a blog post would
@@ -1255,11 +1256,11 @@ draft produces well — plausible, complete-looking, and about nothing. The mode
 specificity has to be mine.</p>
 
 <p><strong>The irreversible.</strong> Deployments, credentials, purchases, anything a revert
-cannot undo.</p>
+can't undo.</p>
 
 <p><strong>The shape of the whole.</strong> Whether the feature should exist, where the seam
 belongs, which of two working designs will still be right in a year. An empty context window
-does not make any of that easier to delegate.</p>
+doesn't make any of that easier to delegate.</p>
 
 <p>The pattern that keeps repeating: agents are good at the parts of engineering that are
 typing, and bad at the parts that are deciding. Most of the value of setting this up is the
@@ -1275,11 +1276,11 @@ writing down — being forced to say, in plain language, which is which.</p>
         "slug": "what-a-green-build-does-not-prove",
         "tag": "Build systems",
         "title": "What a green build does not prove",
-        "summary": "Four things I described as verified this week that were not — a pipeline that compiled a working copy, a lock file that pinned a branch, a push I said would deploy once, and a release that changed nothing. Same mistake each time: a colour accepted as evidence about inputs.",
+        "summary": "Five things I described as verified this week that weren't — a pipeline that compiled a working copy, a lock file that pinned a branch, a push I said would deploy once, a release that changed nothing, and an analytics field I called unused. Same mistake each time: a colour taken as evidence about inputs.",
         "body": """
-<p class="lede">A green pipeline says a build succeeded. It says nothing about what went into
-it. This week four claims I had called verified turned out not to be, and all four were the
-same mistake: a colour accepted as evidence about inputs.</p>
+<p class="lede">A green pipeline says the build succeeded. It says nothing about what went into it. This
+week five things I'd called verified turned out not to be, and every one failed the same
+way: I'd taken a colour as evidence about inputs.</p>
 
 <h2>The build that compiled a working copy</h2>
 
@@ -1289,13 +1290,13 @@ it. It proved the build succeeded. The input was wrong.</p>
 
 <p>The runner was a shell executor whose build directory sits inside a developer's home
 directory — one level below the folder holding the dependency checkouts. So the code the build
-compiled was not fetched from the list at all. It was the local copies already on that disk, in
+compiled wasn't fetched from the list at all. It was the local copies already on that disk, in
 whatever state the last person left them. No commit was required for an uncommitted edit to
 reach a build. The dirty-tree guard in the sync script existed and was correct; nothing on the
 publishing path called it.</p>
 
-<p>The lesson is not "configure your runner properly", though that too. It is that a pipeline's
-inputs are a claim, and the only way to hold that claim is to print them. A build that does not
+<p>The lesson isn't "configure your runner properly", though that too. It is that a pipeline's
+inputs are a claim, and the only way to hold that claim is to print them. A build that doesn't
 name its inputs in its own log is a build nobody can reproduce — including the person who
 pressed the button.</p>
 
@@ -1306,25 +1307,25 @@ revision. That file looks like a lock and behaves like a wish: on one afternoon 
 single dependency moved twice, so the same app commit resolved to two different sets of code on
 two runs, and neither build's log said which one it got.</p>
 
-<p>This is a cheap bug to have and a cheap bug to fix, which is why it is worth writing down. The
+<p>This is a cheap bug to have and a cheap bug to fix, which is why it's worth writing down. The
 script already supported a revision in that column — it falls back to a plain checkout when the
-name is not a remote branch. So the fix is one column, and the cost is honest: bumping a pinned
-dependency becomes an explicit commit, and you cannot fast-forward a pinned checkout any more.
-That is the trade you are buying. It is the whole point of the file.</p>
+name isn't a remote branch. So the fix is one column, and the cost is honest: bumping a pinned
+dependency becomes an explicit commit, and you can't fast-forward a pinned checkout any more.
+That is the trade you're buying. It is the whole point of the file.</p>
 
 <h2>The push that deploys twice</h2>
 
 <p>I said pushing the branch would deploy once. It deployed twice: once from the push, and again
 from the merge into the default branch. What I had actually verified was that the merge-request
-pipeline does not deploy — the rules exclude every source that is not a push, in as many
+pipeline doesn't deploy — the rules exclude every source that isn't a push, in as many
 words — and I had quietly stopped counting there. Two, and the second one arrives after the
 review, when nobody is watching for it.</p>
 
 <pre><code>- if: '$CI_PIPELINE_SOURCE != "push"'
   when: never</code></pre>
 
-<p>The rule is a good design: a branch that has not been merged should not ship. But "the MR
-cannot deploy" and "this work deploys once" are different sentences, and only the second one
+<p>The rule is a good design: a branch that hasn't been merged should not ship. But "the MR
+can't deploy" and "this work deploys once" are different sentences, and only the second one
 tells a tester how many builds are coming.</p>
 
 <h2>The release that changed nothing</h2>
@@ -1337,8 +1338,8 @@ It also meant an entire release whose only real change was a string.</p>
 <p>Nothing in the store tells a tester that. The two releases are distinguishable only by an
 internal release id, which is exactly the kind of identifier nobody outside the console ever
 sees. The only artifact that can say "you have already tested this, there is nothing here" is
-the release note. So the note is hand-written, per release, and it is the one piece of writing
-in the process I will not generate: a changelog derived from commits would have said "fix
+the release note. So the note is hand-written, per release, and it's the one piece of writing
+in the process I won't generate: a changelog derived from commits would have said "fix
 version strings", which is accurate and useless.</p>
 
 <h2>The analytics change that was almost free</h2>
@@ -1346,33 +1347,33 @@ version strings", which is accurate and useless.</p>
 <p>Identity handling moved from a per-event parameter to a first-class user property, and three
 custom parameters were dropped along the way. I called that free. A colleague checked the
 documentation instead of agreeing: one of the three is collected automatically with every
-event, and the other two are not.</p>
+event, and the other two aren't.</p>
 
 <p>So the precise statement is narrower than "nothing was lost". The information survives, because
 the platform's own Platform and Operating system dimensions collect it. What dies is the custom
 dimension names — any report built on those literal parameter names goes blank on the next
-release. That is a five-minute console check, not a code change, and it is the sort of removal
+release. That is a five-minute console check, not a code change, and it's the sort of removal
 that stays unused right up until a chart proves otherwise.</p>
 
 <h2>What I do differently now</h2>
 
 <ul>
   <li><strong>Print the revisions.</strong> Every job dumps the resolved revision of every
-  dependency next to the app commit. If the inputs are not in the log, the claim about the
-  binary is not evidence.</li>
+  dependency next to the app commit. If the inputs aren't in the log, the claim about the
+  binary isn't evidence.</li>
   <li><strong>Pin revisions, not branches.</strong> In anything whose output ships. A branch in
   a lock file records intent; a revision records a build.</li>
   <li><strong>Count deploys from the rules file.</strong> Not from memory, and not from "the MR
   can't ship". Read what each pipeline shape does and add them up.</li>
   <li><strong>Put the purpose in the release note.</strong> Two identical builds and a tester
-  who cannot tell them apart is a documentation defect, not a testing plan.</li>
+  who can't tell them apart is a documentation defect, not a testing plan.</li>
   <li><strong>Check "unused" against the documentation.</strong> Before deleting a field, find
   out whether something was already collecting it. "We never used that" and "the SDK always
   did" look identical in a diff.</li>
 </ul>
 
 <p>The habit underneath all five is the cheapest one available: verify with a command, not with
-a colour. A green check is a statement about the past tense of a machine I cannot see. One
+a colour. A green check is a statement about the past tense of a machine I can't see. One
 <code>rev-parse</code> is a statement about now.</p>
 """,
         "sources": [
@@ -1410,8 +1411,8 @@ green. On any other checkout, in CI, on a fresh clone, the keys match nothing, a
 legacy violation becomes an error in a job that never gets as far as the compiler.</p>
 
 <p>The fix was to drive the include from column one of the manifest instead of a glob,
-and to delete the baseline rather than repair it. A file that is a hundred kilobytes of
-one machine's state is not configuration. The rules it was suppressing belong in a
+and to delete the baseline rather than repair it. A file that's a hundred kilobytes of
+one machine's state isn't configuration. The rules it was suppressing belong in a
 <code>disabled_rules</code> list, which is stable, reviewable, and identical everywhere.</p>
 
 <h2>The gate that ran two thirds of the tests</h2>
@@ -1423,13 +1424,13 @@ them by filename: twelve files with <em>Snapshot</em> in the name, twelve
 
 <p><code>xcodebuild</code> accepted all twelve, ran a third fewer tests than the suite
 contains, and printed <code>TEST SUCCEEDED</code>. Three of the twelve selectors matched
-nothing at all, because the suites do not live in files named after them — they live in
-files named after features. A selector that matches nothing is not an error to the tool. It
+nothing at all, because the suites don't live in files named after them — they live in
+files named after features. A selector that matches nothing isn't an error to the tool. It
 is simply omitted, silently, from a run that still exits zero.</p>
 
 <p>The lesson is narrower than "test everything" and more useful: derive the selector from
 the source, then assert that what you derived equals what you passed. The count is the
-cheap check, and it is the one that would have caught this. A gate that quietly tests less
+cheap check, and it's the one that would have caught this. A gate that quietly tests less
 than it claims is worse than no gate, because it consumes the attention you would have
 spent checking.</p>
 
@@ -1442,7 +1443,7 @@ number, because nobody was looking at the artifact — the pipeline was green, a
 the thing being watched.</p>
 
 <p>Firebase accepts three uploads with one identity and gives each a release ID. App Store
-Connect does not: it rejects a duplicate build number at upload. That rejection arrives
+Connect doesn't: it rejects a duplicate build number at upload. That rejection arrives
 weeks later, on a release branch, when the person holding it has no memory of why the
 number stopped moving. The bandage is one line in each configuration. The cause is a deploy
 job that treats every push as shippable.</p>
@@ -1450,7 +1451,7 @@ job that treats every push as shippable.</p>
 <h2>The snapshot that recorded the session</h2>
 
 <p>Three captures differed from their references. Both images were the same size, on the
-same device, with the same scale, so this was not a device or a runtime mismatch. The
+same device, with the same scale, so this wasn't a device or a runtime mismatch. The
 difference was a student's name.</p>
 
 <p>The references had been recorded signed out. The new captures had a signed-in user —
@@ -1474,10 +1475,10 @@ me that the screen matched a previous process.</p>
 <ol>
   <li><strong>What does it read?</strong> A manifest, a source tree, or whatever happens
   to be on this disk? If the answer is the last one, the result is a property of one
-  machine, and portability is not a nicety to fix later.</li>
+  machine, and portability isn't a nicety to fix later.</li>
   <li><strong>What does green mean?</strong> That a command exited zero, or that a
   property holds? Most of the work is turning the first into the second.</li>
-  <li><strong>Does it fail on a machine that is not mine?</strong> Not "would it run" —
+  <li><strong>Does it fail on a machine that isn't mine?</strong> Not "would it run" —
   xcodebuild would. Whether the answer it gives there is still true.</li>
 </ol>
 

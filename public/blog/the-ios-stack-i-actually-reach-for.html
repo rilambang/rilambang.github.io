@@ -4,11 +4,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>The iOS stack I actually reach for</title>
-<meta name="description" content="Not the stack I would pick on a greenfield project — the one I reach for on someone else&#x27;s codebase at 3am. Every choice is priced by the next engineer&#x27;s ability to debug it.">
+<meta name="description" content="The stack I reach for on someone else&#x27;s codebase, where every choice is priced by whether the next engineer can debug it at 3am.">
 <link rel="canonical" href="https://rilambang.github.io/blog/the-ios-stack-i-actually-reach-for.html">
 <meta property="og:type" content="article">
 <meta property="og:title" content="The iOS stack I actually reach for">
-<meta property="og:description" content="Not the stack I would pick on a greenfield project — the one I reach for on someone else&#x27;s codebase at 3am. Every choice is priced by the next engineer&#x27;s ability to debug it.">
+<meta property="og:description" content="The stack I reach for on someone else&#x27;s codebase, where every choice is priced by whether the next engineer can debug it at 3am.">
 <meta property="og:url" content="https://rilambang.github.io/blog/the-ios-stack-i-actually-reach-for.html">
 <meta property="og:image" content="https://rilambang.github.io/og.png">
 <meta name="twitter:card" content="summary_large_image">
@@ -27,9 +27,9 @@
     <p class="meta">3 min read · Muhammad Ilham Rilambang</p>
   </header>
   <article>
-<p class="lede">This is not the stack I would choose on a blank project. It is the one I reach
-for on a codebase I did not write, where the deciding question is who has to debug this at
-3am.</p>
+<p class="lede">Nobody hands you a blank project. You get a five-year-old codebase, a team, and one
+question that decides everything else: who's on call when this breaks at 3am? This is the
+stack I reach for then.</p>
 
   <figure class="fig"><svg viewBox='0 0 640 300' width='640' height='300' role='img' aria-label='The iOS stack as five layers, each with the rule that decides it' font-family='Helvetica Neue,Helvetica,Arial,sans-serif' xmlns='http://www.w3.org/2000/svg'><g class='n'><rect x='20' y='16' width='600' height='42' rx='10' fill='#161822' stroke='rgba(255, 255, 255, 0.12)'/><rect x='20' y='16' width='3' height='42' rx='1.5' fill='#8ab4ff'/><text x='34' y='42.0' font-size='13' font-weight='600' fill='#f4f6fb'></text></g><text x='38' y='43' font-size='13' fill='#8ab4ff' text-anchor='start' font-weight='600'>UI</text><text x='210' y='43' font-size='12.5' fill='#aab2c4' text-anchor='start' font-weight='400'>SwiftUI first, UIKit where the platform still requires it</text><g class='n'><rect x='20' y='66' width='600' height='42' rx='10' fill='#161822' stroke='rgba(255, 255, 255, 0.12)'/><rect x='20' y='66' width='3' height='42' rx='1.5' fill='#8ab4ff'/><text x='34' y='92.0' font-size='13' font-weight='600' fill='#f4f6fb'></text></g><text x='38' y='93' font-size='13' fill='#8ab4ff' text-anchor='start' font-weight='600'>Navigation</text><text x='210' y='93' font-size='12.5' fill='#aab2c4' text-anchor='start' font-weight='400'>one owner, always</text><g class='n'><rect x='20' y='116' width='600' height='42' rx='10' fill='#161822' stroke='rgba(255, 255, 255, 0.12)'/><rect x='20' y='116' width='3' height='42' rx='1.5' fill='#8ab4ff'/><text x='34' y='142.0' font-size='13' font-weight='600' fill='#f4f6fb'></text></g><text x='38' y='143' font-size='13' fill='#8ab4ff' text-anchor='start' font-weight='600'>Feature modules</text><text x='210' y='143' font-size='12.5' fill='#aab2c4' text-anchor='start' font-weight='400'>local packages, narrow public surfaces</text><g class='n'><rect x='20' y='166' width='600' height='42' rx='10' fill='#161822' stroke='rgba(255, 255, 255, 0.12)'/><rect x='20' y='166' width='3' height='42' rx='1.5' fill='#8ab4ff'/><text x='34' y='192.0' font-size='13' font-weight='600' fill='#f4f6fb'></text></g><text x='38' y='193' font-size='13' fill='#8ab4ff' text-anchor='start' font-weight='600'>Data</text><text x='210' y='193' font-size='12.5' fill='#aab2c4' text-anchor='start' font-weight='400'>the platform&#x27;s own persistence, constraints before validation</text><g class='n'><rect x='20' y='216' width='600' height='42' rx='10' fill='#161822' stroke='rgba(255, 255, 255, 0.12)'/><rect x='20' y='216' width='3' height='42' rx='1.5' fill='#8ab4ff'/><text x='34' y='242.0' font-size='13' font-weight='600' fill='#f4f6fb'></text></g><text x='38' y='243' font-size='13' fill='#8ab4ff' text-anchor='start' font-weight='600'>Platform</text><text x='210' y='243' font-size='12.5' fill='#aab2c4' text-anchor='start' font-weight='400'>the OS before a dependency</text><text x='20' y='288' font-size='11.5' fill='#aab2c4' text-anchor='start' font-weight='400'>Every choice priced by the next engineer&#x27;s ability to debug it at 3am.</text></svg>
     <figcaption>Not preferences — the rule each layer is chosen by.</figcaption>
@@ -42,26 +42,26 @@ for on a codebase I did not write, where the deciding question is who has to deb
 aspirational. Adopting it late costs more than adopting it early, because the cost is
 proportional to how much code you already have. Everything is main-actor by default and
 explicitly off it only where work is genuinely expensive — the opposite default produces code
-that is concurrent by accident.</p>
+that's concurrent by accident.</p>
 
 <h2>UI</h2>
 
 <p>SwiftUI for new screens, UIKit where the platform still requires it or where a table or
-collection needs control the declarative layer does not yet give. That is an honest position
-rather than a religious one: a rewrite that ships is better than a purity that does not.</p>
+collection needs control the declarative layer doesn't yet give. That is an honest position
+rather than a religious one: a rewrite that ships is better than a purity that doesn't.</p>
 
 <p>Navigation has one owner. Always. Two systems that both think they own the stack produce the
 worst bugs to diagnose.</p>
 
 <h2>Structure</h2>
 
-<p>Local Swift packages per seam, the app target as a thin shell. The reason is not elegance —
-it is that an unchanged module does not get rebuilt, and a circular dependency becomes a
+<p>Local Swift packages per seam, the app target as a thin shell. The reason isn't elegance —
+it's that an unchanged module doesn't get rebuilt, and a circular dependency becomes a
 compile error rather than a convention nobody follows.</p>
 
 <h2>Networking</h2>
 
-<p>Whatever the codebase already has, unless it is actively harmful. A second networking layer
+<p>Whatever the codebase already has, unless it's actively harmful. A second networking layer
 is a worse outcome than an imperfect first one. On a greenfield app I would reach for the
 platform's own concurrency tools over a reactive framework; on an existing app I leave the
 existing one alone until there is a reason to move it.</p>
@@ -70,7 +70,7 @@ existing one alone until there is a reason to move it.</p>
 
 <p>The platform's own persistence before a hand-rolled SQL layer, and a real constraint in the
 schema before validation in the app. Constraints are enforced under concurrency and app bugs
-are not. Where the data matters, the second copy of the truth is the one that goes stale.</p>
+aren't. Where the data matters, the second copy of the truth is the one that goes stale.</p>
 
 <h2>Strings</h2>
 
@@ -82,28 +82,28 @@ This is the cheapest discipline on the list and the one most often skipped.</p>
 
 <p>Tests for logic, first and always: parsers, state machines, anything with a branch. They run
 in seconds and they catch the regressions that matter. UI tests sparingly, on the flows that
-carry money or data, because they are slow and inherently flaky and a flaky suite gets ignored
+carry money or data, because they're slow and inherently flaky and a flaky suite gets ignored
 — which is worse than not having one.</p>
 
-<p>A test that cannot fail is not a test. If I cannot describe the change that would turn it
-red, it is decoration.</p>
+<p>A test that can't fail isn't a test. If I can't describe the change that would turn it
+red, it's decoration.</p>
 
 <h2>Third-party dependencies</h2>
 
-<p>Only for a problem the platform does not solve. The bar is not popularity, it is: can I read
+<p>Only for a problem the platform doesn't solve. The bar isn't popularity. Can I read
 this library when it misbehaves, and is anyone still maintaining it in two years? A small
-dependency I understand beats a large one I do not, and "we might need it later" has never once
+dependency I understand beats a large one I don't, and "we might need it later" has never once
 been true.</p>
 
 <h2>Build health</h2>
 
 <p>Build warnings treated as a budget rather than as weather. A codebase with three hundred
-warnings cannot notice the fourth hundred, and one of those was going to tell you that a main
+warnings can't notice the fourth hundred, and one of those was going to tell you that a main
 thread write had just become an act of faith.</p>
 
 <h2>The meta-decision</h2>
 
-<p>I have changed stacks more than once, and each time the framework-specific knowledge expired
+<p>I've changed stacks more than once, and each time the framework-specific knowledge expired
 faster than I expected. What survived is the habit underneath it: prefer the boring choice,
 prefer the platform's own tool, prefer the option a new hire can debug on their first weekend
 on call, and leave the codebase so that the next person's hard problem is the interesting one

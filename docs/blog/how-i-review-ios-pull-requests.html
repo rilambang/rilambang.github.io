@@ -24,11 +24,11 @@
   <header class="post-head">
     <p class="chip">Behaviour</p>
     <h1>How I review iOS pull requests</h1>
-    <p class="meta">3 min read · Muhammad Ilham Rilambang</p>
+    <p class="meta">2 min read · Muhammad Ilham Rilambang</p>
   </header>
   <article>
-<p class="lede">A review that starts with naming has already wasted its most useful attention.
-Here is the order I read a diff in, and the things I refuse to merge.</p>
+<p class="lede">If a review opens with naming, the most useful attention is already spent. This is the
+order I read a diff in, and the things I won't merge.</p>
 
   <figure class="fig"><svg viewBox='0 0 640 282' width='640' height='282' role='img' aria-label='The order an iOS pull request is read in, from intent through crash risk to style last' font-family='Helvetica Neue,Helvetica,Arial,sans-serif' xmlns='http://www.w3.org/2000/svg'><g class='n'><rect x='20' y='16' width='600' height='38' rx='10' fill='#161822' stroke='rgba(255, 255, 255, 0.12)'/><rect x='20' y='16' width='3' height='38' rx='1.5' fill='#8ab4ff'/><text x='34' y='40.0' font-size='13' font-weight='600' fill='#f4f6fb'></text></g><text x='40' y='41' font-size='12.5' fill='#8ab4ff' text-anchor='start' font-weight='600'>1</text><text x='64' y='41' font-size='13' fill='#f4f6fb' text-anchor='start' font-weight='400'>Does it do what the description says?</text><g class='n'><rect x='20' y='62' width='600' height='38' rx='10' fill='#161822' stroke='rgba(255, 255, 255, 0.12)'/><rect x='20' y='62' width='3' height='38' rx='1.5' fill='#8ab4ff'/><text x='34' y='86.0' font-size='13' font-weight='600' fill='#f4f6fb'></text></g><text x='40' y='87' font-size='12.5' fill='#8ab4ff' text-anchor='start' font-weight='600'>2</text><text x='64' y='87' font-size='13' fill='#f4f6fb' text-anchor='start' font-weight='400'>Can it crash?</text><g class='n'><rect x='20' y='108' width='600' height='38' rx='10' fill='#161822' stroke='rgba(255, 255, 255, 0.12)'/><rect x='20' y='108' width='3' height='38' rx='1.5' fill='#8ab4ff'/><text x='34' y='132.0' font-size='13' font-weight='600' fill='#f4f6fb'></text></g><text x='40' y='133' font-size='12.5' fill='#8ab4ff' text-anchor='start' font-weight='600'>3</text><text x='64' y='133' font-size='13' fill='#f4f6fb' text-anchor='start' font-weight='400'>What is the failure path?</text><g class='n'><rect x='20' y='154' width='600' height='38' rx='10' fill='#161822' stroke='rgba(255, 255, 255, 0.12)'/><rect x='20' y='154' width='3' height='38' rx='1.5' fill='#8ab4ff'/><text x='34' y='178.0' font-size='13' font-weight='600' fill='#f4f6fb'></text></g><text x='40' y='179' font-size='12.5' fill='#8ab4ff' text-anchor='start' font-weight='600'>4</text><text x='64' y='179' font-size='13' fill='#f4f6fb' text-anchor='start' font-weight='400'>What was deleted?</text><g class='n'><rect x='20' y='200' width='600' height='38' rx='10' fill='#161822' stroke='rgba(255, 255, 255, 0.12)'/><rect x='20' y='200' width='3' height='38' rx='1.5' fill='#8ab4ff'/><text x='34' y='224.0' font-size='13' font-weight='600' fill='#f4f6fb'></text></g><text x='40' y='225' font-size='12.5' fill='#8ab4ff' text-anchor='start' font-weight='600'>5</text><text x='64' y='225' font-size='13' fill='#aab2c4' text-anchor='start' font-weight='400'>Style — and usually not at all</text><text x='20' y='268' font-size='11.5' fill='#aab2c4' text-anchor='start' font-weight='400'>Read in this order. Starting at 5 wastes the attention that 2 needed.</text></svg>
     <figcaption>Cheapest questions first, taste last.</figcaption>
@@ -39,9 +39,9 @@ Here is the order I read a diff in, and the things I refuse to merge.</p>
 
 <ol>
   <li><strong>Does it do what the description says?</strong> Not what the code says — what the
-  description claims. If they diverge, that is the first comment, before anything else.</li>
+  description claims. If they diverge, that's the first comment, before anything else.</li>
   <li><strong>Can it crash?</strong> Force unwraps, array indexing, casts, anything that
-  assumes a shape it has not checked.</li>
+  assumes a shape it hasn't checked.</li>
   <li><strong>What is the failure path?</strong> Every network call fails. Every write can be
   interrupted. A diff that only handles success is half a diff.</li>
   <li><strong>What was deleted?</strong> Removed guards and removed tests first.</li>
@@ -62,47 +62,47 @@ Here is the order I read a diff in, and the things I refuse to merge.</p>
 <h2>What I refuse to merge</h2>
 
 <ul>
-  <li>A skipped or disabled test. If it cannot pass, delete it and say so; a disabled test is a
+  <li>A skipped or disabled test. If it can't pass, delete it and say so; a disabled test is a
   lie that gets inherited.</li>
   <li>A test that asserts nothing, or that asserts the mock.</li>
   <li><code>try?</code> on a write. Swallowing a failed save is how a user loses an hour of work
   and nobody finds out.</li>
   <li>A new dependency for something the platform already does.</li>
-  <li>A control with no accessibility label. This is not a later ticket; it is an unfinished
+  <li>A control with no accessibility label. This isn't a later ticket; it's an unfinished
   control.</li>
 </ul>
 
-<h2>Concurrency, because that is where the crashes actually are</h2>
+<h2>Concurrency, because that's where the crashes actually are</h2>
 
 <p>Most of the real defects I find in review are structural rather than logical:</p>
 
 <ul>
-  <li>A task started from a view that outlives the view, and writes to state after it is gone.</li>
+  <li>A task started from a view that outlives the view, and writes to state after it's gone.</li>
   <li>State mutated off the main actor that a view reads on it.</li>
   <li>Two writes racing to the same store with no single owner.</li>
 </ul>
 
-<p>These do not need a deep read of the logic. They need one question: <em>who owns this state,
-and on which actor is it touched?</em> If the diff cannot answer in one sentence, that is the
+<p>These don't need a deep read of the logic. They need one question: <em>who owns this state,
+and on which actor is it touched?</em> If the diff can't answer in one sentence, that's the
 comment.</p>
 
 <h2>Two habits that pay</h2>
 
 <p><strong>I review the smallest possible unit, early.</strong> A large diff gets a shallow read
 and a rubber stamp, and both parties know it. Several small diffs get real attention. If a
-change is too big to review carefully, the review is not the problem to fix — the change is.</p>
+change is too big to review carefully, the review isn't the problem to fix — the change is.</p>
 
 <p><strong>I explain the failure, not the rule.</strong> "This will double-submit if the user
 taps twice before the response" teaches something. "Don't allow double taps" produces a fix for
 this instance and the same bug next month. The comment that names the failure mode is worth ten
-that quote the standard — and it is the difference between a review and a gate.</p>
+that quote the standard — and it's the difference between a review and a gate.</p>
 
 <h2>What review is for</h2>
 
 <p>Not catching typos, and not demonstrating that the reviewer read the code. It is the last
 point at which the person who wrote something still remembers why, and someone else can ask
 "what happens when this goes wrong?" while the answer is cheap. Everything else about it is
-negotiable. That is not.</p>
+negotiable. That isn't.</p>
     <div class="sources">
       <h2>Sources</h2>
       <ul>

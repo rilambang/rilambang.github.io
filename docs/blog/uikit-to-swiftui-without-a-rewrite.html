@@ -36,31 +36,31 @@ two systems that each half-know where you are.</p>
   </figure>
 
 
-<p>I have taken more than one shipped app across this boundary. Nobody regrets the destination.
+<p>I've taken more than one shipped app across this boundary. Nobody regrets the destination.
 People regret the order.</p>
 
-<h2>Do not start with the app shell</h2>
+<h2>Don't start with the app shell</h2>
 
 <p>The instinct is to rewrite the root and let the screens follow. That inverts the risk: the
-shell is the part every screen depends on, and it is the part you cannot ship incrementally.</p>
+shell is the part every screen depends on, and it's the part you can't ship incrementally.</p>
 
-<p>Start with leaf screens — a detail view, a settings page, a form. Screens that do not own
+<p>Start with leaf screens — a detail view, a settings page, a form. Screens that don't own
 navigation are the safe unit of migration, because failure costs you one screen rather than
 the app.</p>
 
 <h2>Pick one direction of interop at a time</h2>
 
-<p>The two directions are not symmetric and should not be started together:</p>
+<p>The two directions aren't symmetric and should not be started together:</p>
 
 <ul>
   <li><strong>UIKit shell, SwiftUI leaves</strong> — a UIKit view controller hosts a SwiftUI
-  view. This is the low-risk direction, and it is where a migration should begin.</li>
+  view. This is the low-risk direction, and it's where a migration should begin.</li>
   <li><strong>SwiftUI shell, UIKit leaves</strong> — a SwiftUI view wraps a UIKit component.
-  Necessary for the handful of things SwiftUI still does not do well, and the direction that
-  tends to accumulate if you are careless.</li>
+  Necessary for the handful of things SwiftUI still doesn't do well, and the direction that
+  tends to accumulate if you're careless.</li>
 </ul>
 
-<p>Whichever you are in, know which one it is. A codebase that is doing both, everywhere, with
+<p>Whichever you're in, know which one it is. A codebase that's doing both, everywhere, with
 no rule, has no migration at all.</p>
 
 <h2>Navigation is the seam, so give it exactly one owner</h2>
@@ -70,13 +70,13 @@ Two systems that both believe they own the stack produce bugs that are extremely
 diagnose: a screen that appears twice, a back button that does nothing, state that resets on
 pop.</p>
 
-<p>Keep navigation in one place for the whole migration — whether that is the UIKit navigation
+<p>Keep navigation in one place for the whole migration — whether that's the UIKit navigation
 controller or a SwiftUI stack driven by a coordinator. The other side renders content and
-reports events. It does not push.</p>
+reports events. It doesn't push.</p>
 
 <h2>State ownership: pass data in, events out</h2>
 
-<p>Do not let the two worlds observe each other's state. A view controller watching a SwiftUI
+<p>Don't let the two worlds observe each other's state. A view controller watching a SwiftUI
 observable object, or a SwiftUI view holding a reference to a view controller and polling it,
 is a future bug in both directions.</p>
 
@@ -87,11 +87,11 @@ enough for almost every screen, and it keeps either side replaceable.</p>
 
 <ul>
   <li><strong>Keyboard avoidance.</strong> Two systems, two opinions, one screen. This is the
-  most common source of visual regressions during the swap and it is worth a dedicated pass.</li>
+  most common source of visual regressions during the swap and it's worth a dedicated pass.</li>
   <li><strong>List identity.</strong> A list that reuses cells and a list that keys on identity
   behave differently on update. Missing or unstable identity produces animations and state loss
-  that look like a rendering bug and are not.</li>
-  <li><strong>Lifecycle timing.</strong> "Appeared" does not mean the same instant in both
+  that look like a rendering bug and aren't.</li>
+  <li><strong>Lifecycle timing.</strong> "Appeared" doesn't mean the same instant in both
   systems. Code that kicks off work on appear and cancels on disappear will behave differently,
   and the difference shows up under a slow network, not on your desk.</li>
   <li><strong>Measurement.</strong> Geometry readers used for layout maths are a smell in a
@@ -105,11 +105,11 @@ enough for almost every screen, and it keeps either side replaceable.</p>
 working fallback — not an <code>#available</code> that silently renders nothing. Write down the
 minimum supported version and treat every adoption above it as a decision with a cost.</p>
 
-<h2>How you know it is finished</h2>
+<h2>How you know it's finished</h2>
 
 <p>The app target compiles without importing the old UI framework outside the places the
 platform genuinely requires it. Until then, you have a mixed app, which is a perfectly good
-state to ship from — but it is a state, not an outcome. Name the finish line, or the migration
+state to ship from — but it's a state, not an outcome. Name the finish line, or the migration
 becomes the architecture.</p>
     <div class="sources">
       <h2>Sources</h2>

@@ -27,8 +27,8 @@
     <p class="meta">3 min read · Muhammad Ilham Rilambang</p>
   </header>
   <article>
-<p class="lede">When builds get slow, the first proposal is always a better machine. A faster
-Mac buys a constant factor. The dependency graph is the exponent.</p>
+<p class="lede">Every slow-build meeting starts with somebody proposing a faster Mac. A faster Mac buys a
+constant factor, and a constant factor is the cheap half of the problem. What multiplies it is the dependency graph.</p>
 
   <figure class="fig"><svg viewBox='0 0 640 268' width='640' height='268' role='img' aria-label='The same one-file change rebuilding almost a whole single target, against rebuilding one module of several' font-family='Helvetica Neue,Helvetica,Arial,sans-serif' xmlns='http://www.w3.org/2000/svg'><g class='n'><rect x='20' y='16' width='600' height='40' rx='10' fill='#161822' stroke='rgba(255, 255, 255, 0.12)'/><rect x='20' y='16' width='3' height='40' rx='1.5' fill='#8ab4ff'/><text x='34' y='41.0' font-size='13' font-weight='600' fill='#f4f6fb'>One target: a change recompiles its neighbours</text></g><text x='40' y='84' font-size='12.5' fill='#f4f6fb' text-anchor='start' font-weight='600'>one file changed</text><rect x='40' y='96' width='28' height='24' rx='5' fill='rgba(255, 255, 255, 0.05)' stroke='rgba(255, 255, 255, 0.12)'/><rect x='40' y='126' width='28' height='24' rx='5' fill='rgba(255, 255, 255, 0.05)' stroke='rgba(255, 255, 255, 0.12)'/><rect x='40' y='156' width='28' height='24' rx='5' fill='rgba(255, 255, 255, 0.05)' stroke='rgba(255, 255, 255, 0.12)'/><rect x='74' y='96' width='28' height='24' rx='5' fill='rgba(255, 255, 255, 0.05)' stroke='rgba(255, 255, 255, 0.12)'/><rect x='74' y='126' width='28' height='24' rx='5' fill='rgba(255, 255, 255, 0.05)' stroke='rgba(255, 255, 255, 0.12)'/><rect x='74' y='156' width='28' height='24' rx='5' fill='#8ab4ff' stroke='rgba(255, 255, 255, 0.12)'/><rect x='108' y='96' width='28' height='24' rx='5' fill='rgba(255, 255, 255, 0.05)' stroke='rgba(255, 255, 255, 0.12)'/><rect x='108' y='126' width='28' height='24' rx='5' fill='rgba(255, 255, 255, 0.05)' stroke='rgba(255, 255, 255, 0.12)'/><rect x='108' y='156' width='28' height='24' rx='5' fill='rgba(255, 255, 255, 0.05)' stroke='rgba(255, 255, 255, 0.12)'/><rect x='142' y='96' width='28' height='24' rx='5' fill='rgba(255, 255, 255, 0.05)' stroke='rgba(255, 255, 255, 0.12)'/><rect x='142' y='126' width='28' height='24' rx='5' fill='rgba(255, 255, 255, 0.05)' stroke='rgba(255, 255, 255, 0.12)'/><rect x='142' y='156' width='28' height='24' rx='5' fill='rgba(255, 255, 255, 0.05)' stroke='rgba(255, 255, 255, 0.12)'/><text x='40' y='214' font-size='11.5' fill='#aab2c4' text-anchor='start' font-weight='400'>eleven boxes rebuild anyway</text><text x='360' y='84' font-size='12.5' fill='#f4f6fb' text-anchor='start' font-weight='600'>the same change, split</text><rect x='360' y='96' width='28' height='24' rx='5' fill='rgba(255, 255, 255, 0.05)' stroke='rgba(255, 255, 255, 0.12)'/><rect x='360' y='126' width='28' height='24' rx='5' fill='rgba(255, 255, 255, 0.05)' stroke='rgba(255, 255, 255, 0.12)'/><rect x='360' y='156' width='28' height='24' rx='5' fill='rgba(255, 255, 255, 0.05)' stroke='rgba(255, 255, 255, 0.12)'/><rect x='394' y='96' width='28' height='24' rx='5' fill='rgba(255, 255, 255, 0.05)' stroke='rgba(255, 255, 255, 0.12)'/><rect x='394' y='126' width='28' height='24' rx='5' fill='rgba(255, 255, 255, 0.05)' stroke='rgba(255, 255, 255, 0.12)'/><rect x='394' y='156' width='28' height='24' rx='5' fill='#8ab4ff' stroke='rgba(255, 255, 255, 0.12)'/><rect x='428' y='96' width='28' height='24' rx='5' fill='rgba(255, 255, 255, 0.05)' stroke='rgba(255, 255, 255, 0.12)'/><rect x='428' y='126' width='28' height='24' rx='5' fill='rgba(255, 255, 255, 0.05)' stroke='rgba(255, 255, 255, 0.12)'/><rect x='428' y='156' width='28' height='24' rx='5' fill='rgba(255, 255, 255, 0.05)' stroke='rgba(255, 255, 255, 0.12)'/><rect x='462' y='96' width='28' height='24' rx='5' fill='rgba(255, 255, 255, 0.05)' stroke='rgba(255, 255, 255, 0.12)'/><rect x='462' y='126' width='28' height='24' rx='5' fill='rgba(255, 255, 255, 0.05)' stroke='rgba(255, 255, 255, 0.12)'/><rect x='462' y='156' width='28' height='24' rx='5' fill='rgba(255, 255, 255, 0.05)' stroke='rgba(255, 255, 255, 0.12)'/><text x='360' y='214' font-size='11.5' fill='#aab2c4' text-anchor='start' font-weight='400'>one group rebuilds</text><text x='20' y='250' font-size='11.5' fill='#aab2c4' text-anchor='start' font-weight='400'>Same edit, same machine. The unit of work is the only thing that moved.</text></svg>
     <figcaption>One edit, two build graphs. The machine is identical in both.</figcaption>
@@ -36,8 +36,8 @@ Mac buys a constant factor. The dependency graph is the exponent.</p>
 
 
 <p>Apple's own guidance on incremental build performance is worth reading before optimising
-anything, and it is refreshingly blunt: the things that break incrementality are the things
-that make the build redo work it did not need to redo. That is a graph problem.</p>
+anything, and it's refreshingly blunt: the things that break incrementality are the things
+that make the build redo work it didn't need to redo. That is a graph problem.</p>
 
 <h2>Measure the build, not the vibe</h2>
 
@@ -45,7 +45,7 @@ that make the build redo work it did not need to redo. That is a graph problem.<
 actually goes. Two facts usually fall out immediately:</p>
 
 <ul>
-  <li>One or two tasks dominate, and they are not the compiler.</li>
+  <li>One or two tasks dominate, and they aren't the compiler.</li>
   <li>The build is compiling far more than the change touched.</li>
 </ul>
 
@@ -53,8 +53,8 @@ actually goes. Two facts usually fall out immediately:</p>
 
 <h2>The most common culprit is a Run Script phase</h2>
 
-<p>A script phase with no declared inputs and outputs runs on <em>every</em> build. It does not
-matter that the script is quick. The cost is not the script's runtime, it is that it invalidates
+<p>A script phase with no declared inputs and outputs runs on <em>every</em> build. It doesn't
+matter that the script is quick. The cost isn't the script's runtime, it's that it invalidates
 downstream work and forces the build to redo it. A five-line script can be responsible for
 minutes.</p>
 
@@ -66,7 +66,7 @@ minutes.</p>
   <li><strong>Declare inputs and outputs.</strong> If the script genuinely generates something,
   tell the build system what it reads and what it writes, so it can be skipped when neither
   changed.</li>
-  <li><strong>Move it somewhere it is not on the critical path</strong> — earlier in the
+  <li><strong>Move it somewhere it isn't on the critical path</strong> — earlier in the
   pipeline, or out of the build entirely.</li>
 </ol>
 
@@ -76,7 +76,7 @@ minutes.</p>
 "most of the app". A change to a shared file in a large target can recompile a majority of the
 codebase — not because the compiler is slow, but because the unit of work is the target.</p>
 
-<p>Splitting the target is the fix, and the reason it works is not micro-optimisation. It is
+<p>Splitting the target is the fix, and the reason it works isn't micro-optimisation. It is
 that an unchanged module is genuinely unchanged, and the build system can skip it. The
 incremental case — which is the case you live in, hundreds of times a day — gets faster by an
 order of magnitude rather than by a percentage.</p>
@@ -85,13 +85,13 @@ order of magnitude rather than by a percentage.</p>
 
 <p>Whole-module compilation is faster for a clean build and much worse for an incremental one,
 because the module is the unit that must be redone. The interesting consequence is that your
-debug builds and your release builds want opposite things, and a configuration that is right
+debug builds and your release builds want opposite things, and a configuration that's right
 for one is wrong for the other. Decide per configuration rather than applying one global
 preference.</p>
 
-<h2>Type-checking hot spots are real and they are local</h2>
+<h2>Type-checking hot spots are real and they're local</h2>
 
-<p>A single expression that the type checker cannot resolve quickly — a large literal, a deep
+<p>A single expression that the type checker can't resolve quickly — a large literal, a deep
 nesting of operators, a long chain of overloaded calls — can take longer to compile than the
 file around it. The compiler will tell you if you ask it, and the fix is to make the expression
 simpler or to name the type explicitly. It is a small, contained edit with an outsize effect.</p>
@@ -99,7 +99,7 @@ simpler or to name the type explicitly. It is a small, contained edit with an ou
 <h2>Asset catalogs</h2>
 
 <p>Assets are compiled, and a large catalog that changes often is a step you pay for repeatedly.
-Keeping generated or throwaway assets out of the catalog is not a style preference; it is
+Keeping generated or throwaway assets out of the catalog isn't a style preference; it's
 build time.</p>
 
 <h2>What I'd tell a team staring at a slow build</h2>

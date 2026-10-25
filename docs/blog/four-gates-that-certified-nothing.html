@@ -55,8 +55,8 @@ green. On any other checkout, in CI, on a fresh clone, the keys match nothing, a
 legacy violation becomes an error in a job that never gets as far as the compiler.</p>
 
 <p>The fix was to drive the include from column one of the manifest instead of a glob,
-and to delete the baseline rather than repair it. A file that is a hundred kilobytes of
-one machine's state is not configuration. The rules it was suppressing belong in a
+and to delete the baseline rather than repair it. A file that's a hundred kilobytes of
+one machine's state isn't configuration. The rules it was suppressing belong in a
 <code>disabled_rules</code> list, which is stable, reviewable, and identical everywhere.</p>
 
 <h2>The gate that ran two thirds of the tests</h2>
@@ -68,13 +68,13 @@ them by filename: twelve files with <em>Snapshot</em> in the name, twelve
 
 <p><code>xcodebuild</code> accepted all twelve, ran a third fewer tests than the suite
 contains, and printed <code>TEST SUCCEEDED</code>. Three of the twelve selectors matched
-nothing at all, because the suites do not live in files named after them — they live in
-files named after features. A selector that matches nothing is not an error to the tool. It
+nothing at all, because the suites don't live in files named after them — they live in
+files named after features. A selector that matches nothing isn't an error to the tool. It
 is simply omitted, silently, from a run that still exits zero.</p>
 
 <p>The lesson is narrower than "test everything" and more useful: derive the selector from
 the source, then assert that what you derived equals what you passed. The count is the
-cheap check, and it is the one that would have caught this. A gate that quietly tests less
+cheap check, and it's the one that would have caught this. A gate that quietly tests less
 than it claims is worse than no gate, because it consumes the attention you would have
 spent checking.</p>
 
@@ -87,7 +87,7 @@ number, because nobody was looking at the artifact — the pipeline was green, a
 the thing being watched.</p>
 
 <p>Firebase accepts three uploads with one identity and gives each a release ID. App Store
-Connect does not: it rejects a duplicate build number at upload. That rejection arrives
+Connect doesn't: it rejects a duplicate build number at upload. That rejection arrives
 weeks later, on a release branch, when the person holding it has no memory of why the
 number stopped moving. The bandage is one line in each configuration. The cause is a deploy
 job that treats every push as shippable.</p>
@@ -95,7 +95,7 @@ job that treats every push as shippable.</p>
 <h2>The snapshot that recorded the session</h2>
 
 <p>Three captures differed from their references. Both images were the same size, on the
-same device, with the same scale, so this was not a device or a runtime mismatch. The
+same device, with the same scale, so this wasn't a device or a runtime mismatch. The
 difference was a student's name.</p>
 
 <p>The references had been recorded signed out. The new captures had a signed-in user —
@@ -119,10 +119,10 @@ me that the screen matched a previous process.</p>
 <ol>
   <li><strong>What does it read?</strong> A manifest, a source tree, or whatever happens
   to be on this disk? If the answer is the last one, the result is a property of one
-  machine, and portability is not a nicety to fix later.</li>
+  machine, and portability isn't a nicety to fix later.</li>
   <li><strong>What does green mean?</strong> That a command exited zero, or that a
   property holds? Most of the work is turning the first into the second.</li>
-  <li><strong>Does it fail on a machine that is not mine?</strong> Not "would it run" —
+  <li><strong>Does it fail on a machine that isn't mine?</strong> Not "would it run" —
   xcodebuild would. Whether the answer it gives there is still true.</li>
 </ol>
 

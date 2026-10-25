@@ -36,7 +36,7 @@ stall.</p>
   </figure>
 
 
-<p>I have done this on more than one app now, and the failures are consistent enough to
+<p>I've done this on more than one app now, and the failures are consistent enough to
 predict. This is the order things actually break in.</p>
 
 <h2>1. Resources, and the fact that they fail at runtime</h2>
@@ -46,7 +46,7 @@ string file, an asset catalog image. Inside a package, the code needs
 <code>Bundle.module</code>. Code that still reaches for <code>Bundle.main</code> compiles
 perfectly and returns nil at runtime.</p>
 
-<p>This is the worst class of breakage in the whole migration: it is invisible to the compiler,
+<p>This is the worst class of breakage in the whole migration: it's invisible to the compiler,
 invisible in code review, and usually caught by a user rather than a test. Sweep for
 <code>Bundle.main</code> and <code>UIImage(named:)</code> <em>before</em> moving anything, and
 decide per call site whether it belongs to the package or to the app.</p>
@@ -61,36 +61,36 @@ physically and not at all conceptually.</p>
 <blockquote>The test I use: if a package needs more than a handful of public symbols, it is
 not a module. It is a folder that happens to have a manifest.</blockquote>
 
-<p>So the real work is not moving code, it is <em>designing the API you wish existed</em> and
-then making the code fit behind it. Write the interface first. If it is awkward to write, the
+<p>So the real work isn't moving code, it's <em>designing the API you wish existed</em> and
+then making the code fit behind it. Write the interface first. If it's awkward to write, the
 boundary is in the wrong place, and you have found that out before the expensive part.</p>
 
 <h2>3. Build settings stop being inherited</h2>
 
-<p>A package does not inherit your app target's build settings. The Swift language version, the
-warnings you had silenced, optimisation flags, the deployment target — all of it is declared in
-the manifest and is now a decision someone has to make deliberately. Do it in one pass, or you
+<p>A package doesn't inherit your app target's build settings. The Swift language version, the
+warnings you had silenced, optimisation flags, the deployment target — it's all declared in the
+manifest and is now a decision someone has to make deliberately. Do it in one pass, or you
 will spend a fortnight on warnings that appear in one module and not the adjacent one.</p>
 
 <h2>4. Names collide immediately</h2>
 
 <p>Every modular codebase has a <code>User</code>, a <code>Config</code>, an
-<code>Extensions</code>, a <code>Logger</code>. Once they are in separate modules they are all
+<code>Extensions</code>, a <code>Logger</code>. Once they're in separate modules they're all
 legal and all ambiguous at every call site. Type names have to say what they are now — which
 sounds like a nit and is actually a boundary leaking into every file that touches two modules.</p>
 
-<h2>5. Tests cannot see across the wall either</h2>
+<h2>5. Tests can't see across the wall either</h2>
 
-<p><code>@testable import</code> works for a package's own tests. It does not let a test in one
+<p><code>@testable import</code> works for a package's own tests. It doesn't let a test in one
 module reach into another's internals. That is the point, but it means tests that were quietly
 testing implementation details have to be rewritten against the public surface — or the surface
-has to grow to make the behaviour testable. The second option is usually correct, and it is a
+has to grow to make the behaviour testable. The second option is usually correct, and it's a
 useful signal that something is missing from the API.</p>
 
 <h2>6. The awkward middle, and why people quit here</h2>
 
 <p>For a while, everything is public, nothing is faster, and there are more files than before.
-That is not the design failing; it is the design being incomplete. The end state — narrow
+That isn't the design failing; it's the design being incomplete. The end state — narrow
 public surfaces, small rebuilds, obvious ownership — is what pays. Judge it at the end, not in
 week two.</p>
 
@@ -98,9 +98,9 @@ week two.</p>
 
 <p>The first genuinely valuable thing modularisation does is make circular dependencies
 <em>compile errors</em>. In a single target, A using B and B using A is invisible. Across
-module boundaries it cannot exist.</p>
+module boundaries it can't exist.</p>
 
-<p>That error is not an obstacle in your way. It is the design bug you had been hiding,
+<p>That error isn't an obstacle in your way. It is the design bug you had been hiding,
 finally unable to hide. The wrong fix is to merge the two modules so it compiles again.</p>
 
 <h2>The sequencing I'd use again</h2>
@@ -111,15 +111,15 @@ finally unable to hide. The wrong fix is to merge the two modules so it compiles
   <li><strong>Then the middle.</strong> Shared UI, shared services. This is where the API
   design conversation actually happens.</li>
   <li><strong>Feature modules last.</strong> They are the ones that need the seams below them
-  to be settled, and the ones most likely to move again if they are not.</li>
+  to be settled, and the ones most likely to move again if they aren't.</li>
   <li><strong>The app target ends up a shell.</strong> Composition, navigation, configuration.
-  If the app target still contains business logic, the split is not finished.</li>
+  If the app target still contains business logic, the split isn't finished.</li>
 </ol>
 
 <p>The thing I would do differently: agree the vocabulary <em>and</em> the public surface
 before anyone starts moving code, in writing, and treat a change to either as a design
 decision rather than a refactor. Moving files is mechanical. Everything that made the project
-worth doing is not.</p>
+worth doing isn't.</p>
     <div class="sources">
       <h2>Sources</h2>
       <ul>

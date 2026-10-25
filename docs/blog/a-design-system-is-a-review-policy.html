@@ -27,15 +27,16 @@
     <p class="meta">2 min read · Muhammad Ilham Rilambang</p>
   </header>
   <article>
-<p class="lede">A design system is not a package you import. It is a set of decisions that
-review enforces, and the package is only the place those decisions live.</p>
+<p class="lede">A design system is a set of decisions, and review is what enforces them. The package is
+just where the decisions live. Once those two separate — and they separate quietly —
+what's left is a colour palette with a README.</p>
 
   <figure class="fig"><svg viewBox='0 0 640 260' width='640' height='260' role='img' aria-label='A design value with two traceable owners and a third copy that drifts away from both' font-family='Helvetica Neue,Helvetica,Arial,sans-serif' xmlns='http://www.w3.org/2000/svg'><g class='n'><rect x='20' y='16' width='190' height='62' rx='10' fill='#161822' stroke='rgba(255, 255, 255, 0.12)'/><rect x='20' y='16' width='3' height='62' rx='1.5' fill='#8ab4ff'/><text x='34' y='42' font-size='13' font-weight='600' fill='#f4f6fb'>Design source</text><text x='34' y='62' font-size='11.5' fill='#aab2c4'>where the value is decided</text></g><g class='n'><rect x='225' y='16' width='190' height='62' rx='10' fill='#161822' stroke='rgba(255, 255, 255, 0.12)'/><rect x='225' y='16' width='3' height='62' rx='1.5' fill='#8ab4ff'/><text x='239' y='42' font-size='13' font-weight='600' fill='#f4f6fb'>Token file</text><text x='239' y='62' font-size='11.5' fill='#aab2c4'>the name that carries intent</text></g><g class='n'><rect x='430' y='16' width='190' height='62' rx='10' fill='#161822' stroke='rgba(255, 255, 255, 0.12)'/><rect x='430' y='16' width='3' height='62' rx='1.5' fill='#8ab4ff'/><text x='444' y='42' font-size='13' font-weight='600' fill='#f4f6fb'>A literal</text><text x='444' y='62' font-size='11.5' fill='#aab2c4'>added at 6pm, on a deadline</text></g><line x1='115' y1='78' x2='115' y2='122' stroke='rgba(255, 255, 255, 0.12)' stroke-width='1.5' class='d'/><polygon points='115,122 110.5,114.8 119.5,114.8' fill='rgba(255, 255, 255, 0.12)'/><line x1='320' y1='78' x2='320' y2='122' stroke='rgba(255, 255, 255, 0.12)' stroke-width='1.5' class='d'/><polygon points='320,122 315.5,114.8 324.5,114.8' fill='rgba(255, 255, 255, 0.12)'/><line x1='115' y1='122' x2='320' y2='122' stroke='rgba(255, 255, 255, 0.12)' stroke-width='1.5' class='d'/><line x1='217' y1='122' x2='217' y2='150' stroke='rgba(255, 255, 255, 0.12)' stroke-width='1.5' class='d'/><polygon points='217,150 212.5,142.8 221.5,142.8' fill='rgba(255, 255, 255, 0.12)'/><g class='n'><rect x='20' y='152' width='395' height='62' rx='10' fill='#1b2440' stroke='#8ab4ff'/><rect x='20' y='152' width='3' height='62' rx='1.5' fill='#8ab4ff'/><text x='34' y='178' font-size='13' font-weight='600' fill='#f4f6fb'>One value, two owners</text><text x='34' y='198' font-size='11.5' fill='#aab2c4'>a rename is a two-file change and review can see it</text></g><line x1='525' y1='78' x2='525' y2='150' stroke='rgba(255, 255, 255, 0.12)' stroke-width='1.5' class='d'/><polygon points='525,150 520.5,142.8 529.5,142.8' fill='rgba(255, 255, 255, 0.12)'/><g class='n'><rect x='430' y='152' width='190' height='62' rx='10' fill='#161822' stroke='rgba(255, 255, 255, 0.12)'/><rect x='430' y='152' width='3' height='62' rx='1.5' fill='#8ab4ff'/><text x='444' y='178' font-size='13' font-weight='600' fill='#f4f6fb'>Drift</text><text x='444' y='198' font-size='11.5' fill='#aab2c4'>it just ages badly</text></g><text x='20' y='246' font-size='11.5' fill='#aab2c4' text-anchor='start' font-weight='400'>The third box is the one that decides whether the system survives screen three.</text></svg>
     <figcaption>Two owners is a system. Three is a countdown.</figcaption>
   </figure>
 
 
-<p>I have watched more than one design system die at screen three. The failure is always the
+<p>I've watched more than one design system die at screen three. The failure is always the
 same and never looks like a design problem at the time: someone had a deadline, the component
 almost fit, and they wrote the value inline. That file is now the precedent.</p>
 
@@ -43,7 +44,7 @@ almost fit, and they wrote the value inline. That file is now the precedent.</p>
 
 <p>In a healthy system there are exactly two places a colour can come from: the design source,
 and the token that mirrors it. In a real codebase there is a third — the literal somebody
-pasted into a view — and that is the one that ages badly. It does not break. It just drifts,
+pasted into a view — and that's the one that ages badly. It doesn't break. It just drifts,
 one hex at a time, until nobody can change the brand colour without a treasure hunt.</p>
 
 <h2>What makes it stick</h2>
@@ -51,7 +52,7 @@ one hex at a time, until nobody can change the brand colour without a treasure h
 <ol>
   <li><strong>Token names describe intent, not value.</strong> <code>surface</code>,
   <code>danger</code>, <code>border-subtle</code> survive a redesign. <code>grey300</code>
-  does not, and it invites the next person to pick a neighbouring number by eye.</li>
+  doesn't, and it invites the next person to pick a neighbouring number by eye.</li>
   <li><strong>The default has to be the correct one.</strong> If using the system is harder
   than not using it, the system loses, every time, to someone under pressure. Convenience beats
   policy.</li>
@@ -76,16 +77,16 @@ one hex at a time, until nobody can change the brand colour without a treasure h
 <h2>The honest cost, said out loud</h2>
 
 <p>A design system slows down the first screen and speeds up the tenth. That is the entire trade,
-and it is a bad deal if you only ever build one screen. Teams abandon systems because nobody
+and it's a bad deal if you only ever build one screen. Teams abandon systems because nobody
 said the first half of that sentence, so the first screen feels like overhead and the tenth
 never arrives.</p>
 
 <p>Say it in the same breath as the plan. "This will be slower for a fortnight and faster after
-that" is a sentence a team can agree to. "We are adopting a design system" is not.</p>
+that" is a sentence a team can agree to. "We are adopting a design system" isn't.</p>
 
 <h2>The design side is a person, not a handoff</h2>
 
-<p>The systems I have seen work have a designer who reads the diff, or a developer who has the
+<p>The systems I've seen work have a designer who reads the diff, or a developer who has the
 design file open. The ones that fail have a Figma link and a prayer. The gap between the mock
 and the implementation is where defaults get invented — and invented defaults are the beginning
 of the third copy.</p>
