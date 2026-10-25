@@ -51,98 +51,142 @@ def _hex(v):
     return tuple(int(v[i:i + 2], 16) for i in (1, 3, 5))
 
 
+def _rgba(tok):
+    """`rgba(9, 9, 16, 0.78)` -> ((9, 9, 16), 0.78). A plain hex token is opaque."""
+    v = TOK[tok]
+    if v.startswith("#"):
+        return _hex(v), 1.0
+    parts = v[v.find("(") + 1:v.rfind(")")].replace("/", " ").replace(",", " ").split()
+    base = tuple(int(round(float(x))) for x in parts[:3])
+    a = float(parts[3].rstrip("%"))
+    return base, (a / 100 if parts[3].endswith("%") else a)
+
+
+def _over(panel, behind):
+    base, alpha = _rgba(panel)
+    return tuple(alpha * c + (1 - alpha) * d for c, d in zip(base, _hex(behind)))
+
+
 def check_bar():
-    """A translucent panel decides the contrast of everything sitting on it, and Safari
-    cannot express `prefers-reduced-transparency` at all — so the default has to be legible
-    by itself, and the check has to be arithmetic rather than a look. Worst case is the
-    panel over the darkest thing on the site, i.e. over --ink. Change the glass, the panel
-    colour or the link colour, and this fails the build instead of quietly thinning out."""
-    glass = TOK["glass"]
-    parts = glass[glass.find("(") + 1:glass.rfind(")")].replace("/", " ").split()
-    base = tuple(int(x) for x in parts[:3])
-    alpha = float(parts[3].rstrip("%")) / 100 if len(parts) > 3 else 1.0
-    behind = _hex(TOK["ink"])
-    panel = tuple(alpha * c + (1 - alpha) * i for c, i in zip(base, behind))
-    for tok in ("ink-soft", "ink", "accent"):
+    """A frosted panel decides the contrast of everything sitting on it, so its colour
+    is not one value: it is the glass composited over whatever is behind it. Here that
+    is the darkest gradient stop, the two coloured lights, and — for the sticky top bar —
+    white screenshots scrolling underneath. Check every one of those, not the average.
+    Change the glass, a gradient stop or a text token and the build fails instead of
+    quietly thinning out."""
+    checks = []
+    for bg in ("bg-top", "bg-warm", "bg-cool"):
+        panel = _over("glass", TOK[bg])
+        checks += [(tok, panel, f"glass over {bg}") for tok in ("ink", "ink-soft", "muted", "accent")]
+    for behind in ("#ffffff", TOK["bg"]):
+        panel = _over("bar", behind)
+        checks += [(tok, panel, f"bar over {behind}") for tok in ("ink", "ink-soft", "muted")]
+
+    failures = []
+    for tok, panel, label in checks:
         r = _ratio(_hex(TOK[tok]), panel)
+        print(f"  {tok:9s} {TOK[tok]:9s} on {label:22s} {r:5.2f}:1")
         if r < 4.5:
-            raise SystemExit(
-                f"\n✗ {tok} ({TOK[tok]}) on the glass panel is {r:.2f}:1, under 4.5:1.\n"
-                f"  Panel: {glass} over {TOK['ink']}. Darken the token, or thicken the glass.")
-        print(f"  {tok:9s} {TOK[tok]:9s} on glass  {r:5.2f}:1")
+            failures.append(f"{tok} ({TOK[tok]}) on {label} is {r:.2f}:1, under 4.5:1")
+
+    if failures:
+        raise SystemExit(
+            "\n✗ " + "\n✗ ".join(failures) +
+            "\n  Lighten the token, darken the panel, or thicken the glass.")
 
 
 check_bar()
 
 CSS = """
-@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,300&display=swap');
-:root{{--bg:{bg};--ink:{ink};--ink-soft:{ink-soft};--muted:{muted};--line:{line};
-  --accent:{accent};--tint:{tint};--warm:{warm};--glass:{glass};--rim:{rim};
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+:root{{--bg:{bg};--bg-top:{bg-top};--bg-warm:{bg-warm};--bg-cool:{bg-cool};
+  --ink:{ink};--ink-soft:{ink-soft};--muted:{muted};--line:{line};--edge:{edge};
+  --accent:{accent};--tint:{tint};--warm:{warm};--surface:{surface};--figure:{figure};
+  --glass:{glass};--bar:{bar};--rim:{rim};--radius:{radius};
   --sans:{sans};--display:{display};--mono:{mono}}}
 *{{box-sizing:border-box}}
 html{{scroll-behavior:smooth}}
-body{{margin:0;background:var(--bg);color:var(--ink);
-  font:17px/1.68 {sans};-webkit-font-smoothing:antialiased}}
+body{{margin:0;min-height:100vh;background:var(--bg);color:var(--ink);
+  font:17px/1.7 {sans};-webkit-font-smoothing:antialiased;overflow-x:hidden}}
+/* the field, on a fixed pseudo-element: `background-attachment: fixed` is ignored
+   by iOS Safari, which would scroll the gradient and flicker the sticky bar. */
+body::before{{content:"";position:fixed;inset:0;z-index:-1;background:
+  radial-gradient(1120px 780px at 6% -14%,rgba(98,64,236,.58) 0%,rgba(98,64,236,0) 58%),
+  radial-gradient(1000px 720px at 100% -8%,rgba(12,122,172,.52) 0%,rgba(12,122,172,0) 55%),
+  radial-gradient(1100px 820px at 46% 116%,rgba(76,46,158,.42) 0%,rgba(76,46,158,0) 62%),
+  radial-gradient(760px 620px at 88% 62%,rgba(16,118,158,.24) 0%,rgba(16,118,158,0) 64%),
+  radial-gradient(720px 600px at 6% 88%,rgba(92,60,204,.22) 0%,rgba(92,60,204,0) 66%),
+  linear-gradient(180deg,var(--bg-top) 0%,var(--bg) 52%,#05050a 100%)}}
 .wrap{{max-width:760px;margin:0 auto;padding:0 24px 80px}}
-.top{{position:sticky;top:0;z-index:5;margin:0 0 44px;padding:16px 0;
+.top{{position:sticky;top:0;z-index:5;margin:0 calc(50% - 50vw) 52px;
+  padding:16px max(24px,calc(50vw - 356px));
   display:flex;justify-content:space-between;align-items:baseline;
-  background:var(--bg);border-bottom:1px solid var(--ink);
-  font-family:var(--mono);font-size:11.5px;letter-spacing:.07em;text-transform:uppercase}}
+  background:var(--bar);-webkit-backdrop-filter:blur(22px) saturate(160%);
+  backdrop-filter:blur(22px) saturate(160%);
+  border-bottom:1px solid var(--line);font-size:13px;letter-spacing:.01em;
+  color:var(--ink-soft)}}
 .top a{{color:var(--ink-soft);text-decoration:none}}
-.top a:hover{{color:var(--accent)}}
-.top .who{{font-weight:500;color:var(--ink)}}
-h1,h2,h3{{font-family:{display};font-weight:700;color:var(--ink)}}
-h1{{font-size:44px;line-height:1.02;letter-spacing:-.02em;margin:0 0 14px;text-wrap:balance}}
-h2{{font-size:23px;line-height:1.14;letter-spacing:-.01em;margin:44px 0 12px}}
+.top a:hover{{color:var(--ink)}}
+.top .who{{font-weight:600;color:var(--ink)}}
+h1,h2,h3{{font-family:{display};font-weight:600;color:var(--ink)}}
+h1{{font-size:44px;line-height:1.07;letter-spacing:-.032em;margin:0 0 16px;text-wrap:balance}}
+h2{{font-size:23px;line-height:1.2;letter-spacing:-.022em;margin:44px 0 12px}}
 h3{{font-size:17px;margin:28px 0 8px}}
-p,li{{color:#27272a}}
-.lede{{font-size:19.5px;line-height:1.55;color:var(--ink-soft);margin:0 0 36px}}
+p,li{{color:var(--ink-soft)}}
+strong{{color:var(--ink);font-weight:600}}
+.lede{{font-size:19.5px;line-height:1.6;color:var(--ink-soft);margin:0 0 38px}}
 ul,ol{{padding-left:22px}}
 li{{margin:7px 0}}
 a{{color:var(--accent);text-decoration:none;border-bottom:1px solid transparent}}
 a:hover{{border-color:var(--accent)}}
-a:focus-visible{{outline:2px solid var(--accent);outline-offset:3px}}
-code{{font:14px/1.5 var(--mono);background:var(--warm);padding:1px 5px;
-  border:1px solid var(--line)}}
-pre{{background:var(--warm);border:1px solid var(--line);padding:16px 18px;
-  overflow-x:auto;font-size:13.5px}}
-pre code{{background:none;border:0;padding:0}}
-blockquote{{margin:30px 0;padding:2px 0 2px 22px;border-left:3px solid var(--accent);
-  font-size:18px;font-style:italic;color:var(--ink-soft)}}
+a:focus-visible{{outline:2px solid var(--accent);outline-offset:3px;border-radius:3px}}
+code{{font:14px/1.5 var(--mono);background:var(--warm);padding:2px 6px;
+  border:1px solid var(--line);border-radius:6px;color:var(--ink)}}
+pre{{background:rgba(0,0,0,.3);border:1px solid var(--line);border-radius:14px;
+  padding:16px 18px;overflow-x:auto;font-size:13.5px}}
+pre code{{background:none;border:0;padding:0;color:var(--ink-soft)}}
+blockquote{{margin:30px 0;padding:4px 0 4px 20px;border-left:2px solid var(--accent);
+  font-size:18px;color:var(--ink-soft)}}
 blockquote p{{margin:0}}
 .chip{{display:inline-block;font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;
-  text-transform:uppercase;color:var(--accent);background:transparent;
-  border:1px solid var(--accent);padding:4px 9px;margin:0 0 18px}}
+  text-transform:uppercase;color:var(--accent);background:rgba(138,180,255,.1);
+  border:1px solid var(--accent);border-radius:999px;padding:4px 11px;margin:0 0 18px}}
 .meta{{font-family:var(--mono);font-size:11px;letter-spacing:.05em;text-transform:uppercase;
   color:var(--muted);margin:0 0 40px}}
-.fig{{margin:34px 0 40px;border:1px solid var(--ink);background:#fff;padding:18px;
-  overflow-x:auto}}
+.fig{{margin:34px 0 40px;border:1px solid var(--rim);border-radius:18px;
+  background:var(--figure);padding:18px;overflow-x:auto;
+  box-shadow:0 26px 56px -32px rgba(0,0,0,.9),inset 0 1px 0 rgba(255,255,255,.07)}}
 .fig svg{{max-width:100%;height:auto}}
-.fig figcaption{{font-size:13px;line-height:1.5;color:var(--muted);margin-top:14px;
+.fig figcaption{{font-size:13px;line-height:1.55;color:var(--muted);margin-top:14px;
   padding-top:12px;border-top:1px solid var(--line)}}
-.sources{{margin-top:56px;border-top:1px solid var(--ink);padding-top:20px;font-size:14px}}
+.sources{{margin-top:56px;border-top:1px solid var(--line);padding-top:20px;font-size:14px}}
 .sources h2{{font-family:var(--mono);font-size:11px;letter-spacing:.14em;
   text-transform:uppercase;color:var(--muted);margin:0 0 12px;font-weight:500}}
 .sources li{{margin:7px 0;color:var(--muted)}}
 .foot{{margin-top:48px;border-top:1px solid var(--line);padding-top:20px;
   font-size:13px;line-height:1.6;color:var(--muted)}}
 .pager{{display:flex;justify-content:space-between;gap:16px;margin-top:32px;
-  padding-top:18px;border-top:1px solid var(--ink);font-size:14px}}
+  padding-top:18px;border-top:1px solid var(--line);font-size:14px}}
 .pager a{{text-decoration:none;border-bottom:0}}
-.pager a:hover{{color:var(--accent)}}
+.pager a:hover{{color:var(--ink)}}
 .pager span{{color:var(--muted)}}
 /* index */
 .lede--index{{margin-bottom:44px}}
-.cards{{list-style:none;padding:0;margin:0;border-top:1px solid var(--ink)}}
-.cards li{{border-bottom:1px solid var(--line);padding:26px 0;display:grid;
-  grid-template-columns:64px 1fr;gap:20px}}
-.cards h2{{margin:0 0 7px;font-size:24px}}
+.cards{{list-style:none;padding:6px 24px;margin:0;border-radius:18px;
+  background:linear-gradient(160deg,rgba(255,255,255,.09) 0%,rgba(255,255,255,.032) 46%,rgba(255,255,255,.06) 100%);
+  -webkit-backdrop-filter:blur(30px) saturate(180%);backdrop-filter:blur(30px) saturate(180%);
+  border:1px solid var(--rim);box-shadow:0 30px 70px -34px rgba(0,0,0,.95),
+  inset 0 1px 0 rgba(255,255,255,.24)}}
+.cards li{{border-bottom:1px solid var(--line);padding:24px 0;display:grid;
+  grid-template-columns:56px 1fr;gap:20px}}
+.cards li:last-child{{border-bottom:0}}
+.cards h2{{margin:0 0 7px;font-size:23px}}
 .cards a{{text-decoration:none;border-bottom:0}}
 .cards a:hover h2{{color:var(--accent)}}
 .cards p{{margin:0;color:var(--muted);font-size:15.5px}}
 .num{{font:500 12px/1 var(--mono);color:var(--accent);letter-spacing:.06em;
-  border:1px solid var(--line);padding:9px 0;text-align:center;background:var(--warm);
-  height:fit-content}}
+  border:1px solid var(--line);border-radius:999px;padding:9px 0;text-align:center;
+  background:rgba(255,255,255,.04);height:fit-content}}
 /* ── motion ────────────────────────────────────────────────────────────────
    Transform only, never opacity, on anything a reader needs. Diagrams draw their
    connectors, which are decoration: if an animation never runs, a box is a few
@@ -175,13 +219,14 @@ blockquote p{{margin:0}}
 }}
 @media (max-width:600px){{
   .wrap{{padding:0 18px 60px}}h1{{font-size:32px}}h2{{font-size:21px}}
-  .cards li{{grid-template-columns:1fr;gap:8px}}.num{{display:none}}
+  .cards{{padding:4px 18px}}.cards li{{grid-template-columns:1fr;gap:8px}}.num{{display:none}}
   .fig{{padding:12px}}
   /* Diagrams keep their 640px drawing and scroll. Shrinking them to the column
      would render 11.5px labels at six pixels and call that responsive. */
   .fig svg{{max-width:none}}
 }}
 """.format(**TOK)
+
 
 # ── figures ───────────────────────────────────────────────────────────────────
 # Diagrams are SVG, drawn from text. That keeps them inside every existing guard:
@@ -200,7 +245,7 @@ FONT = "font-family='Helvetica Neue,Helvetica,Arial,sans-serif'"
 
 
 def _box(x, y, w, h, title, sub="", accent=False, n=0):
-    fill = F_TINT if accent else "#fff"
+    fill = F_TINT if accent else TOK["surface"]
     stroke = F_ACC if accent else F_LINE
     t = (f"<text x='{x + 14}' y='{y + (26 if sub else h / 2 + 5)}' font-size='13' "
          f"font-weight='600' fill='{F_INK}'>{html.escape(title)}</text>")

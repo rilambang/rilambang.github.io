@@ -1,25 +1,32 @@
-/* Design direction: brutalist editorial — Playfair Display + Source Serif 4 +
-   JetBrains Mono, monochrome with one blue accent, square corners, visible rules.
-   Guidance from the ui-ux-pro-max design-system search (Brutalism + Monochrome
-   Editorial pairing), with its handwritten-font suggestion dropped: Caveat/Quicksand
-   is a bad read for dense technical prose, so display serif + text serif instead. */
-@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,300&display=swap');
+/* Design direction: dark liquid glass. A deep gradient field, frosted panels with
+   hairline rims, Inter for everything and JetBrains Mono only for micro-labels.
+   This replaces the brutalist editorial pass: Playfair + visible rules read as a
+   printed CV, which was the complaint. Palette tokens here are the single source
+   of truth — scripts/build-blog.py reads this block and checks the contrast. */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
 
 :root {
-  --bg: #fafafa;
-  --ink: #09090b;
-  --ink-soft: #3f3f46;
-  --muted: #475569;
-  --line: #d4d4d8;
-  --accent: #2563eb;
-  --tint: #eff4ff;
-  --warm: #f4f4f5;
-  --glass: rgb(250 250 250);
-  --rim: #09090b;
-  --radius: 0px;
+  --bg: #09090f;
+  --bg-top: #0c0c15;
+  --bg-warm: #221a52;
+  --bg-cool: #073444;
+  --ink: #f4f6fb;
+  --ink-soft: #c9cedb;
+  --muted: #aab2c4;
+  --line: rgba(255, 255, 255, 0.12);
+  --edge: rgba(255, 255, 255, 0.18);
+  --accent: #8ab4ff;
+  --tint: #1b2440;
+  --warm: rgba(255, 255, 255, 0.05);
+  --surface: #161822;
+  --figure: #0b0c13;
+  --glass: rgba(255, 255, 255, 0.09);
+  --bar: rgba(9, 9, 16, 0.78);
+  --rim: rgba(255, 255, 255, 0.16);
+  --radius: 22px;
   --wrap: 1080px;
-  --sans: "Source Serif 4", Georgia, "Times New Roman", serif;
-  --display: "Playfair Display", Georgia, "Times New Roman", serif;
+  --sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --display: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   --mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
 }
 
@@ -29,12 +36,31 @@ html { scroll-behavior: smooth; }
 
 body {
   margin: 0;
+  min-height: 100vh;
   background: var(--bg);
   color: var(--ink);
   font-family: var(--sans);
   font-size: 17px;
-  line-height: 1.6;
+  line-height: 1.62;
+  font-feature-settings: "cv11", "ss01";
   -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+/* The field. Fixed on a pseudo-element instead of `background-attachment: fixed`,
+   which iOS Safari mostly ignores — the gradient would scroll and flicker. */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(1120px 780px at 6% -14%, rgba(98, 64, 236, 0.58) 0%, rgba(98, 64, 236, 0) 58%),
+    radial-gradient(1000px 720px at 100% -8%, rgba(12, 122, 172, 0.52) 0%, rgba(12, 122, 172, 0) 55%),
+    radial-gradient(1100px 820px at 46% 116%, rgba(76, 46, 158, 0.42) 0%, rgba(76, 46, 158, 0) 62%),
+    radial-gradient(760px 620px at 88% 62%, rgba(16, 118, 158, 0.24) 0%, rgba(16, 118, 158, 0) 64%),
+    radial-gradient(720px 600px at 6% 88%, rgba(92, 60, 204, 0.22) 0%, rgba(92, 60, 204, 0) 66%),
+    linear-gradient(180deg, var(--bg-top) 0%, var(--bg) 52%, #05050a 100%);
 }
 
 a { color: inherit; text-decoration: none; }
@@ -42,6 +68,7 @@ a:hover { color: var(--accent); }
 a:focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 3px;
+  border-radius: 4px;
 }
 
 img { display: block; max-width: 100%; }
@@ -54,22 +81,54 @@ img { display: block; max-width: 100%; }
   left: 16px;
   top: 16px;
   z-index: 30;
-  background: var(--ink);
-  color: var(--bg);
-  padding: 8px 12px;
-  border-radius: 0;
+  background: var(--surface);
+  color: var(--ink);
+  padding: 10px 14px;
+  border: 1px solid var(--edge);
+  border-radius: 10px;
+}
+
+/* ── glass ───────────────────────────────────────────── */
+/* One recipe, used by every panel. If `backdrop-filter` is missing the gradient
+   on the panel itself still separates it from the field, so nothing disappears. */
+.facts,
+.card,
+.tenure,
+.contact {
+  background:
+    linear-gradient(160deg, rgba(255, 255, 255, 0.09) 0%, rgba(255, 255, 255, 0.032) 46%, rgba(255, 255, 255, 0.06) 100%);
+  -webkit-backdrop-filter: blur(30px) saturate(180%);
+  backdrop-filter: blur(30px) saturate(180%);
+  border: 1px solid var(--rim);
+  border-radius: var(--radius);
+  box-shadow:
+    0 30px 70px -34px rgba(0, 0, 0, 0.95),
+    inset 0 1px 0 rgba(255, 255, 255, 0.24),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.05);
+}
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .facts, .card, .tenure, .contact {
+    background: linear-gradient(160deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.055));
+  }
 }
 
 /* ── top bar ─────────────────────────────────────────── */
-/* Solid, not glass. A translucent panel decides the contrast of everything sitting
-   on it and Safari cannot express `prefers-reduced-transparency`; an opaque bar
-   makes the question go away. scripts/build-blog.py still checks the ratio. */
+/* Dark-tinted glass, not white: the bar scrolls over light screenshots, and a
+   light panel would turn every label into a contrast coin-flip. build-blog.py
+   checks the worst case (this bar over pure white) arithmetically. */
 .top {
   position: sticky;
   top: 0;
   z-index: 20;
-  background: var(--bg);
-  border-bottom: 1px solid var(--ink);
+  background: var(--bar);
+  -webkit-backdrop-filter: blur(22px) saturate(160%);
+  backdrop-filter: blur(22px) saturate(160%);
+  border-bottom: 1px solid var(--line);
+}
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .top { background: rgba(9, 9, 16, 0.96); }
 }
 
 .top__inner {
@@ -83,22 +142,19 @@ img { display: block; max-width: 100%; }
 }
 
 .top__name {
-  font-family: var(--mono);
-  font-weight: 500;
-  font-size: 12px;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
+  font-weight: 600;
+  font-size: 14px;
+  letter-spacing: -0.01em;
 }
 
 .top__nav {
   display: flex;
   gap: 22px;
-  font-family: var(--mono);
-  font-size: 11.5px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  font-size: 13.5px;
   color: var(--ink-soft);
 }
+
+.top__nav a:hover { color: var(--ink); }
 
 /* A sticky bar hides whatever an anchor jumps to unless the targets know about it.
    `[id]`, not `section[id]`: the skip link targets `<main id="main">`, and any future
@@ -109,12 +165,11 @@ img { display: block; max-width: 100%; }
 .hero {
   max-width: var(--wrap);
   margin: 0 auto;
-  padding: 96px 24px 72px;
-  border-bottom: 1px solid var(--line);
+  padding: 104px 24px 76px;
 }
 
 .hero__eyebrow {
-  margin: 0 0 24px;
+  margin: 0 0 26px;
   font-family: var(--mono);
   font-size: 11.5px;
   letter-spacing: 0.14em;
@@ -125,17 +180,26 @@ img { display: block; max-width: 100%; }
 .hero__title {
   margin: 0;
   font-family: var(--display);
-  font-size: clamp(40px, 6.2vw, 74px);
-  line-height: 0.98;
-  letter-spacing: -0.02em;
-  font-weight: 900;
+  font-size: clamp(40px, 6.4vw, 76px);
+  line-height: 1.01;
+  letter-spacing: -0.035em;
+  font-weight: 700;
   text-wrap: balance;
 }
 
+/* The accent word gets the only gradient on the page. */
+.hero__title em {
+  font-style: normal;
+  background: linear-gradient(92deg, #cfe0ff 0%, var(--accent) 46%, #9d8bff 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
 .hero__blurb {
-  max-width: 58ch;
-  margin: 32px 0 0;
-  font-size: 19px;
+  max-width: 56ch;
+  margin: 28px 0 0;
+  font-size: 18.5px;
   line-height: 1.6;
   color: var(--ink-soft);
 }
@@ -143,24 +207,38 @@ img { display: block; max-width: 100%; }
 .hero__links {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px 26px;
-  margin: 36px 0 0;
-  font-family: var(--mono);
-  font-size: 12px;
-  letter-spacing: 0.04em;
+  gap: 10px 22px;
+  margin: 40px 0 0;
+  font-size: 14px;
+  color: var(--ink-soft);
 }
 
 .hero__links a {
-  border-bottom: 1px solid var(--line);
-  padding-bottom: 3px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 16px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.03);
+  transition: border-color 0.2s, background 0.2s, color 0.2s;
+}
+
+.hero__links a:hover {
+  color: var(--ink);
+  border-color: var(--edge);
+  background: rgba(255, 255, 255, 0.07);
 }
 
 .hero__links a:first-child {
-  font-weight: 500;
-  border-bottom: 2px solid var(--ink);
+  color: var(--ink);
+  border-color: var(--accent);
+  background: rgba(138, 180, 255, 0.12);
 }
 
-.hero__links a:first-child:hover { border-color: var(--accent); }
+.hero__links a:first-child:hover {
+  background: rgba(138, 180, 255, 0.2);
+}
 
 /* ── facts ───────────────────────────────────────────── */
 .facts {
@@ -168,33 +246,32 @@ img { display: block; max-width: 100%; }
   margin: 0 auto;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 1px;
-  background: var(--ink);
-  border: 1px solid var(--ink);
-  border-top: 0;
+  overflow: hidden;
 }
 
 .fact {
-  background: var(--bg);
-  padding: 26px 20px;
+  padding: 26px 22px 28px;
+  border-left: 1px solid var(--line);
 }
+
+.fact:first-child { border-left: 0; }
 
 .fact strong {
   display: block;
   font-family: var(--display);
   font-size: 34px;
   line-height: 1;
-  letter-spacing: -0.02em;
-  font-weight: 700;
+  letter-spacing: -0.03em;
+  font-weight: 600;
 }
 
 .fact span {
   display: block;
-  margin-top: 8px;
+  margin-top: 10px;
   font-family: var(--mono);
-  font-size: 11px;
+  font-size: 10.5px;
   line-height: 1.5;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--muted);
 }
@@ -203,33 +280,49 @@ img { display: block; max-width: 100%; }
 .section {
   max-width: var(--wrap);
   margin: 0 auto;
-  padding: 96px 24px 0;
+  padding: 88px 24px 0;
 }
 
 .section__title {
-  margin: 0 0 40px;
-  padding-bottom: 12px;
-  border-bottom: 1px solid var(--ink);
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 0 0 30px;
   font-family: var(--mono);
-  font-size: 12px;
-  letter-spacing: 0.16em;
+  font-size: 11.5px;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: var(--ink);
+  color: var(--muted);
   font-weight: 500;
+}
+
+.section__title::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, var(--line), transparent);
 }
 
 /* ── work ────────────────────────────────────────────── */
 .work {
   display: grid;
-  gap: 28px;
+  gap: 22px;
 }
 
 .card {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   gap: 0;
-  border: 1px solid var(--ink);
-  background: #fff;
+  overflow: hidden;
+  transition: border-color 0.3s, transform 0.3s, box-shadow 0.3s;
+}
+
+.card:hover {
+  border-color: rgba(255, 255, 255, 0.28);
+  transform: translateY(-2px);
+  box-shadow:
+    0 34px 70px -30px rgba(0, 0, 0, 0.95),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
 }
 
 .card__shots {
@@ -237,31 +330,32 @@ img { display: block; max-width: 100%; }
   grid-template-columns: 1fr 1fr;
   gap: 14px;
   align-items: center;
-  padding: 28px;
-  background: var(--warm);
+  padding: 30px;
+  background: rgba(0, 0, 0, 0.22);
   border-right: 1px solid var(--line);
 }
 
 .card__shots img {
   width: 100%;
+  min-width: 0; /* a wide source image must not set the grid track's minimum */
   max-height: 340px;
   object-fit: contain;
   object-position: top;
-  border: 1px solid var(--line);
+  border-radius: 12px;
 }
 
 .card__body {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding: 34px 36px;
+  padding: 36px 38px;
 }
 
 .card__meta {
   margin: 0 0 12px;
   font-family: var(--mono);
-  font-size: 11px;
-  letter-spacing: 0.1em;
+  font-size: 10.5px;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--accent);
 }
@@ -269,10 +363,10 @@ img { display: block; max-width: 100%; }
 .card__body h3 {
   margin: 0;
   font-family: var(--display);
-  font-size: 31px;
-  line-height: 1.06;
-  letter-spacing: -0.015em;
-  font-weight: 700;
+  font-size: 30px;
+  line-height: 1.1;
+  letter-spacing: -0.028em;
+  font-weight: 600;
 }
 
 .card__line {
@@ -283,55 +377,51 @@ img { display: block; max-width: 100%; }
 .card__tags {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
+  gap: 7px;
   margin: 20px 0 0;
 }
 
 .card__tags span {
-  font-family: var(--mono);
-  font-size: 10.5px;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
+  font-size: 12px;
   color: var(--muted);
   border: 1px solid var(--line);
-  padding: 4px 8px;
+  border-radius: 999px;
+  padding: 4px 10px;
 }
 
 .card__link {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  margin-top: 24px;
-  font-family: var(--mono);
-  font-size: 12px;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  border-bottom: 1px solid var(--ink);
+  gap: 7px;
+  margin-top: 26px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--accent);
   align-self: flex-start;
-  padding-bottom: 2px;
 }
 
-.card__link:hover { border-color: var(--accent); }
+.card__link:hover { text-decoration: underline; text-underline-offset: 4px; }
 
 /* ── roles ───────────────────────────────────────────── */
 .roles {
   list-style: none;
   margin: 0;
   padding: 0;
-  border-top: 1px solid var(--line);
 }
 
 .roles li {
   display: grid;
   grid-template-columns: 130px minmax(0, 1fr) 160px;
   gap: 20px;
-  padding: 16px 0;
+  padding: 15px 0;
   border-bottom: 1px solid var(--line);
   font-size: 16px;
   align-items: baseline;
 }
 
-.roles__role { font-weight: 600; }
+.roles li:first-child { border-top: 1px solid var(--line); }
+
+.roles__role { font-weight: 500; color: var(--ink); }
 
 .roles__span,
 .roles__where {
@@ -355,10 +445,10 @@ img { display: block; max-width: 100%; }
 .mini {
   margin: 0 0 14px;
   font-family: var(--mono);
-  font-size: 11px;
-  letter-spacing: 0.12em;
+  font-size: 10.5px;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: var(--accent);
+  color: var(--muted);
   font-weight: 500;
 }
 
@@ -375,8 +465,11 @@ img { display: block; max-width: 100%; }
   gap: 12px;
   padding: 10px 0;
   border-bottom: 1px solid var(--line);
-  font-size: 16px;
+  font-size: 15.5px;
 }
+
+.links li a { color: var(--ink-soft); }
+.links li a:hover { color: var(--accent); }
 
 .links li em {
   font-style: normal;
@@ -399,58 +492,87 @@ img { display: block; max-width: 100%; }
 
 /* ── contact ─────────────────────────────────────────── */
 .contact {
-  max-width: var(--wrap);
+  max-width: calc(var(--wrap) - 48px);
   margin: 96px auto 0;
-  padding: 64px 24px 72px;
-  border-top: 1px solid var(--ink);
+  padding: 56px 44px 60px;
+  overflow: hidden;
+  position: relative;
+}
+
+/* a soft light leak so the last panel is the brightest thing on the page */
+.contact::before {
+  content: "";
+  position: absolute;
+  width: 520px;
+  height: 520px;
+  right: -160px;
+  top: -240px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(138, 180, 255, 0.22), transparent 68%);
+  pointer-events: none;
 }
 
 .contact h2 {
+  position: relative;
   margin: 0;
   font-family: var(--display);
-  font-size: clamp(30px, 4vw, 48px);
-  line-height: 1.02;
-  letter-spacing: -0.02em;
-  font-weight: 900;
+  font-size: clamp(30px, 4vw, 46px);
+  line-height: 1.06;
+  letter-spacing: -0.03em;
+  font-weight: 600;
   text-wrap: balance;
 }
 
 .contact p {
-  margin: 18px 0 0;
+  position: relative;
+  margin: 16px 0 0;
   color: var(--ink-soft);
   max-width: 54ch;
 }
 
 .contact__mail {
-  display: inline-block;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
   margin-top: 28px;
   font-family: var(--mono);
-  font-size: 16px;
-  border-bottom: 2px solid var(--ink);
-  padding-bottom: 3px;
+  font-size: 15px;
+  color: var(--ink);
+  padding: 12px 22px;
+  border: 1px solid var(--accent);
+  border-radius: 999px;
+  background: rgba(138, 180, 255, 0.12);
+  transition: background 0.2s, color 0.2s;
 }
 
-.contact__mail:hover { border-color: var(--accent); }
+.contact__mail:hover {
+  background: var(--accent);
+  color: #0a0b12;
+}
+
+.contact__mail:hover svg { stroke: currentColor; }
 
 .foot {
   max-width: var(--wrap);
-  margin: 0 auto;
-  padding: 24px 24px 48px;
+  margin: 40px auto 0;
+  padding: 24px 24px 56px;
   display: flex;
   justify-content: space-between;
   gap: 16px;
   flex-wrap: wrap;
-  font-family: var(--mono);
-  font-size: 11px;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
+  font-size: 13px;
   color: var(--muted);
   border-top: 1px solid var(--line);
 }
 
+.foot a { color: var(--ink-soft); }
+
 /* ── responsive ──────────────────────────────────────── */
 @media (max-width: 860px) {
   .facts { grid-template-columns: 1fr 1fr; }
+  .fact:nth-child(odd) { border-left: 0; }
+  .fact:nth-child(n + 3) { border-top: 1px solid var(--line); }
   .card { grid-template-columns: 1fr; }
   .card__shots { border-right: 0; border-bottom: 1px solid var(--line); }
   .grid2 { grid-template-columns: 1fr; gap: 44px; }
@@ -458,18 +580,25 @@ img { display: block; max-width: 100%; }
   .links--row { grid-template-columns: 1fr; }
   .roles li { grid-template-columns: 1fr; gap: 4px; }
   .roles__where { text-align: left; }
+  .contact { padding: 44px 28px 48px; }
 }
 
 @media (max-width: 560px) {
   body { font-size: 16.5px; }
-  .hero { padding-top: 56px; }
+  .hero { padding: 64px 20px 56px; }
   .hero__title br { display: none; }
   .facts { grid-template-columns: 1fr; }
+  .fact { border-left: 0; }
+  .fact:nth-child(n + 2) { border-top: 1px solid var(--line); }
+  .card__body { padding: 28px 24px 32px; }
+  .card__shots { padding: 20px; gap: 10px; }
+  .section { padding: 64px 20px 0; }
   /* The bar has to survive a narrow phone with a long name: let it wrap rather than
      push the document wider than the viewport, which is what makes a page scroll
      sideways and every screenshot look clipped. */
   .top__inner { flex-wrap: wrap; gap: 6px 16px; padding: 14px 18px; }
-  .top__nav { gap: 12px; font-size: 10.5px; flex-wrap: wrap; }
+  .top__nav { gap: 14px; font-size: 12.5px; flex-wrap: wrap; }
+  .foot { padding: 20px 20px 44px; }
 }
 
 /* ── motion ──────────────────────────────────────────── */
@@ -502,9 +631,7 @@ img { display: block; max-width: 100%; }
 
 /* ── tenure chart ────────────────────────────────────── */
 .tenure {
-  border: 1px solid var(--ink);
-  background: #fff;
-  padding: 30px 30px 22px;
+  padding: 30px 32px 24px;
 }
 
 .tenure__head {
@@ -534,12 +661,12 @@ img { display: block; max-width: 100%; }
   align-items: center;
   gap: 16px;
   padding: 9px 0;
-  border-bottom: 1px solid var(--warm);
+  border-bottom: 1px solid var(--line);
 }
 
 .tenure__name {
   font-size: 13.5px;
-  color: var(--ink);
+  color: var(--ink-soft);
 }
 
 .tenure__track {
@@ -550,14 +677,18 @@ img { display: block; max-width: 100%; }
 
 .tenure__bar {
   position: absolute;
-  top: 5px;
-  height: 12px;
-  background: var(--ink-soft);
+  top: 6px;
+  height: 10px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.24), rgba(255, 255, 255, 0.42));
   transition: width 0.7s cubic-bezier(0.22, 0.7, 0.3, 1) 0.15s,
               left 0.7s cubic-bezier(0.22, 0.7, 0.3, 1) 0.15s;
 }
 
-.tenure__bar.is-live { background: var(--accent); }
+.tenure__bar.is-live {
+  background: linear-gradient(90deg, var(--accent), #b7a4ff);
+  box-shadow: 0 0 18px rgba(138, 180, 255, 0.45);
+}
 
 .tenure__years {
   font-family: var(--mono);
@@ -593,7 +724,7 @@ img { display: block; max-width: 100%; }
 }
 
 @media (max-width: 720px) {
-  .tenure { padding: 22px 18px 18px; }
+  .tenure { padding: 22px 20px 18px; }
   .tenure__head { display: none; }
   .tenure__rows li { grid-template-columns: 1fr; gap: 2px; }
   .tenure__axis { margin: 8px 0 0; }

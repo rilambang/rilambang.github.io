@@ -105,7 +105,7 @@ export default function App() {
         <section className="hero" id="top">
           <p className="hero__eyebrow">{ME.role} · {ME.where}</p>
           <h1 className="hero__title">
-            I ship iOS for products that<br />{' '}people depend on.
+            I ship iOS for products that<br />{' '}people <em>depend</em> on.
           </h1>
           <p className="hero__blurb">{ME.blurb}</p>
           <p className="hero__links">
@@ -206,7 +206,7 @@ export default function App() {
         <section id="contact" className="contact" data-reveal>
           <h2>{CONTACT.heading}</h2>
           <p>{CONTACT.body}</p>
-          <a className="contact__mail" href={`mailto:${ME.email}`}>{ME.email}</a>
+          <a className="contact__mail" href={`mailto:${ME.email}`}>{ME.email} <Arrow /></a>
         </section>
       </main>
 

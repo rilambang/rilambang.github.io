@@ -1,17 +1,49 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
-  <rect width="1200" height="630" fill="#fafafa"/>
-  <rect x="0" y="0" width="1200" height="8" fill="#2563eb"/>
-  <g font-family="Playfair Display, Georgia, 'Times New Roman', serif" fill="#09090b">
-    <text x="80" y="118" font-size="76" font-weight="900" letter-spacing="-1">Muhammad Ilham</text>
-    <text x="80" y="200" font-size="76" font-weight="900" letter-spacing="-1">Rilambang</text>
-  </g>
-  <rect x="80" y="250" width="1040" height="1" fill="#09090b"/>
-  <g font-family="Playfair Display, Georgia, 'Times New Roman', serif" fill="#09090b">
-    <text x="80" y="352" font-size="52" font-weight="700" letter-spacing="-1">I ship iOS for products</text>
-    <text x="80" y="412" font-size="52" font-weight="700" letter-spacing="-1">that people depend on.</text>
-  </g>
-  <g font-family="JetBrains Mono, ui-monospace, Menlo, monospace" fill="#475569" font-size="20" letter-spacing="1">
-    <text x="80" y="524" font-size="16">iOS ENGINEER · JAKARTA, INDONESIA · TELKOM INDONESIA</text>
-    <text x="80" y="560" font-size="16">1M+ STUDENTS · 99.5% CRASH-FREE · MOBILE SINCE 2017</text>
+  <defs>
+    <radialGradient id="violet" cx="0.18" cy="0.1" r="0.75">
+      <stop offset="0" stop-color="#7c5cff" stop-opacity="0.55"/>
+      <stop offset="1" stop-color="#7c5cff" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="teal" cx="0.92" cy="0.95" r="0.7">
+      <stop offset="0" stop-color="#22d3ee" stop-opacity="0.42"/>
+      <stop offset="1" stop-color="#22d3ee" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="ink" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#a78bfa"/>
+      <stop offset="1" stop-color="#67e8f9"/>
+    </linearGradient>
+    <linearGradient id="panel" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0.10"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0.03"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1200" height="630" fill="#09090f"/>
+  <rect width="1200" height="630" fill="url(#violet)"/>
+  <rect width="1200" height="630" fill="url(#teal)"/>
+
+  <g font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Helvetica Neue', Arial, sans-serif">
+    <rect x="52" y="52" width="1096" height="526" rx="30" fill="url(#panel)" stroke="#ffffff" stroke-opacity="0.16"/>
+    <rect x="52" y="52" width="1096" height="1" fill="#ffffff" fill-opacity="0.22"/>
+
+    <text x="112" y="176" font-size="66" font-weight="700" letter-spacing="-2.2" fill="#f4f6fb">Muhammad Ilham</text>
+    <text x="112" y="248" font-size="66" font-weight="700" letter-spacing="-2.2" fill="#f4f6fb">Rilambang</text>
+
+    <text x="112" y="352" font-size="46" font-weight="600" letter-spacing="-1.2" fill="#c9cedb">I ship iOS for products</text>
+    <text x="112" y="406" font-size="46" font-weight="600" letter-spacing="-1.2" fill="#c9cedb">that people <tspan fill="url(#ink)">depend</tspan> on.</text>
+
+    <g font-family="'JetBrains Mono', ui-monospace, Menlo, monospace" font-size="15" letter-spacing="2.2" fill="#aab2c4">
+      <text x="112" y="500">IOS ENGINEER · JAKARTA, INDONESIA · TELKOM INDONESIA</text>
+    </g>
+    <rect x="112" y="520" width="120" height="2" rx="1" fill="url(#ink)"/>
+
+    <g text-anchor="end">
+      <text x="1088" y="236" font-family="Inter, ui-sans-serif, system-ui, sans-serif" font-size="42" font-weight="700" letter-spacing="-1.4" fill="#f4f6fb">1M+</text>
+      <text x="1088" y="262" font-family="'JetBrains Mono', ui-monospace, Menlo, monospace" font-size="12" letter-spacing="1.6" fill="#aab2c4">STUDENTS ON MY EXAM MODULES</text>
+      <text x="1088" y="344" font-family="Inter, ui-sans-serif, system-ui, sans-serif" font-size="42" font-weight="700" letter-spacing="-1.4" fill="#f4f6fb">99.5%</text>
+      <text x="1088" y="370" font-family="'JetBrains Mono', ui-monospace, Menlo, monospace" font-size="12" letter-spacing="1.6" fill="#aab2c4">CRASH-FREE AFTER THE REWRITE</text>
+      <text x="1088" y="452" font-family="Inter, ui-sans-serif, system-ui, sans-serif" font-size="42" font-weight="700" letter-spacing="-1.4" fill="#f4f6fb">2017</text>
+      <text x="1088" y="478" font-family="'JetBrains Mono', ui-monospace, Menlo, monospace" font-size="12" letter-spacing="1.6" fill="#aab2c4">SHIPPING MOBILE SINCE</text>
+    </g>
   </g>
 </svg>
