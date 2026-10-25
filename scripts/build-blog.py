@@ -75,68 +75,74 @@ def check_bar():
 check_bar()
 
 CSS = """
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,300&display=swap');
 :root{{--bg:{bg};--ink:{ink};--ink-soft:{ink-soft};--muted:{muted};--line:{line};
   --accent:{accent};--tint:{tint};--warm:{warm};--glass:{glass};--rim:{rim};
-  --sans:{sans}}}
+  --sans:{sans};--display:{display};--mono:{mono}}}
 *{{box-sizing:border-box}}
 html{{scroll-behavior:smooth}}
 body{{margin:0;background:var(--bg);color:var(--ink);
-  font:16px/1.68 {sans};-webkit-font-smoothing:antialiased}}
-.wrap{{max-width:720px;margin:0 auto;padding:36px 24px 72px}}
-.top{{position:sticky;top:0;z-index:5;margin:0 0 36px;padding:14px 0;
-  display:flex;justify-content:space-between;align-items:baseline;font-size:14px;
-  background:var(--glass);-webkit-backdrop-filter:blur(16px) saturate(180%);
-  backdrop-filter:blur(16px) saturate(180%);
-  box-shadow:inset 0 -1px 0 var(--line),inset 0 1px 0 var(--rim)}}
+  font:17px/1.68 {sans};-webkit-font-smoothing:antialiased}}
+.wrap{{max-width:760px;margin:0 auto;padding:0 24px 80px}}
+.top{{position:sticky;top:0;z-index:5;margin:0 0 44px;padding:16px 0;
+  display:flex;justify-content:space-between;align-items:baseline;
+  background:var(--bg);border-bottom:1px solid var(--ink);
+  font-family:var(--mono);font-size:11.5px;letter-spacing:.07em;text-transform:uppercase}}
 .top a{{color:var(--ink-soft);text-decoration:none}}
 .top a:hover{{color:var(--accent)}}
-.top .who{{font-weight:600;color:var(--ink)}}
-@media (prefers-reduced-transparency:reduce){{
-  .top{{background:var(--bg);-webkit-backdrop-filter:none;backdrop-filter:none}}}}
-@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){{
-  .top{{background:var(--bg)}}}}
-h1{{font-size:33px;line-height:1.18;letter-spacing:-0.022em;margin:0 0 12px}}
-h2{{font-size:19.5px;letter-spacing:-0.012em;margin:36px 0 10px}}
-h3{{font-size:16px;margin:24px 0 6px}}
-p,li{{color:#221f1a}}
-.lede{{font-size:18.5px;line-height:1.55;color:#3d3a32;margin:0 0 32px}}
-ul,ol{{padding-left:20px}}
-li{{margin:6px 0}}
-a{{color:var(--accent)}}
-code{{font:14px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace;
-  background:var(--warm);padding:1px 5px;border-radius:4px}}
-pre{{background:var(--warm);border:1px solid var(--line);border-radius:10px;
-  padding:14px 16px;overflow-x:auto}}
-pre code{{background:none;padding:0}}
-blockquote{{margin:26px 0;padding:4px 0 4px 20px;border-left:3px solid var(--accent);
-  font-size:17px;color:#3d3a32}}
+.top .who{{font-weight:500;color:var(--ink)}}
+h1,h2,h3{{font-family:{display};font-weight:700;color:var(--ink)}}
+h1{{font-size:44px;line-height:1.02;letter-spacing:-.02em;margin:0 0 14px;text-wrap:balance}}
+h2{{font-size:23px;line-height:1.14;letter-spacing:-.01em;margin:44px 0 12px}}
+h3{{font-size:17px;margin:28px 0 8px}}
+p,li{{color:#27272a}}
+.lede{{font-size:19.5px;line-height:1.55;color:var(--ink-soft);margin:0 0 36px}}
+ul,ol{{padding-left:22px}}
+li{{margin:7px 0}}
+a{{color:var(--accent);text-decoration:none;border-bottom:1px solid transparent}}
+a:hover{{border-color:var(--accent)}}
+a:focus-visible{{outline:2px solid var(--accent);outline-offset:3px}}
+code{{font:14px/1.5 var(--mono);background:var(--warm);padding:1px 5px;
+  border:1px solid var(--line)}}
+pre{{background:var(--warm);border:1px solid var(--line);padding:16px 18px;
+  overflow-x:auto;font-size:13.5px}}
+pre code{{background:none;border:0;padding:0}}
+blockquote{{margin:30px 0;padding:2px 0 2px 22px;border-left:3px solid var(--accent);
+  font-size:18px;font-style:italic;color:var(--ink-soft)}}
 blockquote p{{margin:0}}
-.chip{{display:inline-block;font-size:11.5px;letter-spacing:.09em;text-transform:uppercase;
-  color:var(--accent);background:var(--tint);border-radius:999px;padding:4px 11px;margin-bottom:14px}}
-.meta{{font-size:13px;color:var(--muted);margin:0 0 34px}}
-.fig{{margin:30px 0 34px;border:1px solid var(--line);border-radius:14px;background:#fff;
-  padding:20px 20px 14px}}
-.fig svg{{display:block;width:100%;height:auto}}
-.fig figcaption{{font-size:13px;line-height:1.5;color:var(--muted);margin-top:12px}}
-.sources{{margin-top:52px;border-top:1px solid var(--line);padding-top:18px;font-size:14px}}
-.sources h2{{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin:0 0 10px}}
-.sources li{{margin:6px 0;color:var(--muted)}}
-.foot{{margin-top:44px;border-top:1px solid var(--line);padding-top:18px;font-size:13.5px;color:var(--muted)}}
-.pager{{display:flex;justify-content:space-between;gap:16px;margin-top:26px;font-size:14px}}
-.pager a{{text-decoration:none}}
+.chip{{display:inline-block;font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--accent);background:transparent;
+  border:1px solid var(--accent);padding:4px 9px;margin:0 0 18px}}
+.meta{{font-family:var(--mono);font-size:11px;letter-spacing:.05em;text-transform:uppercase;
+  color:var(--muted);margin:0 0 40px}}
+.fig{{margin:34px 0 40px;border:1px solid var(--ink);background:#fff;padding:18px;
+  overflow-x:auto}}
+.fig svg{{max-width:100%;height:auto}}
+.fig figcaption{{font-size:13px;line-height:1.5;color:var(--muted);margin-top:14px;
+  padding-top:12px;border-top:1px solid var(--line)}}
+.sources{{margin-top:56px;border-top:1px solid var(--ink);padding-top:20px;font-size:14px}}
+.sources h2{{font-family:var(--mono);font-size:11px;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--muted);margin:0 0 12px;font-weight:500}}
+.sources li{{margin:7px 0;color:var(--muted)}}
+.foot{{margin-top:48px;border-top:1px solid var(--line);padding-top:20px;
+  font-size:13px;line-height:1.6;color:var(--muted)}}
+.pager{{display:flex;justify-content:space-between;gap:16px;margin-top:32px;
+  padding-top:18px;border-top:1px solid var(--ink);font-size:14px}}
+.pager a{{text-decoration:none;border-bottom:0}}
+.pager a:hover{{color:var(--accent)}}
 .pager span{{color:var(--muted)}}
 /* index */
-.lede--index{{margin-bottom:40px}}
-.cards{{list-style:none;padding:0;margin:0}}
-.cards li{{border-top:1px solid var(--line);padding:22px 0;display:grid;
-  grid-template-columns:56px 1fr;gap:18px}}
-.cards h2{{margin:0 0 6px;font-size:20px}}
-.cards a{{text-decoration:none}}
+.lede--index{{margin-bottom:44px}}
+.cards{{list-style:none;padding:0;margin:0;border-top:1px solid var(--ink)}}
+.cards li{{border-bottom:1px solid var(--line);padding:26px 0;display:grid;
+  grid-template-columns:64px 1fr;gap:20px}}
+.cards h2{{margin:0 0 7px;font-size:24px}}
+.cards a{{text-decoration:none;border-bottom:0}}
 .cards a:hover h2{{color:var(--accent)}}
-.cards p{{margin:0;color:var(--muted);font-size:15px}}
-.num{{font:600 13px/1 ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--accent);
-  border:1px solid var(--line);border-radius:10px;padding:10px 0;text-align:center;
-  background:var(--tint);height:fit-content}}
+.cards p{{margin:0;color:var(--muted);font-size:15.5px}}
+.num{{font:500 12px/1 var(--mono);color:var(--accent);letter-spacing:.06em;
+  border:1px solid var(--line);padding:9px 0;text-align:center;background:var(--warm);
+  height:fit-content}}
 /* ── motion ────────────────────────────────────────────────────────────────
    Transform only, never opacity, on anything a reader needs. Diagrams draw their
    connectors, which are decoration: if an animation never runs, a box is a few
@@ -168,8 +174,12 @@ blockquote p{{margin:0}}
   .fig .d{{stroke-dasharray:none;stroke-dashoffset:0}}
 }}
 @media (max-width:600px){{
-  .wrap{{padding:26px 18px 56px}}h1{{font-size:26px}}
-  .cards li{{grid-template-columns:1fr}}.num{{display:none}}
+  .wrap{{padding:0 18px 60px}}h1{{font-size:32px}}h2{{font-size:21px}}
+  .cards li{{grid-template-columns:1fr;gap:8px}}.num{{display:none}}
+  .fig{{padding:12px}}
+  /* Diagrams keep their 640px drawing and scroll. Shrinking them to the column
+     would render 11.5px labels at six pixels and call that responsive. */
+  .fig svg{{max-width:none}}
 }}
 """.format(**TOK)
 
@@ -399,6 +409,36 @@ def fig_pinning():
                 "revisions and pinning them", 236, b)
 
 
+def fig_four_gates():
+    """A table rather than a flow: the point is that nothing moves between the three
+    columns. Each row is a gate, the input it actually read, and the claim its green
+    text was taken to make. The rules are drawn, not animated: .fig .d animates a 320px
+    dash, and a 600px rule would render as a dash with a gap in it once it finishes."""
+    head = 38
+    b = _line(20, head + 6, 620, head + 6, draw=False)
+    b += _cap(20, head, "GATE", 10.5, F_MUTED)
+    b += _cap(150, head, "IT READ", 10.5, F_MUTED)
+    b += _cap(392, head, "IT CERTIFIED", 10.5, F_MUTED)
+    rows = [
+        ("Lint gate", "a directory of checkouts", "the set that ships"),
+        ("Pre-push", "filenames, not the source", "every suite in the target"),
+        ("Deploy job", "a build number nobody bumped", "a new artifact"),
+        ("Snapshots", "the previous test's session", "the screen as drawn"),
+    ]
+    for i, (gate, read, claim) in enumerate(rows):
+        y = head + 6 + i * 58
+        b += _line(20, y, 620, y, draw=False)
+        b += _cap(20, y + 26, gate, 13, F_INK, weight="600")
+        b += _cap(150, y + 26, read, 11.5, F_MUTED)
+        b += _cap(392, y + 26, claim, 11.5, F_ACC)
+    bottom = head + 6 + len(rows) * 58
+    b += _line(20, bottom, 620, bottom, draw=False)
+    b += _cap(20, bottom + 30,
+              "Right column: what I assumed. Middle column: what the check actually touched.")
+    return _svg("Four CI gates, the input each one actually read, and the claim its green "
+                "result was believed to make", bottom + 46, b)
+
+
 FIGURES = {
     "kiosk-and-assessment-apps": (
         fig_two_questions(),
@@ -430,6 +470,10 @@ FIGURES = {
     "what-a-green-build-does-not-prove": (
         fig_pinning(),
         "Three inputs, one of them moving. The fix is one column and one log line."),
+    "four-gates-that-certified-nothing": (
+        fig_four_gates(),
+        "Four gates, one mistake each: the check touched one thing and was trusted "
+        "about another. Nothing in the middle column is the shipping artifact."),
 }
 
 POSTS = [
@@ -1292,6 +1336,117 @@ a colour. A green check is a statement about the past tense of a machine I canno
             ("Automatically collected events — Analytics Help", "https://support.google.com/analytics/answer/9234069"),
         ],
     },
+    {
+        "slug": "four-gates-that-certified-nothing",
+        "tag": "Build systems",
+        "title": "Four gates that passed without testing anything",
+        "summary": "A lint gate that linted a directory, a pre-push script that ran two thirds of the tests and printed success, a build number shared by three uploads, and snapshots that recorded a session instead of a screen. Every one of them was green, and every green was true about the wrong thing.",
+        "body": """
+<p class="lede">Every gate I added this month passed. That was the problem. Four of them
+were answering a different question than the one I thought I had asked, and in each case
+the green text was accurate — about something other than what I believed it certified.</p>
+
+<p>None of the four was a subtle bug. Each was a single line that described the machine
+the job happened to run on rather than the thing that was supposed to ship. That is why
+they all looked fine: they were correct on my laptop.</p>
+
+<h2>The gate that described a disk</h2>
+
+<p>A lint job went red with a wall of violations, almost none of them new. The dependency
+manifest names the packages the app actually links. The gate never read it. It globbed a
+parent directory and linted every checkout sitting there, including two old working copies
+that nobody had linked in months. Those two produced most of the failure, and the packages
+that really shipped were clean.</p>
+
+<p>The same config carried a second defect in the same direction. The baseline that
+absorbs legacy violations was keyed by absolute path — one entry per file, prefixed with
+the path of the machine that generated it. On that machine it matched and the gate was
+green. On any other checkout, in CI, on a fresh clone, the keys match nothing, and every
+legacy violation becomes an error in a job that never gets as far as the compiler.</p>
+
+<p>The fix was to drive the include from column one of the manifest instead of a glob,
+and to delete the baseline rather than repair it. A file that is a hundred kilobytes of
+one machine's state is not configuration. The rules it was suppressing belong in a
+<code>disabled_rules</code> list, which is stable, reviewable, and identical everywhere.</p>
+
+<h2>The gate that ran two thirds of the tests</h2>
+
+<p>The complaint was that snapshot failures were discovered in CI, after a push, rather
+than before it. So I built a pre-push script that ran only the snapshot suites. It selected
+them by filename: twelve files with <em>Snapshot</em> in the name, twelve
+<code>-only-testing</code> arguments.</p>
+
+<p><code>xcodebuild</code> accepted all twelve, ran a third fewer tests than the suite
+contains, and printed <code>TEST SUCCEEDED</code>. Three of the twelve selectors matched
+nothing at all, because the suites do not live in files named after them — they live in
+files named after features. A selector that matches nothing is not an error to the tool. It
+is simply omitted, silently, from a run that still exits zero.</p>
+
+<p>The lesson is narrower than "test everything" and more useful: derive the selector from
+the source, then assert that what you derived equals what you passed. The count is the
+cheap check, and it is the one that would have caught this. A gate that quietly tests less
+than it claims is worse than no gate, because it consumes the attention you would have
+spent checking.</p>
+
+<h2>The build number that told nothing apart</h2>
+
+<p>Three consecutive uploads carried the same marketing version and the same build number.
+The deploy job had no <code>changes:</code> rule, so every branch push produced a build,
+including pushes whose diff could not compile into the app. And nobody bumped the build
+number, because nobody was looking at the artifact — the pipeline was green, and green was
+the thing being watched.</p>
+
+<p>Firebase accepts three uploads with one identity and gives each a release ID. App Store
+Connect does not: it rejects a duplicate build number at upload. That rejection arrives
+weeks later, on a release branch, when the person holding it has no memory of why the
+number stopped moving. The bandage is one line in each configuration. The cause is a deploy
+job that treats every push as shippable.</p>
+
+<h2>The snapshot that recorded the session</h2>
+
+<p>Three captures differed from their references. Both images were the same size, on the
+same device, with the same scale, so this was not a device or a runtime mismatch. The
+difference was a student's name.</p>
+
+<p>The references had been recorded signed out. The new captures had a signed-in user —
+leaked from an earlier test in the same process. The harness reset its cache between
+captures and not its session, so the reference described the history of the test run rather
+than the screen. Re-recording would have made it pass, and would have baked a leaked
+session into the reference permanently, where no one would ever look again.</p>
+
+<p>That is the most dangerous shape of a stale reference: not old pixels, but a test that
+is measuring the wrong thing and will keep measuring it, consistently, forever.</p>
+
+<h2>The shape they share</h2>
+
+<p>All four gates reported on their input accurately and on their claim inaccurately. The
+lint job told me about a directory. The pre-push script told me that twelve selectors had
+been accepted. The deploy job told me that a command had exited zero. The snapshot run told
+me that the screen matched a previous process.</p>
+
+<p>Three questions, asked before trusting any gate:</p>
+
+<ol>
+  <li><strong>What does it read?</strong> A manifest, a source tree, or whatever happens
+  to be on this disk? If the answer is the last one, the result is a property of one
+  machine, and portability is not a nicety to fix later.</li>
+  <li><strong>What does green mean?</strong> That a command exited zero, or that a
+  property holds? Most of the work is turning the first into the second.</li>
+  <li><strong>Does it fail on a machine that is not mine?</strong> Not "would it run" —
+  xcodebuild would. Whether the answer it gives there is still true.</li>
+</ol>
+
+<p>In every case the repair was smaller than the analysis: one column, one count, one
+bump, one reset. The expensive part was noticing that a green check says nothing until you
+can name what it checked.</p>
+""",
+        "sources": [
+            ("SwiftLint — configuration, baselines and included paths", "https://realm.github.io/SwiftLint/configuration.html"),
+            ("GitLab CI/CD — control when jobs run: rules and when: never", "https://docs.gitlab.com/ci/jobs/job_control/"),
+            ("Build settings reference — CURRENT_PROJECT_VERSION", "https://developer.apple.com/documentation/xcode/build-settings-reference"),
+            ("swift-snapshot-testing — recording and asserting references", "https://github.com/pointfreeco/swift-snapshot-testing"),
+        ],
+    },
 ]
 
 
@@ -1310,14 +1465,14 @@ def page(title, description, url, body, extra_head=""):
 <meta property="og:url" content="{url}">
 <meta property="og:image" content="{CARD}">
 <meta name="twitter:card" content="summary_large_image">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%231f4fd8'/><text x='16' y='23' font-family='Georgia,serif' font-size='20' fill='%23fbfaf7' text-anchor='middle'>R</text></svg>">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='0' fill='%232563eb'/><text x='16' y='23' font-family='Georgia,serif' font-size='20' fill='%23ffffff' text-anchor='middle'>R</text></svg>">
 <link rel="stylesheet" href="./blog.css">
 {extra_head}</head>
 <body>
 <div class="wrap">
   <div class="top">
     <a class="who" href="/">Muhammad Ilham Rilambang</a>
-    <a href="./index.html">Writing</a>
+    <a href="./index.html">Blog</a>
   </div>
 {body}
 </div>
@@ -1375,9 +1530,13 @@ def render_post(p, i):
 
 
 def render_index():
+    # Newest first. POSTS is authored oldest-first because each post's prev/next pager
+    # reads in publication order; the index is a reading list, and a reader lands on it
+    # wanting today, not the beginning.
+    recent = list(reversed(POSTS))
     items = "".join(
         f'      <li>\n'
-        f'        <span class="num">{i + 1:02d}</span>\n'
+        f'        <span class="num">{len(recent) - i:02d}</span>\n'
         f'        <div>\n'
         f'          <a href="./{p["slug"]}.html"><h2>{html.escape(p["title"])}</h2></a>\n'
         f'          <p>{html.escape(p["summary"])}</p>\n'
@@ -1385,20 +1544,21 @@ def render_index():
         f'{minutes(p["body"])} min read</p>\n'
         f'        </div>\n'
         f'      </li>\n'
-        for i, p in enumerate(POSTS)
+        for i, p in enumerate(recent)
     )
     body = (
-        '  <h1>Writing</h1>\n'
+        '  <h1>Blog</h1>\n'
         '  <p class="lede lede--index">Notes on the craft of iOS — platform rules,\n'
         '  modularisation, build health, migration, review practice, and the development\n'
-        '  process I use with agents. Nine pieces, written October 2026.</p>\n'
+        f'  process I use with agents. {len(POSTS)} pieces, newest first, written in\n'
+        '  October 2026.</p>\n'
         f'  <ul class="cards">\n{items}  </ul>\n'
         '  <p class="foot">Everything here is public and citable — no employer internals, no\n'
         '  colleague names, no unpublished metrics. If a claim needs a source it has one, and\n'
         '  every diagram here is drawn from text rather than a screenshot of anything.</p>\n'
     )
     return page(
-        "Writing — Muhammad Ilham Rilambang",
+        "Blog — Muhammad Ilham Rilambang",
         "Notes on the craft of iOS: platform rules, modularisation, build health, migration, "
         "review practice and the agent workflow I actually run.",
         f"{SITE}/blog/",

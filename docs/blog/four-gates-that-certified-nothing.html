@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Four gates that passed without testing anything</title>
+<meta name="description" content="A lint gate that linted a directory, a pre-push script that ran two thirds of the tests and printed success, a build number shared by three uploads, and snapshots that recorded a session instead of a screen. Every one of them was green, and every green was true about the wrong thing.">
+<link rel="canonical" href="https://rilambang.github.io/blog/four-gates-that-certified-nothing.html">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Four gates that passed without testing anything">
+<meta property="og:description" content="A lint gate that linted a directory, a pre-push script that ran two thirds of the tests and printed success, a build number shared by three uploads, and snapshots that recorded a session instead of a screen. Every one of them was green, and every green was true about the wrong thing.">
+<meta property="og:url" content="https://rilambang.github.io/blog/four-gates-that-certified-nothing.html">
+<meta property="og:image" content="https://rilambang.github.io/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='0' fill='%232563eb'/><text x='16' y='23' font-family='Georgia,serif' font-size='20' fill='%23ffffff' text-anchor='middle'>R</text></svg>">
+<link rel="stylesheet" href="./blog.css">
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <a class="who" href="/">Muhammad Ilham Rilambang</a>
+    <a href="./index.html">Blog</a>
+  </div>
+  <header class="post-head">
+    <p class="chip">Build systems</p>
+    <h1>Four gates that passed without testing anything</h1>
+    <p class="meta">4 min read · Muhammad Ilham Rilambang</p>
+  </header>
+  <article>
+<p class="lede">Every gate I added this month passed. That was the problem. Four of them
+were answering a different question than the one I thought I had asked, and in each case
+the green text was accurate — about something other than what I believed it certified.</p>
+
+  <figure class="fig"><svg viewBox='0 0 640 322' width='640' height='322' role='img' aria-label='Four CI gates, the input each one actually read, and the claim its green result was believed to make' font-family='Helvetica Neue,Helvetica,Arial,sans-serif' xmlns='http://www.w3.org/2000/svg'><line x1='20' y1='44' x2='620' y2='44' stroke='#d4d4d8' stroke-width='1.5'/><text x='20' y='38' font-size='10.5' fill='#475569' text-anchor='start' font-weight='400'>GATE</text><text x='150' y='38' font-size='10.5' fill='#475569' text-anchor='start' font-weight='400'>IT READ</text><text x='392' y='38' font-size='10.5' fill='#475569' text-anchor='start' font-weight='400'>IT CERTIFIED</text><line x1='20' y1='44' x2='620' y2='44' stroke='#d4d4d8' stroke-width='1.5'/><text x='20' y='70' font-size='13' fill='#09090b' text-anchor='start' font-weight='600'>Lint gate</text><text x='150' y='70' font-size='11.5' fill='#475569' text-anchor='start' font-weight='400'>a directory of checkouts</text><text x='392' y='70' font-size='11.5' fill='#2563eb' text-anchor='start' font-weight='400'>the set that ships</text><line x1='20' y1='102' x2='620' y2='102' stroke='#d4d4d8' stroke-width='1.5'/><text x='20' y='128' font-size='13' fill='#09090b' text-anchor='start' font-weight='600'>Pre-push</text><text x='150' y='128' font-size='11.5' fill='#475569' text-anchor='start' font-weight='400'>filenames, not the source</text><text x='392' y='128' font-size='11.5' fill='#2563eb' text-anchor='start' font-weight='400'>every suite in the target</text><line x1='20' y1='160' x2='620' y2='160' stroke='#d4d4d8' stroke-width='1.5'/><text x='20' y='186' font-size='13' fill='#09090b' text-anchor='start' font-weight='600'>Deploy job</text><text x='150' y='186' font-size='11.5' fill='#475569' text-anchor='start' font-weight='400'>a build number nobody bumped</text><text x='392' y='186' font-size='11.5' fill='#2563eb' text-anchor='start' font-weight='400'>a new artifact</text><line x1='20' y1='218' x2='620' y2='218' stroke='#d4d4d8' stroke-width='1.5'/><text x='20' y='244' font-size='13' fill='#09090b' text-anchor='start' font-weight='600'>Snapshots</text><text x='150' y='244' font-size='11.5' fill='#475569' text-anchor='start' font-weight='400'>the previous test&#x27;s session</text><text x='392' y='244' font-size='11.5' fill='#2563eb' text-anchor='start' font-weight='400'>the screen as drawn</text><line x1='20' y1='276' x2='620' y2='276' stroke='#d4d4d8' stroke-width='1.5'/><text x='20' y='306' font-size='11.5' fill='#475569' text-anchor='start' font-weight='400'>Right column: what I assumed. Middle column: what the check actually touched.</text></svg>
+    <figcaption>Four gates, one mistake each: the check touched one thing and was trusted about another. Nothing in the middle column is the shipping artifact.</figcaption>
+  </figure>
+
+
+<p>None of the four was a subtle bug. Each was a single line that described the machine
+the job happened to run on rather than the thing that was supposed to ship. That is why
+they all looked fine: they were correct on my laptop.</p>
+
+<h2>The gate that described a disk</h2>
+
+<p>A lint job went red with a wall of violations, almost none of them new. The dependency
+manifest names the packages the app actually links. The gate never read it. It globbed a
+parent directory and linted every checkout sitting there, including two old working copies
+that nobody had linked in months. Those two produced most of the failure, and the packages
+that really shipped were clean.</p>
+
+<p>The same config carried a second defect in the same direction. The baseline that
+absorbs legacy violations was keyed by absolute path — one entry per file, prefixed with
+the path of the machine that generated it. On that machine it matched and the gate was
+green. On any other checkout, in CI, on a fresh clone, the keys match nothing, and every
+legacy violation becomes an error in a job that never gets as far as the compiler.</p>
+
+<p>The fix was to drive the include from column one of the manifest instead of a glob,
+and to delete the baseline rather than repair it. A file that is a hundred kilobytes of
+one machine's state is not configuration. The rules it was suppressing belong in a
+<code>disabled_rules</code> list, which is stable, reviewable, and identical everywhere.</p>
+
+<h2>The gate that ran two thirds of the tests</h2>
+
+<p>The complaint was that snapshot failures were discovered in CI, after a push, rather
+than before it. So I built a pre-push script that ran only the snapshot suites. It selected
+them by filename: twelve files with <em>Snapshot</em> in the name, twelve
+<code>-only-testing</code> arguments.</p>
+
+<p><code>xcodebuild</code> accepted all twelve, ran a third fewer tests than the suite
+contains, and printed <code>TEST SUCCEEDED</code>. Three of the twelve selectors matched
+nothing at all, because the suites do not live in files named after them — they live in
+files named after features. A selector that matches nothing is not an error to the tool. It
+is simply omitted, silently, from a run that still exits zero.</p>
+
+<p>The lesson is narrower than "test everything" and more useful: derive the selector from
+the source, then assert that what you derived equals what you passed. The count is the
+cheap check, and it is the one that would have caught this. A gate that quietly tests less
+than it claims is worse than no gate, because it consumes the attention you would have
+spent checking.</p>
+
+<h2>The build number that told nothing apart</h2>
+
+<p>Three consecutive uploads carried the same marketing version and the same build number.
+The deploy job had no <code>changes:</code> rule, so every branch push produced a build,
+including pushes whose diff could not compile into the app. And nobody bumped the build
+number, because nobody was looking at the artifact — the pipeline was green, and green was
+the thing being watched.</p>
+
+<p>Firebase accepts three uploads with one identity and gives each a release ID. App Store
+Connect does not: it rejects a duplicate build number at upload. That rejection arrives
+weeks later, on a release branch, when the person holding it has no memory of why the
+number stopped moving. The bandage is one line in each configuration. The cause is a deploy
+job that treats every push as shippable.</p>
+
+<h2>The snapshot that recorded the session</h2>
+
+<p>Three captures differed from their references. Both images were the same size, on the
+same device, with the same scale, so this was not a device or a runtime mismatch. The
+difference was a student's name.</p>
+
+<p>The references had been recorded signed out. The new captures had a signed-in user —
+leaked from an earlier test in the same process. The harness reset its cache between
+captures and not its session, so the reference described the history of the test run rather
+than the screen. Re-recording would have made it pass, and would have baked a leaked
+session into the reference permanently, where no one would ever look again.</p>
+
+<p>That is the most dangerous shape of a stale reference: not old pixels, but a test that
+is measuring the wrong thing and will keep measuring it, consistently, forever.</p>
+
+<h2>The shape they share</h2>
+
+<p>All four gates reported on their input accurately and on their claim inaccurately. The
+lint job told me about a directory. The pre-push script told me that twelve selectors had
+been accepted. The deploy job told me that a command had exited zero. The snapshot run told
+me that the screen matched a previous process.</p>
+
+<p>Three questions, asked before trusting any gate:</p>
+
+<ol>
+  <li><strong>What does it read?</strong> A manifest, a source tree, or whatever happens
+  to be on this disk? If the answer is the last one, the result is a property of one
+  machine, and portability is not a nicety to fix later.</li>
+  <li><strong>What does green mean?</strong> That a command exited zero, or that a
+  property holds? Most of the work is turning the first into the second.</li>
+  <li><strong>Does it fail on a machine that is not mine?</strong> Not "would it run" —
+  xcodebuild would. Whether the answer it gives there is still true.</li>
+</ol>
+
+<p>In every case the repair was smaller than the analysis: one column, one count, one
+bump, one reset. The expensive part was noticing that a green check says nothing until you
+can name what it checked.</p>
+    <div class="sources">
+      <h2>Sources</h2>
+      <ul>
+      <li><a href="https://realm.github.io/SwiftLint/configuration.html" target="_blank" rel="noreferrer">SwiftLint — configuration, baselines and included paths</a></li>
+      <li><a href="https://docs.gitlab.com/ci/jobs/job_control/" target="_blank" rel="noreferrer">GitLab CI/CD — control when jobs run: rules and when: never</a></li>
+      <li><a href="https://developer.apple.com/documentation/xcode/build-settings-reference" target="_blank" rel="noreferrer">Build settings reference — CURRENT_PROJECT_VERSION</a></li>
+      <li><a href="https://github.com/pointfreeco/swift-snapshot-testing" target="_blank" rel="noreferrer">swift-snapshot-testing — recording and asserting references</a></li>
+      </ul>
+    </div>
+  </article>
+  <p class="foot">Written from experience shipping iOS apps. No client names, no internal details, no unpublished numbers — everything citable here is public.</p>
+  <nav class="pager">
+    <a href="./what-a-green-build-does-not-prove.html">← What a green build does not prove</a>
+    <span></span>
+  </nav>
+
+</div>
+</body>
+</html>

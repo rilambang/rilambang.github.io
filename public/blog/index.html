@@ -3,83 +3,44 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Writing — Muhammad Ilham Rilambang</title>
+<title>Blog — Muhammad Ilham Rilambang</title>
 <meta name="description" content="Notes on the craft of iOS: platform rules, modularisation, build health, migration, review practice and the agent workflow I actually run.">
 <link rel="canonical" href="https://rilambang.github.io/blog/">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Writing — Muhammad Ilham Rilambang">
+<meta property="og:title" content="Blog — Muhammad Ilham Rilambang">
 <meta property="og:description" content="Notes on the craft of iOS: platform rules, modularisation, build health, migration, review practice and the agent workflow I actually run.">
 <meta property="og:url" content="https://rilambang.github.io/blog/">
 <meta property="og:image" content="https://rilambang.github.io/og.png">
 <meta name="twitter:card" content="summary_large_image">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%231f4fd8'/><text x='16' y='23' font-family='Georgia,serif' font-size='20' fill='%23fbfaf7' text-anchor='middle'>R</text></svg>">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='0' fill='%232563eb'/><text x='16' y='23' font-family='Georgia,serif' font-size='20' fill='%23ffffff' text-anchor='middle'>R</text></svg>">
 <link rel="stylesheet" href="./blog.css">
 </head>
 <body>
 <div class="wrap">
   <div class="top">
     <a class="who" href="/">Muhammad Ilham Rilambang</a>
-    <a href="./index.html">Writing</a>
+    <a href="./index.html">Blog</a>
   </div>
-  <h1>Writing</h1>
+  <h1>Blog</h1>
   <p class="lede lede--index">Notes on the craft of iOS — platform rules,
   modularisation, build health, migration, review practice, and the development
-  process I use with agents. Nine pieces, written October 2026.</p>
+  process I use with agents. 10 pieces, newest first, written in
+  October 2026.</p>
   <ul class="cards">
       <li>
-        <span class="num">01</span>
+        <span class="num">10</span>
         <div>
-          <a href="./kiosk-and-assessment-apps.html"><h2>Kiosk and assessment apps: what Apple will and won&#x27;t let you lock</h2></a>
-          <p>The hardest problem in a proctored exam app is not the exam. It is that the OS owns the device, and your anti-cheat has to be something Apple agreed to.</p>
-          <p class="meta" style="margin:8px 0 0">Platform rules · 4 min read</p>
+          <a href="./four-gates-that-certified-nothing.html"><h2>Four gates that passed without testing anything</h2></a>
+          <p>A lint gate that linted a directory, a pre-push script that ran two thirds of the tests and printed success, a build number shared by three uploads, and snapshots that recorded a session instead of a screen. Every one of them was green, and every green was true about the wrong thing.</p>
+          <p class="meta" style="margin:8px 0 0">Build systems · 4 min read</p>
         </div>
       </li>
       <li>
-        <span class="num">02</span>
+        <span class="num">09</span>
         <div>
-          <a href="./splitting-an-app-into-local-packages.html"><h2>Splitting an app into local Swift packages: what breaks first</h2></a>
-          <p>The files move in a day. The boundaries take a quarter. Here is the order things actually break in, and the one rule that keeps the first week from turning into a public-API explosion.</p>
-          <p class="meta" style="margin:8px 0 0">Modularisation · 4 min read</p>
-        </div>
-      </li>
-      <li>
-        <span class="num">03</span>
-        <div>
-          <a href="./build-time-is-a-dependency-graph-problem.html"><h2>Build time is a dependency-graph problem, not a machine problem</h2></a>
-          <p>Faster hardware buys you a constant factor. The graph is the exponent. Why the first fix is almost always deleting a script phase, and what to measure before you touch anything.</p>
-          <p class="meta" style="margin:8px 0 0">Build systems · 3 min read</p>
-        </div>
-      </li>
-      <li>
-        <span class="num">04</span>
-        <div>
-          <a href="./uikit-to-swiftui-without-a-rewrite.html"><h2>UIKit to SwiftUI without a rewrite</h2></a>
-          <p>The migration succeeds or fails on one decision: who owns navigation. Everything else is a sequence of small, reversible steps.</p>
-          <p class="meta" style="margin:8px 0 0">Migration · 3 min read</p>
-        </div>
-      </li>
-      <li>
-        <span class="num">05</span>
-        <div>
-          <a href="./a-design-system-is-a-review-policy.html"><h2>A design system is a review policy, not a library</h2></a>
-          <p>Importing a token package changes nothing. The system holds when the correct choice is easier than the wrong one — and when review refuses the local override.</p>
-          <p class="meta" style="margin:8px 0 0">Craft · 2 min read</p>
-        </div>
-      </li>
-      <li>
-        <span class="num">06</span>
-        <div>
-          <a href="./how-i-review-ios-pull-requests.html"><h2>How I review iOS pull requests</h2></a>
-          <p>Risk before style, deletion before addition, and three questions I ask on every diff. What I refuse to merge, and why the comment that explains the failure mode is worth ten that state the rule.</p>
-          <p class="meta" style="margin:8px 0 0">Behaviour · 3 min read</p>
-        </div>
-      </li>
-      <li>
-        <span class="num">07</span>
-        <div>
-          <a href="./the-ios-stack-i-actually-reach-for.html"><h2>The iOS stack I actually reach for</h2></a>
-          <p>Not the stack I would pick on a greenfield project — the one I reach for on someone else&#x27;s codebase at 3am. Every choice is priced by the next engineer&#x27;s ability to debug it.</p>
-          <p class="meta" style="margin:8px 0 0">Tooling · 3 min read</p>
+          <a href="./what-a-green-build-does-not-prove.html"><h2>What a green build does not prove</h2></a>
+          <p>Four things I described as verified this week that were not — a pipeline that compiled a working copy, a lock file that pinned a branch, a push I said would deploy once, and a release that changed nothing. Same mistake each time: a colour accepted as evidence about inputs.</p>
+          <p class="meta" style="margin:8px 0 0">Build systems · 5 min read</p>
         </div>
       </li>
       <li>
@@ -91,11 +52,59 @@
         </div>
       </li>
       <li>
-        <span class="num">09</span>
+        <span class="num">07</span>
         <div>
-          <a href="./what-a-green-build-does-not-prove.html"><h2>What a green build does not prove</h2></a>
-          <p>Four things I described as verified this week that were not — a pipeline that compiled a working copy, a lock file that pinned a branch, a push I said would deploy once, and a release that changed nothing. Same mistake each time: a colour accepted as evidence about inputs.</p>
-          <p class="meta" style="margin:8px 0 0">Build systems · 5 min read</p>
+          <a href="./the-ios-stack-i-actually-reach-for.html"><h2>The iOS stack I actually reach for</h2></a>
+          <p>Not the stack I would pick on a greenfield project — the one I reach for on someone else&#x27;s codebase at 3am. Every choice is priced by the next engineer&#x27;s ability to debug it.</p>
+          <p class="meta" style="margin:8px 0 0">Tooling · 3 min read</p>
+        </div>
+      </li>
+      <li>
+        <span class="num">06</span>
+        <div>
+          <a href="./how-i-review-ios-pull-requests.html"><h2>How I review iOS pull requests</h2></a>
+          <p>Risk before style, deletion before addition, and three questions I ask on every diff. What I refuse to merge, and why the comment that explains the failure mode is worth ten that state the rule.</p>
+          <p class="meta" style="margin:8px 0 0">Behaviour · 3 min read</p>
+        </div>
+      </li>
+      <li>
+        <span class="num">05</span>
+        <div>
+          <a href="./a-design-system-is-a-review-policy.html"><h2>A design system is a review policy, not a library</h2></a>
+          <p>Importing a token package changes nothing. The system holds when the correct choice is easier than the wrong one — and when review refuses the local override.</p>
+          <p class="meta" style="margin:8px 0 0">Craft · 2 min read</p>
+        </div>
+      </li>
+      <li>
+        <span class="num">04</span>
+        <div>
+          <a href="./uikit-to-swiftui-without-a-rewrite.html"><h2>UIKit to SwiftUI without a rewrite</h2></a>
+          <p>The migration succeeds or fails on one decision: who owns navigation. Everything else is a sequence of small, reversible steps.</p>
+          <p class="meta" style="margin:8px 0 0">Migration · 3 min read</p>
+        </div>
+      </li>
+      <li>
+        <span class="num">03</span>
+        <div>
+          <a href="./build-time-is-a-dependency-graph-problem.html"><h2>Build time is a dependency-graph problem, not a machine problem</h2></a>
+          <p>Faster hardware buys you a constant factor. The graph is the exponent. Why the first fix is almost always deleting a script phase, and what to measure before you touch anything.</p>
+          <p class="meta" style="margin:8px 0 0">Build systems · 3 min read</p>
+        </div>
+      </li>
+      <li>
+        <span class="num">02</span>
+        <div>
+          <a href="./splitting-an-app-into-local-packages.html"><h2>Splitting an app into local Swift packages: what breaks first</h2></a>
+          <p>The files move in a day. The boundaries take a quarter. Here is the order things actually break in, and the one rule that keeps the first week from turning into a public-API explosion.</p>
+          <p class="meta" style="margin:8px 0 0">Modularisation · 4 min read</p>
+        </div>
+      </li>
+      <li>
+        <span class="num">01</span>
+        <div>
+          <a href="./kiosk-and-assessment-apps.html"><h2>Kiosk and assessment apps: what Apple will and won&#x27;t let you lock</h2></a>
+          <p>The hardest problem in a proctored exam app is not the exam. It is that the OS owns the device, and your anti-cheat has to be something Apple agreed to.</p>
+          <p class="meta" style="margin:8px 0 0">Platform rules · 4 min read</p>
         </div>
       </li>
   </ul>

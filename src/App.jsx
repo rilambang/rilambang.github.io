@@ -95,7 +95,7 @@ export default function App() {
             <a href="#work">Work</a>
             <a href="#path">Shipping</a>
             <a href="#roles">Path</a>
-            <a href="blog/">Writing</a>
+            <a href="blog/">Blog</a>
             <a href="#contact">Contact</a>
           </nav>
         </div>
@@ -105,8 +105,7 @@ export default function App() {
         <section className="hero" id="top">
           <p className="hero__eyebrow">{ME.role} · {ME.where}</p>
           <h1 className="hero__title">
-            I ship iOS for products that<br />
-            people depend on.
+            I ship iOS for products that<br />{' '}people depend on.
           </h1>
           <p className="hero__blurb">{ME.blurb}</p>
           <p className="hero__links">
