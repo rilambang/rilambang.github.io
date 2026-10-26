@@ -190,14 +190,24 @@ blockquote p{{margin:0}}
 /* ── motion ────────────────────────────────────────────────────────────────
    Transform only, never opacity, on anything a reader needs. Diagrams draw their
    connectors, which are decoration: if an animation never runs, a box is a few
-   pixels low and a line is already there, and nothing is ever invisible.        */
+   pixels low and a line is already there, and nothing is ever invisible. The one
+   looping layer is the travelling accent segment, and it starts at opacity 0.      */
 @keyframes rise{{from{{transform:translateY(16px)}}to{{transform:none}}}}
 @keyframes draw{{to{{stroke-dashoffset:0}}}}
+@keyframes flow{{0%{{stroke-dashoffset:0;opacity:0}}
+  12%,88%{{opacity:.9}}100%{{stroke-dashoffset:-32;opacity:0}}}}
+@keyframes bar{{0%,100%{{opacity:1}}50%{{opacity:.4}}}}
 .post-head > *{{animation:rise .6s cubic-bezier(.22,.7,.3,1) both}}
 .post-head > :nth-child(2){{animation-delay:.05s}}
 .post-head > :nth-child(3){{animation-delay:.1s}}
 .fig .d{{stroke-dasharray:var(--len,320);stroke-dashoffset:var(--len,320);
   animation:draw .9s ease-out .2s both}}
+/* The loop: an accent segment travels each connector, and the accent bar on every
+   box breathes. Both are decoration layered over a diagram that is already complete,
+   so no state the page depends on ever lives in the animation. */
+.fig .p{{stroke-dasharray:8 24;stroke-linecap:round;opacity:0;
+  animation:flow 2.8s linear infinite}}
+.fig .a{{animation:bar 4.2s ease-in-out infinite}}
 .fig .n{{animation:rise .7s cubic-bezier(.22,.7,.3,1) both}}
 .fig .n:nth-child(2){{animation-delay:.06s}}
 .fig .n:nth-child(3){{animation-delay:.12s}}
@@ -213,7 +223,7 @@ blockquote p{{margin:0}}
 }}
 @media (prefers-reduced-motion:reduce){{
   html{{scroll-behavior:auto}}
-  .post-head > *,.fig .d,.fig .n,article > h2,article > p,article > ul,article > ol,
+  .post-head > *,.fig .d,.fig .p,.fig .n,.fig .a,article > h2,article > p,article > ul,article > ol,
   article > blockquote,article > pre,article > figure{{animation:none}}
   .fig .d{{stroke-dasharray:none;stroke-dashoffset:0}}
 }}
@@ -255,14 +265,21 @@ def _box(x, y, w, h, title, sub="", accent=False, n=0):
              f"{html.escape(sub)}</text>")
     return (f"<g class='n'><rect x='{x}' y='{y}' width='{w}' height='{h}' rx='10' "
             f"fill='{fill}' stroke='{stroke}'/>"
-            f"<rect x='{x}' y='{y}' width='3' height='{h}' rx='1.5' fill='{F_ACC}'/>"
+            f"<rect class='a' x='{x}' y='{y}' width='3' height='{h}' rx='1.5' fill='{F_ACC}'/>"
             f"{t}{s}</g>")
 
 
 def _line(x1, y1, x2, y2, draw=True):
     cls = " class='d'" if draw else ""
-    return (f"<line x1='{x1}' y1='{y1}' x2='{x2}' y2='{y2}' stroke='{F_LINE}' "
+    base = (f"<line x1='{x1}' y1='{y1}' x2='{x2}' y2='{y2}' stroke='{F_LINE}' "
             f"stroke-width='1.5'{cls}/>")
+    if not draw:
+        return base
+    # A short accent segment sliding along the connector, forever. The connector
+    # itself stays solid and already drawn; this is the only part that loops, so a
+    # reader who never runs the animation still sees the whole diagram.
+    return base + (f"<line class='p' x1='{x1}' y1='{y1}' x2='{x2}' y2='{y2}' "
+                   f"stroke='{F_ACC}' stroke-width='1.5'/>")
 
 
 def _arrow(x1, y1, x2, y2):
