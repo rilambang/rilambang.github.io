@@ -701,7 +701,7 @@ img { display: block; max-width: 100%; }
 .tenure__axis {
   position: relative;
   height: 18px;
-  margin: 8px 92px 0 156px;
+  margin: 8px 108px 0 156px;
   border-top: 1px solid var(--line);
 }
 

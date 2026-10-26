@@ -32,21 +32,24 @@ function useReveal() {
   }, [])
 }
 
-const year = (iso) => Number(iso.slice(0, 4)) + (Number(iso.slice(5, 7)) - 1) / 12
-const AXIS = [2017, 2027]
+const now = () => {
+  const d = new Date()
+  return d.getFullYear() + d.getMonth() / 12
+}
+const AXIS = [2021, 2027]
 
 const Tenure = () => {
   const pct = (n) => ((n - AXIS[0]) / (AXIS[1] - AXIS[0])) * 100
   return (
     <div className="tenure" data-reveal>
       <div className="tenure__head">
-        <span className="tenure__label">First listed</span>
-        <span className="tenure__label tenure__label--end">Last update</span>
+        <span className="tenure__label">Since</span>
+        <span className="tenure__label tenure__label--end">Until</span>
       </div>
       <ol className="tenure__rows">
         {TENURE.rows.map((r) => {
-          const a = year(r.from)
-          const b = year(r.to)
+          const a = r.from
+          const b = r.to ?? now()
           return (
             <li key={r.name}>
               <span className="tenure__name">{r.name}</span>
@@ -57,20 +60,21 @@ const Tenure = () => {
                 />
               </span>
               <span className="tenure__years">
-                {r.from.slice(0, 4)}–{r.live ? 'now' : r.to.slice(0, 4)}
+                {Math.floor(r.from)}–{r.live ? 'now' : Math.floor(r.to)}
               </span>
             </li>
           )
         })}
       </ol>
       <div className="tenure__axis" aria-hidden="true">
-        {[2017, 2019, 2021, 2023, 2025, 2027].map((y) => (
+        {[2021, 2023, 2025, 2027].map((y) => (
           <span key={y} style={{ left: `${pct(y)}%` }}>{y}</span>
         ))}
       </div>
       <p className="tenure__note">
-        Public App Store listing dates, as of {TENURE.asOf} — {TENURE.source}.
-        No account analytics: installs, retention and crash rate are not public.
+        My time on each app, not the App Store listing. IndiHome and Antares ran
+        together until 2025; SATUSEHAT and MyPertamina were occasional work in the
+        Agree years, so they are not charted.
       </p>
     </div>
   )

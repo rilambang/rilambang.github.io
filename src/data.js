@@ -71,20 +71,16 @@ export const WORK = [
   },
 ]
 
-// Public App Store listing dates, pulled from itunes.apple.com/lookup?country=id.
-// No account data, no key, no ratings: the two biggest rating samples are the two
-// lowest scores, so a rating chart would argue with the page instead of supporting it.
-// Re-run the URL to check any row.
+// My time on each app, not the app's App Store life. IndiHome and Antares were
+// carried together, so those two are the only bars that overlap; the rest are
+// sequential. MyPertamina and SATUSEHAT were occasional work inside the Agree
+// years — left off the chart until their dates are precise enough to draw.
 export const TENURE = {
-  asOf: '2026-10-18',
-  source: 'itunes.apple.com/lookup?country=id',
   rows: [
-    { name: 'MyPertamina', from: '2017-10-20', to: '2026-10-06', live: true },
-    { name: 'SATUSEHAT Mobile', from: '2020-04-13', to: '2026-10-10', live: true },
-    { name: 'IndiHome Eazy', from: '2019-12-05', to: '2024-07-02', live: false },
-    { name: 'Antares Eazy', from: '2023-04-11', to: '2026-09-18', live: true },
-    { name: 'Agree Mart', from: '2022-04-28', to: '2023-10-22', live: false },
-    { name: 'Pijar Sekolah', from: '2025-07-28', to: '2026-10-16', live: true },
+    { name: 'Pijar Sekolah', from: 2025.5, to: null, live: true },
+    { name: 'Antares Eazy', from: 2023.25, to: 2025.5 },
+    { name: 'IndiHome Eazy', from: 2022, to: 2025.5 },
+    { name: 'Agree Mart', from: 2021, to: 2022 },
   ],
 }
 
