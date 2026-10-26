@@ -484,6 +484,49 @@ def fig_four_gates():
                 "result was believed to make", bottom + 46, b)
 
 
+def fig_one_file():
+    """Fan-in: five responsibilities pointing at the file that happens to be open."""
+    b = _box(20, 16, 600, 54, "The exam screen's view model",
+             "one file, and no rule about what may not move into it", accent=True)
+    boxes = [
+        (20, "Question state", "answered, flagged, untouched"),
+        (225, "The answer rule", "when may this leave the device"),
+        (430, "The offline queue", "and its retry pump"),
+        (20, "Navigation", "through the exam gate"),
+        (225, "The network calls", "one import away"),
+    ]
+    ys = [110, 110, 110, 186, 186]
+    for (x, t, s), y in zip(boxes, ys):
+        b += _arrow(x + 90, 70, x + 90, y - 4)
+        b += _box(x, y, 190, 58, t, s)
+    b += _cap(430, 214, "and a sixth is always", 11.5)
+    b += _cap(430, 232, "one story away", 11.5)
+    return _svg("Five responsibilities fanning into a single view model file", 262, b)
+
+
+def fig_clean_bill():
+    """The wall works. The bill is the count — drawn as a grid, because the point is
+    quantity, not names."""
+    b = _box(20, 16, 300, 56, "Feature", "view, presenter, its state")
+    b += _box(20, 96, 300, 56, "Data", "repository, mappers, the network")
+    b += _box(20, 176, 300, 56, "Domain", "entities, repository protocols")
+    for y in (72, 152):
+        b += _arrow(170, y, 170, y + 20)
+
+    for i in range(24):
+        x = 380 + (i % 6) * 40
+        y = 16 + (i // 6) * 42
+        b += (f"<rect x='{x}' y='{y}' width='34' height='32' rx='6' "
+              f"fill='{F_WARM if i % 7 else F_TINT}' stroke='{F_LINE}'/>")
+    b += _cap(380, 218, "43 packages", 13, F_ACC, weight="600")
+    b += _cap(380, 240, "each with a repo, a manifest, a lock row,", 11.5)
+    b += _cap(380, 258, "a CI path and a checkout to keep in sync", 11.5)
+    b += _cap(20, 288, "The arrows are a compile error, and that part worked. Eight features and twelve core modules")
+    b += _cap(20, 306, "later, the count is the cost.")
+    return _svg("A three-layer feature on the left behind a compiler wall, and forty-three "
+                "packages of bookkeeping on the right", 324, b)
+
+
 def fig_three_acts():
     """A table again, for the same reason as the gates: the interesting thing is the
     third column. What the screen owned went down while the bill went up, then got paid."""
@@ -544,7 +587,15 @@ FIGURES = {
         fig_four_gates(),
         "Four gates, one mistake each: the check touched one thing and was trusted "
         "about another. Nothing in the middle column is the shipping artifact."),
-    "mvvm-to-clean-to-viper": (
+    "mvvm-to-viper-part-one": (
+        fig_one_file(),
+        "Five responsibilities, one file, and no rule that says a sixth cannot move in. "
+        "Every one of them arrived as the smallest change that would get a story done."),
+    "mvvm-to-viper-part-two": (
+        fig_clean_bill(),
+        "The wall is on the left, and it works. The bill is on the right, and it compounds "
+        "per module rather than per feature."),
+    "mvvm-to-viper-part-three": (
         fig_three_acts(),
         "Three passes over one app. The middle row is where the code got better and the "
         "work got heavier — and the last row is why VIPER was worth paying for, here."),
@@ -1523,123 +1574,233 @@ can name what it checked.</p>
         ],
     },
     {
-        "slug": "mvvm-to-clean-to-viper",
+        "slug": "mvvm-to-viper-part-one",
         "tag": "Architecture",
-        "title": "MVVM to Clean to VIPER: three architectures, one exam app",
-        "summary": "Three passes over the same proctored-exam app: what MVVM let one file own, what clean boundaries fixed and what they cost in package count, and why VIPER was mostly a rename that finally made the screen own its rules.",
+        "title": "MVVM to VIPER, part one: when the view model is the app",
+        "summary": "First of three. What MVVM gets right, what the proctored exam screen's view model quietly took ownership of, and why a pattern that works at five screens stops being local at fifty.",
         "body": """
 <p class="lede">The review comment that started this was one I wrote on my own diff: <em>why does
 the exam view model know the network layer, the router, the answer queue, and the
-invigilator?</em> Three architectures later, the answer is that nothing in MVVM said it
-couldn't — and every migration since has been about getting the compiler to say no.</p>
+invigilator?</em> I had no good answer, so the next three architecture passes were spent earning
+one. This is part one of three.</p>
 
 <p>The app is a proctored exam client: a million students sit exams on it, usually on school
-Wi-Fi, usually with someone watching them. That prices every architecture decision differently.
-A failed exam is not a bad afternoon, and the modules have to keep shipping while the structure
-moves underneath them.</p>
+Wi-Fi, usually with someone watching them. That prices every decision differently. A failed exam
+is not a bad afternoon, and the modules have to keep shipping while the structure moves
+underneath them.</p>
 
-<h2>Act one: MVVM, when the view model is the app</h2>
+<h2>MVVM is the right answer, at the size you meet it</h2>
 
-<p>MVVM is the right answer at the size where most of us meet it. A screen, some published
-state, a service in the initializer. You can hold the whole feature in your head.</p>
+<p>A screen, some published state, a service in the initializer. The whole feature fits in your
+head, and so does the diff. That is where most of us meet MVVM, and it is why most of us are
+right to use it.</p>
 
-<p>Then the feature grows, and nothing in MVVM stops growth from landing in one place. The exam
-screen's view model ended up owning:</p>
+<p>The trouble is not that MVVM is wrong. It is that MVVM is a rendering pattern with no opinion
+about anything else — where a rule lives, who owns navigation, which layer may speak in which
+data shape. Nature abhors that vacuum, and the nearest thing to fill it is the view model.</p>
+
+<h2>What one file ended up owning</h2>
+
+<p>Grow a feature for a year and the list stops being a list of one screen's concerns:</p>
 
 <ul>
   <li>what state each question is in — answered, flagged as unsure, untouched;</li>
   <li>the rule for when an answer is allowed to leave the device;</li>
   <li>the offline answer queue and its retry pump;</li>
-  <li>navigation through the exam gate;</li>
+  <li>navigation through the exam gate, including the paths that must not be reachable;</li>
   <li>and the HTTP calls, because importing the network manager was one line and a review
   away.</li>
 </ul>
 
-<p>MVVM has no opinion about where business rules live, so they live in the view model. No
-opinion about navigation, so navigation lives in the view model. No opinion about data shapes,
-so the view model starts speaking in wire types. Ours took the API's finish payload straight at
-the seam where the screen said "finish". That is the tell: the UI is now authored by the backend
-schema.</p>
+<p>None of those arrived as an architectural decision. Each arrived as the smallest possible
+change to get a story done, in the file that was already open. That is how a view model becomes
+an app.</p>
 
-<p>Testing followed the same shape. To test one rule you built a view model, mocked a network
-manager, subscribed to a Combine sink, and hoped. Fourteen exam suites lived in the app test
-target, so a rule about the answer queue could not be tested without building the app.</p>
+<h2>The tell is the wire type</h2>
 
-<p>None of that was a skill problem. It was a blast-radius problem: every rule had access to
-everything, so every change could touch anything.</p>
+<p>You can date the moment a screen stopped owning its own shape. It is when the backend's
+payload shows up at the seam where the UI decides something.</p>
 
-<h2>Act two: clean, or make the compiler hold the line</h2>
+<p>Ours took the API's finish request — a JSON shape with the server's field names on it —
+straight where the screen said "finish". Nothing crashed. It just meant the screen was now
+authored by someone else's schema, and the day that schema changed, the change landed in the
+UI. A screen that speaks wire types cannot be reused, cannot be tested alone, and cannot be
+reasoned about without the API documentation open.</p>
 
-<p>The first correction was not a rewrite of the view model. It was a wall.</p>
+<h2>Testing takes the shape of the code</h2>
 
-<p>Per feature: a domain target with entities and repository protocols, a data target with the
-real repository, mappers and the network, and a feature target with the view and its state —
-separate local packages with an acyclic graph between them. The folder names are not the point.
-The point is that the graph is a compiler fact: a presenter that imports the networking module
-does not get a review comment, it gets a build error.</p>
+<p>Because the rules lived in a file that also knew about UIKit, the network and navigation,
+testing one rule meant building all of it: construct the view model, mock the network manager,
+subscribe to a Combine sink, and hope the thing you cared about fires before the test
+times out.</p>
 
-<p>That one property paid immediately:</p>
+<p>Fourteen exam suites lived inside the app test target for exactly this reason. A rule about
+the offline answer queue — a rule that is pure logic and could run in milliseconds — could not be
+tested without building the app it was embedded in.</p>
+
+<h2>Why I would still defend it</h2>
+
+<p>At five screens and two engineers, MVVM is not a compromise; it is the cheapest thing that
+works, and every alternative is overhead you have not earned yet. The pattern did not fail here.
+It held exactly as long as the feature fit inside one file, and it kept holding for a while
+after it stopped fitting, because everyone was polite about it.</p>
+
+<h2>Where it breaks</h2>
+
+<p>It breaks on blast radius, not on taste. When every rule can reach everything, no change is
+local: a tweak to the answer state can touch the gate, the queue and the reporting path, and the
+review has to reason about all of it at once. Nobody wrote that down anywhere — it just became
+true.</p>
+
+<p>That is not a skill problem, and it is not fixed by discipline. It is fixed by making some
+things impossible to import. Part two is the wall we built, and the bill that came with it.</p>
+""",
+        "sources": [
+            ("The Clean Architecture — Robert C. Martin", "https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html"),
+            ("Swift API Design Guidelines", "https://www.swift.org/documentation/api-design-guidelines/"),
+        ],
+    },
+    {
+        "slug": "mvvm-to-viper-part-two",
+        "tag": "Architecture",
+        "title": "MVVM to VIPER, part two: the wall, and the bill for it",
+        "summary": "Second of three. Three targets per feature make the dependency graph a compiler fact — and forty-three packages make it a second product. The clean architecture win, and the cost I had not priced in.",
+        "body": """
+<p class="lede">The first correction was not a rewrite of the view model. It was a wall. The wall
+is the part I would keep from all three architectures. The bill that arrived with it is the part
+I would renegotiate.</p>
+
+<h2>Three targets, one feature</h2>
+
+<p>Per feature: a domain target with the entities and the repository protocols, a data target
+with the real repository, the mappers and the network, and a feature target with the view and
+its state. Separate local packages, with an acyclic graph between them.</p>
+
+<p>The folder names are not the point. The point is that the dependency graph is a compiler
+fact. A presenter that tries to import the networking module does not get a review comment and
+a discussion about layering; it gets a build error. That is a different category of enforcement
+from a convention document, and it is the only kind that survives a deadline.</p>
+
+<h2>What the wall paid for</h2>
 
 <ul>
   <li><strong>Rules became testable in milliseconds.</strong> No UIKit, no network, no app. An
-  interactor and a fake repository.</li>
-  <li><strong>Wire types stopped leaking.</strong> A mapper moves wire type to entity and back,
-  with round-trip tests, so the day the backend renames a field the diff is one file instead of
-  eleven screens.</li>
-  <li><strong>Reuse stopped meaning "copy".</strong> Question types moved behind their own
-  models instead of being open-coded per screen.</li>
+  interactor and a fake repository. A test that used to be an integration test became a
+  unit test, which is the difference between running it on save and never running it.</li>
+  <li><strong>Wire types stopped leaking.</strong> A mapper moves the wire type to an entity and
+  back, with round-trip tests. The day the backend renames a field, the diff is one file instead
+  of eleven screens.</li>
+  <li><strong>Reuse stopped meaning "copy".</strong> The question types — multiple choice, essay,
+  matching, drag and drop — moved behind their own models instead of being open-coded per
+  screen. Three screens that had drifted apart became one behaviour.</li>
 </ul>
+
+<p>None of that is decoration. On a product this size the first item alone pays for the wall:
+the rules that decide whether a student's answer survives a dropped connection are the rules
+most worth a test, and before this they were the hardest to test.</p>
 
 <p>And then it over-delivered, the way architecture tends to.</p>
 
-<h2>The bill for clean: forty-three packages</h2>
+<h2>The bill: forty-three packages</h2>
 
-<p>Three layers per feature, times eight features, plus a dozen shared core modules, and we were
-at <strong>43 sibling packages</strong>. Each one: its own repository, its own manifest, its own
-row in the lock file, its own entry in the CI path list, its own checkout to keep in sync. A
-single feature crossed three repos. A cross-cutting change was a three-repo merge request with
-a lock bump.</p>
+<p>Three layers per feature, times eight features, plus a dozen shared core modules, and the app
+had <strong>43 sibling packages</strong>. Each one came with its own repository, its own
+manifest, its own row in the lock file, its own entry in the CI path list, and its own checkout
+to keep in sync.</p>
 
-<p>Layering made the code cleaner and the work heavier. Clean boundaries are cheap per module
-and expensive per module count, which is the trade I had not priced in. At 43, the module system
-had become a second product we maintained.</p>
+<p>A single feature crossed three repos. A cross-cutting change — a new answer state, say — was a
+three-repo merge request with a lock bump, and a reviewer who had to hold three diffs in their
+head to see one story. Nothing was wrong with any individual module. The count was the
+problem.</p>
 
-<p>There was a quieter failure too. Clean gave us a home for entities and repositories, but the
-view model still had three jobs: view state, use-case orchestration, navigation. The data layer
-got better and the screen did not change at all.</p>
+<p>Clean boundaries are cheap per module and expensive per module count, and that exponent is
+what I had not priced in. At 43, the module system had become a second product we maintained:
+it had its own tooling, its own failure modes, its own drift.</p>
 
-<h2>Act three: VIPER, which is mostly a rename and a confession</h2>
+<h2>The quieter failure</h2>
 
-<p>Here is the part that does not go in the architecture diagram: we did not adopt VIPER because
-it is better on paper. We adopted it because the view model had already become a presenter, and
-naming it one was the cheapest way to stop the next person from putting rules back into it.</p>
+<p>Clean gave us a home for entities and repositories, and it did nothing at all for the screen.
+The view model still had three jobs — view state, use-case orchestration, navigation — and still
+had no rule about which was which.</p>
 
-<p>The migration was mostly mechanical, which is the best thing you can say about an
-architecture change on a product a million people depend on:</p>
+<p>That is the part worth saying plainly, because it is the part that gets lost in the diagram:
+the data layer got better, the screen did not change, and the screen was the thing generating
+the defects. We had improved the half of the architecture that was already tractable.</p>
+
+<h2>What I would have kept cheaper</h2>
+
+<p>One package per feature, with the three layers as targets inside it. Same compiler walls, same
+testable domain, a third of the bookkeeping — one repo, one manifest, one lock row, one CI path
+per feature instead of three. The boundaries that mattered were between targets, not between
+repositories, and the repository split bought us nothing a target didn't already enforce.</p>
+
+<p>Part three is what happened when the screen finally got the same treatment, and why the honest
+name for it was a rename.</p>
+""",
+        "sources": [
+            ("The Clean Architecture — Robert C. Martin", "https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html"),
+            ("Creating Swift Packages — WWDC19 session 410", "https://developer.apple.com/videos/play/wwdc2019/410/"),
+            ("Improving the speed of incremental builds — Apple Developer Documentation", "https://developer.apple.com/documentation/xcode/improving-the-speed-of-incremental-builds"),
+        ],
+    },
+    {
+        "slug": "mvvm-to-viper-part-three",
+        "tag": "Architecture",
+        "title": "MVVM to VIPER, part three: a rename and a confession",
+        "summary": "Third of three. VIPER fixed nothing Clean had not, except the last unowned thing — the screen. Six use cases, a router with one owner, forty-three packages down to nineteen, and the operations that made the migration survivable.",
+        "body": """
+<p class="lede">We did not adopt VIPER because it is better on paper. We adopted it because the
+view model had already become a presenter, and naming it one was the cheapest way to stop the
+next person from putting rules back into it. This part is the least reverent of the three.</p>
+
+<h2>A rename is documentation</h2>
+
+<p>Twenty-two view models became presenters. That is the whole change in one line, and it is not
+a small thing. Type names are the documentation that survives a rewrite: nobody opens the
+architecture document, and everybody reads autocomplete. After the rename, the file that says
+"this is a presenter" is harder to stuff business rules into — not impossible, harder, and
+harder is what architecture is actually made of.</p>
+
+<h2>Six use cases instead of one file</h2>
+
+<p>The rules moved out one at a time, each into an interactor with a name that says what it
+does: load the questions, submit an answer, poll the status, report an isolation event, finish,
+flush the offline queue.</p>
+
+<p>Each owns one rule, each is testable with a fake, and each can be reasoned about without
+loading the three thousand lines around it. The presenter kept what a presenter should have:
+view state, and the intent that changes it.</p>
+
+<h2>The router, given an owner</h2>
+
+<p>Feature routers own one question — where does this button go — while the app-level
+coordinator still owns the stack itself. A VIPER router is often a god object in disguise, and
+the thing that prevents it is deciding, once, that there is exactly one owner above it.</p>
+
+<p>This matters more here than in most apps, because navigation <em>is</em> a product rule: an
+exam gate, a consent screen, a state the student must not be able to pop back out of. That is
+the case where the ceremony earns itself.</p>
+
+<h2>The last wire type, and the views that came home</h2>
 
 <ul>
-  <li><strong>Twenty-two view models became presenters.</strong> Type names are documentation
-  that survives a rewrite. Nobody reads the architecture doc; everyone reads autocomplete.</li>
-  <li><strong>The rules moved out, one use case at a time</strong> — load the questions, submit
-  an answer, poll the status, report an isolation event, finish, flush the offline queue. Each
-  owns one rule, and each is testable with a fake.</li>
-  <li><strong>The router got a real job.</strong> Feature routers own "where does this button
-  go"; the app-level coordinator still owns the stack. A VIPER router is often a god object, and
-  a single owner above it is what prevents that.</li>
-  <li><strong>The last wire type left the domain.</strong> The network layer can now change
-  without touching a screen.</li>
-  <li><strong>The question views came home.</strong> They had been in the shared UI package,
-  which meant every feature that wanted a checkbox imported the exam module's world. The core
-  lost three dependencies.</li>
+  <li><strong>The finish payload became an entity.</strong> The network layer can now change
+  without touching a screen — the debt from part one, paid off last.</li>
+  <li><strong>The question views came home.</strong> They had been sitting in the shared UI
+  package, which meant any feature that wanted a checkbox imported the exam module's world. They
+  moved into the exam feature, and the shared core lost three dependencies.</li>
   <li><strong>The tests came home too.</strong> Fourteen suites moved into the feature package,
-  which let us delete five test-only escape hatches that existed so app-side tests could reach
-  presenter internals. Deleting an escape hatch is better architecture than adding a
-  protocol.</li>
+  which let us delete five test-only escape hatches that existed solely so app-side tests could
+  reach presenter internals. Deleting an escape hatch is better architecture than adding a
+  protocol to justify it.</li>
 </ul>
 
-<p>The module count went from <strong>43 to 19</strong>: one package per feature, exporting the
-same three products under unchanged names, so not one <code>import</code> line changed. That is
-the only reason a 43-to-19 consolidation landed as a series of boring commits.</p>
+<h2>Forty-three to nineteen</h2>
+
+<p>One package per feature, exporting the same three products under unchanged names, so not one
+<code>import</code> line changed anywhere. That is the only reason a 43-to-19 consolidation
+landed as a series of boring commits, and boring commits are the only kind that land on a
+product a million people depend on.</p>
 
 <p>The layout is now the thing you can explain in ten seconds: entity and interactor in the
 domain, repository and mappers in data, view, presenter and router in the feature.</p>
@@ -1648,24 +1809,24 @@ domain, repository and mappers in data, view, presenter and router in the featur
 
 <p>Not the architecture. The operations around it.</p>
 
-<p><strong>A pilot and a script.</strong> One feature was consolidated by hand, a merge script
-was written from the exact commands that worked, and the remaining slices ran through it.
-Mechanical batches do not get eight review loops; they get one reviewed script.</p>
+<p><strong>A pilot and a script.</strong> One feature was consolidated by hand, a merge script was
+written from the exact commands that worked, and the remaining slices ran through it. Mechanical
+batches do not get eight review loops; they get one reviewed script.</p>
 
 <p><strong>A lock file and a sync step.</strong> A revision pinned per module, and a sync that
 fails loudly on drift. Without that, nineteen packages times eight engineers is a support
 desk.</p>
 
 <p><strong>A gate that could say no.</strong> Device build, the full app suite, every package
-suite, lint. Once at the end of a batch, not per slice. And for the exam slice specifically, a
+suite, lint — once at the end of a batch, not per slice. And for the exam slice specifically, a
 real proctored exam on a real device: start, answer offline, restore the network, flush, finish,
 isolation path. A simulator pass does not prove a queue replays.</p>
 
 <p><strong>A build-only rule for the mechanical work.</strong> During the rename and the
-consolidation the compiler was the gate, and the full suite ran once at the end. That sounds
-reckless. It was not: the changes were renames and file moves, and running a thousand tests after
-each of twenty-two renames turns a two-day job into two weeks. The rule had a written expiry
-date, and the full gate ran before anything shipped.</p>
+consolidation, the compiler was the gate and the full suite ran once at the end. That sounds
+reckless. It was not: the changes were renames and file moves, and running a thousand tests
+after each of twenty-two renames turns a two-day job into two weeks. The rule had a written
+expiry date, and the full gate ran before anything shipped.</p>
 
 <h2>What I would do differently</h2>
 
@@ -1675,26 +1836,25 @@ date, and the full gate ran before anything shipped.</p>
   bookkeeping.</li>
   <li><strong>Do not clean the layer that is not hurting.</strong> I improved data access for
   months while the screen kept growing. The screen was the problem.</li>
-  <li><strong>Migrate the riskiest path first.</strong> The exam is the app, and we did it
-  last. Doing it first would have been scarier, and it would have found the real constraints
-  before three other slices depended on them.</li>
-  <li><strong>Give navigation a deliberate owner on day one.</strong> Every architecture lets
-  the router drift into everything or nothing. "The coordinator owns the stack, feature routers
-  own the destination" is a five-minute decision that saves a rewrite.</li>
+  <li><strong>Migrate the riskiest path first.</strong> The exam is the app, and we did it last.
+  Doing it first would have been scarier, and it would have found the real constraints — the
+  offline queue, the gate, the isolation reporting — before three other slices depended on
+  them.</li>
+  <li><strong>Give navigation a deliberate owner on day one.</strong> Every architecture lets the
+  router drift into everything or nothing, and the decision costs five minutes.</li>
 </ul>
 
-<h2>The honest summary</h2>
+<h2>Choosing today</h2>
 
 <p>MVVM got the app to a million students. Clean made the data layer testable and the boundaries
 real, and cost us a module system. VIPER fixed nothing Clean had not already fixed — it made the
 last unowned thing, the screen, own its responsibilities, and made the architecture readable in
 autocomplete.</p>
 
-<p>If you are choosing today: MVVM while the feature fits in one head, clean boundaries the
-moment a rule has to be tested without a screen, and VIPER when navigation is a product rule
-rather than a detail. Here navigation <em>is</em> the product — a gate, a consent screen, an
-invigilator watching — so VIPER earned its ceremony. Most apps do not have that, and should not
-pay for it.</p>
+<p>If you are choosing now: MVVM while the feature fits in one head, clean boundaries the moment
+a rule has to be tested without a screen, and VIPER when navigation is a product rule rather
+than a detail. Here navigation <em>is</em> the product, so VIPER earned its ceremony. Most apps
+do not have that, and should not pay for it.</p>
 
 <p>The architecture that wins is not the one with the most layers. It is the one where the
 compiler can tell the next engineer no without me in the room.</p>

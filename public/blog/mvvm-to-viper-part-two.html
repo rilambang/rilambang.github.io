@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MVVM to VIPER, part two: the wall, and the bill for it</title>
+<meta name="description" content="Second of three. Three targets per feature make the dependency graph a compiler fact — and forty-three packages make it a second product. The clean architecture win, and the cost I had not priced in.">
+<link rel="canonical" href="https://rilambang.github.io/blog/mvvm-to-viper-part-two.html">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MVVM to VIPER, part two: the wall, and the bill for it">
+<meta property="og:description" content="Second of three. Three targets per feature make the dependency graph a compiler fact — and forty-three packages make it a second product. The clean architecture win, and the cost I had not priced in.">
+<meta property="og:url" content="https://rilambang.github.io/blog/mvvm-to-viper-part-two.html">
+<meta property="og:image" content="https://rilambang.github.io/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='0' fill='%232563eb'/><text x='16' y='23' font-family='Georgia,serif' font-size='20' fill='%23ffffff' text-anchor='middle'>R</text></svg>">
+<link rel="stylesheet" href="./blog.css">
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <a class="who" href="/">Muhammad Ilham Rilambang</a>
+    <a href="./index.html">Blog</a>
+  </div>
+  <header class="post-head">
+    <p class="chip">Architecture</p>
+    <h1>MVVM to VIPER, part two: the wall, and the bill for it</h1>
+    <p class="meta">3 min read · Muhammad Ilham Rilambang</p>
+  </header>
+  <article>
+<p class="lede">The first correction was not a rewrite of the view model. It was a wall. The wall
+is the part I would keep from all three architectures. The bill that arrived with it is the part
+I would renegotiate.</p>
+
+  <figure class="fig"><svg viewBox='0 0 640 324' width='640' height='324' role='img' aria-label='A three-layer feature on the left behind a compiler wall, and forty-three packages of bookkeeping on the right' font-family='Helvetica Neue,Helvetica,Arial,sans-serif' xmlns='http://www.w3.org/2000/svg'><g class='n'><rect x='20' y='16' width='300' height='56' rx='10' fill='#161822' stroke='rgba(255, 255, 255, 0.12)'/><rect x='20' y='16' width='3' height='56' rx='1.5' fill='#8ab4ff'/><text x='34' y='42' font-size='13' font-weight='600' fill='#f4f6fb'>Feature</text><text x='34' y='62' font-size='11.5' fill='#aab2c4'>view, presenter, its state</text></g><g class='n'><rect x='20' y='96' width='300' height='56' rx='10' fill='#161822' stroke='rgba(255, 255, 255, 0.12)'/><rect x='20' y='96' width='3' height='56' rx='1.5' fill='#8ab4ff'/><text x='34' y='122' font-size='13' font-weight='600' fill='#f4f6fb'>Data</text><text x='34' y='142' font-size='11.5' fill='#aab2c4'>repository, mappers, the network</text></g><g class='n'><rect x='20' y='176' width='300' height='56' rx='10' fill='#161822' stroke='rgba(255, 255, 255, 0.12)'/><rect x='20' y='176' width='3' height='56' rx='1.5' fill='#8ab4ff'/><text x='34' y='202' font-size='13' font-weight='600' fill='#f4f6fb'>Domain</text><text x='34' y='222' font-size='11.5' fill='#aab2c4'>entities, repository protocols</text></g><line x1='170' y1='72' x2='170' y2='92' stroke='rgba(255, 255, 255, 0.12)' stroke-width='1.5' class='d'/><polygon points='170,92 165.5,84.8 174.5,84.8' fill='rgba(255, 255, 255, 0.12)'/><line x1='170' y1='152' x2='170' y2='172' stroke='rgba(255, 255, 255, 0.12)' stroke-width='1.5' class='d'/><polygon points='170,172 165.5,164.8 174.5,164.8' fill='rgba(255, 255, 255, 0.12)'/><rect x='380' y='16' width='34' height='32' rx='6' fill='#1b2440' stroke='rgba(255, 255, 255, 0.12)'/><rect x='420' y='16' width='34' height='32' rx='6' fill='rgba(255, 255, 255, 0.05)' stroke='rgba(255, 255, 255, 0.12)'/><rect x='460' y='16' width='34' height='32' rx='6' fill='rgba(255, 255, 255, 0.05)' stroke='rgba(255, 255, 255, 0.12)'/><rect x='500' y='16' width='34' height='32' rx='6' fill='rgba(255, 255, 255, 0.05)' stroke='rgba(255, 255, 255, 0.12)'/><rect x='540' y='16' width='34' height='32' rx='6' fill='rgba(255, 255, 255, 0.05)' stroke='rgba(255, 255, 255, 0.12)'/><rect x='580' y='16' width='34' height='32' rx='6' fill='rgba(255, 255, 255, 0.05)' stroke='rgba(255, 255, 255, 0.12)'/><rect x='380' y='58' width='34' height='32' rx='6' fill='rgba(255, 255, 255, 0.05)' stroke='rgba(255, 255, 255, 0.12)'/><rect x='420' y='58' width='34' height='32' rx='6' fill='#1b2440' stroke='rgba(255, 255, 255, 0.12)'/><rect x='460' y='58' width='34' height='32' rx='6' fill='rgba(255, 255, 255, 0.05)' stroke='rgba(255, 255, 255, 0.12)'/><rect x='500' y='58' width='34' height='32' rx='6' fill='rgba(255, 255, 255, 0.05)' stroke='rgba(255, 255, 255, 0.12)'/><rect x='540' y='58' width='34' height='32' rx='6' fill='rgba(255, 255, 255, 0.05)' stroke='rgba(255, 255, 255, 0.12)'/><rect x='580' y='58' width='34' height='32' rx='6' fill='rgba(255, 255, 255, 0.05)' stroke='rgba(255, 255, 255, 0.12)'/><rect x='380' y='100' width='34' height='32' rx='6' fill='rgba(255, 255, 255, 0.05)' stroke='rgba(255, 255, 255, 0.12)'/><rect x='420' y='100' width='34' height='32' rx='6' fill='rgba(255, 255, 255, 0.05)' stroke='rgba(255, 255, 255, 0.12)'/><rect x='460' y='100' width='34' height='32' rx='6' fill='#1b2440' stroke='rgba(255, 255, 255, 0.12)'/><rect x='500' y='100' width='34' height='32' rx='6' fill='rgba(255, 255, 255, 0.05)' stroke='rgba(255, 255, 255, 0.12)'/><rect x='540' y='100' width='34' height='32' rx='6' fill='rgba(255, 255, 255, 0.05)' stroke='rgba(255, 255, 255, 0.12)'/><rect x='580' y='100' width='34' height='32' rx='6' fill='rgba(255, 255, 255, 0.05)' stroke='rgba(255, 255, 255, 0.12)'/><rect x='380' y='142' width='34' height='32' rx='6' fill='rgba(255, 255, 255, 0.05)' stroke='rgba(255, 255, 255, 0.12)'/><rect x='420' y='142' width='34' height='32' rx='6' fill='rgba(255, 255, 255, 0.05)' stroke='rgba(255, 255, 255, 0.12)'/><rect x='460' y='142' width='34' height='32' rx='6' fill='rgba(255, 255, 255, 0.05)' stroke='rgba(255, 255, 255, 0.12)'/><rect x='500' y='142' width='34' height='32' rx='6' fill='#1b2440' stroke='rgba(255, 255, 255, 0.12)'/><rect x='540' y='142' width='34' height='32' rx='6' fill='rgba(255, 255, 255, 0.05)' stroke='rgba(255, 255, 255, 0.12)'/><rect x='580' y='142' width='34' height='32' rx='6' fill='rgba(255, 255, 255, 0.05)' stroke='rgba(255, 255, 255, 0.12)'/><text x='380' y='218' font-size='13' fill='#8ab4ff' text-anchor='start' font-weight='600'>43 packages</text><text x='380' y='240' font-size='11.5' fill='#aab2c4' text-anchor='start' font-weight='400'>each with a repo, a manifest, a lock row,</text><text x='380' y='258' font-size='11.5' fill='#aab2c4' text-anchor='start' font-weight='400'>a CI path and a checkout to keep in sync</text><text x='20' y='288' font-size='11.5' fill='#aab2c4' text-anchor='start' font-weight='400'>The arrows are a compile error, and that part worked. Eight features and twelve core modules</text><text x='20' y='306' font-size='11.5' fill='#aab2c4' text-anchor='start' font-weight='400'>later, the count is the cost.</text></svg>
+    <figcaption>The wall is on the left, and it works. The bill is on the right, and it compounds per module rather than per feature.</figcaption>
+  </figure>
+
+
+<h2>Three targets, one feature</h2>
+
+<p>Per feature: a domain target with the entities and the repository protocols, a data target
+with the real repository, the mappers and the network, and a feature target with the view and
+its state. Separate local packages, with an acyclic graph between them.</p>
+
+<p>The folder names are not the point. The point is that the dependency graph is a compiler
+fact. A presenter that tries to import the networking module does not get a review comment and
+a discussion about layering; it gets a build error. That is a different category of enforcement
+from a convention document, and it is the only kind that survives a deadline.</p>
+
+<h2>What the wall paid for</h2>
+
+<ul>
+  <li><strong>Rules became testable in milliseconds.</strong> No UIKit, no network, no app. An
+  interactor and a fake repository. A test that used to be an integration test became a
+  unit test, which is the difference between running it on save and never running it.</li>
+  <li><strong>Wire types stopped leaking.</strong> A mapper moves the wire type to an entity and
+  back, with round-trip tests. The day the backend renames a field, the diff is one file instead
+  of eleven screens.</li>
+  <li><strong>Reuse stopped meaning "copy".</strong> The question types — multiple choice, essay,
+  matching, drag and drop — moved behind their own models instead of being open-coded per
+  screen. Three screens that had drifted apart became one behaviour.</li>
+</ul>
+
+<p>None of that is decoration. On a product this size the first item alone pays for the wall:
+the rules that decide whether a student's answer survives a dropped connection are the rules
+most worth a test, and before this they were the hardest to test.</p>
+
+<p>And then it over-delivered, the way architecture tends to.</p>
+
+<h2>The bill: forty-three packages</h2>
+
+<p>Three layers per feature, times eight features, plus a dozen shared core modules, and the app
+had <strong>43 sibling packages</strong>. Each one came with its own repository, its own
+manifest, its own row in the lock file, its own entry in the CI path list, and its own checkout
+to keep in sync.</p>
+
+<p>A single feature crossed three repos. A cross-cutting change — a new answer state, say — was a
+three-repo merge request with a lock bump, and a reviewer who had to hold three diffs in their
+head to see one story. Nothing was wrong with any individual module. The count was the
+problem.</p>
+
+<p>Clean boundaries are cheap per module and expensive per module count, and that exponent is
+what I had not priced in. At 43, the module system had become a second product we maintained:
+it had its own tooling, its own failure modes, its own drift.</p>
+
+<h2>The quieter failure</h2>
+
+<p>Clean gave us a home for entities and repositories, and it did nothing at all for the screen.
+The view model still had three jobs — view state, use-case orchestration, navigation — and still
+had no rule about which was which.</p>
+
+<p>That is the part worth saying plainly, because it is the part that gets lost in the diagram:
+the data layer got better, the screen did not change, and the screen was the thing generating
+the defects. We had improved the half of the architecture that was already tractable.</p>
+
+<h2>What I would have kept cheaper</h2>
+
+<p>One package per feature, with the three layers as targets inside it. Same compiler walls, same
+testable domain, a third of the bookkeeping — one repo, one manifest, one lock row, one CI path
+per feature instead of three. The boundaries that mattered were between targets, not between
+repositories, and the repository split bought us nothing a target didn't already enforce.</p>
+
+<p>Part three is what happened when the screen finally got the same treatment, and why the honest
+name for it was a rename.</p>
+    <div class="sources">
+      <h2>Sources</h2>
+      <ul>
+      <li><a href="https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html" target="_blank" rel="noreferrer">The Clean Architecture — Robert C. Martin</a></li>
+      <li><a href="https://developer.apple.com/videos/play/wwdc2019/410/" target="_blank" rel="noreferrer">Creating Swift Packages — WWDC19 session 410</a></li>
+      <li><a href="https://developer.apple.com/documentation/xcode/improving-the-speed-of-incremental-builds" target="_blank" rel="noreferrer">Improving the speed of incremental builds — Apple Developer Documentation</a></li>
+      </ul>
+    </div>
+  </article>
+  <p class="foot">Written from experience shipping iOS apps. No client names, no internal details, no unpublished numbers — everything citable here is public.</p>
+  <nav class="pager">
+    <a href="./mvvm-to-viper-part-one.html">← MVVM to VIPER, part one: when the view model is the app</a>
+    <a href="./mvvm-to-viper-part-three.html">MVVM to VIPER, part three: a rename and a confession →</a>
+  </nav>
+
+</div>
+</body>
+</html>

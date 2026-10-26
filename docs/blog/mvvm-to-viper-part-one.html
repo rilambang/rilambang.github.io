@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MVVM to VIPER, part one: when the view model is the app</title>
+<meta name="description" content="First of three. What MVVM gets right, what the proctored exam screen&#x27;s view model quietly took ownership of, and why a pattern that works at five screens stops being local at fifty.">
+<link rel="canonical" href="https://rilambang.github.io/blog/mvvm-to-viper-part-one.html">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MVVM to VIPER, part one: when the view model is the app">
+<meta property="og:description" content="First of three. What MVVM gets right, what the proctored exam screen&#x27;s view model quietly took ownership of, and why a pattern that works at five screens stops being local at fifty.">
+<meta property="og:url" content="https://rilambang.github.io/blog/mvvm-to-viper-part-one.html">
+<meta property="og:image" content="https://rilambang.github.io/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='0' fill='%232563eb'/><text x='16' y='23' font-family='Georgia,serif' font-size='20' fill='%23ffffff' text-anchor='middle'>R</text></svg>">
+<link rel="stylesheet" href="./blog.css">
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <a class="who" href="/">Muhammad Ilham Rilambang</a>
+    <a href="./index.html">Blog</a>
+  </div>
+  <header class="post-head">
+    <p class="chip">Architecture</p>
+    <h1>MVVM to VIPER, part one: when the view model is the app</h1>
+    <p class="meta">3 min read · Muhammad Ilham Rilambang</p>
+  </header>
+  <article>
+<p class="lede">The review comment that started this was one I wrote on my own diff: <em>why does
+the exam view model know the network layer, the router, the answer queue, and the
+invigilator?</em> I had no good answer, so the next three architecture passes were spent earning
+one. This is part one of three.</p>
+
+  <figure class="fig"><svg viewBox='0 0 640 262' width='640' height='262' role='img' aria-label='Five responsibilities fanning into a single view model file' font-family='Helvetica Neue,Helvetica,Arial,sans-serif' xmlns='http://www.w3.org/2000/svg'><g class='n'><rect x='20' y='16' width='600' height='54' rx='10' fill='#1b2440' stroke='#8ab4ff'/><rect x='20' y='16' width='3' height='54' rx='1.5' fill='#8ab4ff'/><text x='34' y='42' font-size='13' font-weight='600' fill='#f4f6fb'>The exam screen&#x27;s view model</text><text x='34' y='62' font-size='11.5' fill='#aab2c4'>one file, and no rule about what may not move into it</text></g><line x1='110' y1='70' x2='110' y2='106' stroke='rgba(255, 255, 255, 0.12)' stroke-width='1.5' class='d'/><polygon points='110,106 105.5,98.8 114.5,98.8' fill='rgba(255, 255, 255, 0.12)'/><g class='n'><rect x='20' y='110' width='190' height='58' rx='10' fill='#161822' stroke='rgba(255, 255, 255, 0.12)'/><rect x='20' y='110' width='3' height='58' rx='1.5' fill='#8ab4ff'/><text x='34' y='136' font-size='13' font-weight='600' fill='#f4f6fb'>Question state</text><text x='34' y='156' font-size='11.5' fill='#aab2c4'>answered, flagged, untouched</text></g><line x1='315' y1='70' x2='315' y2='106' stroke='rgba(255, 255, 255, 0.12)' stroke-width='1.5' class='d'/><polygon points='315,106 310.5,98.8 319.5,98.8' fill='rgba(255, 255, 255, 0.12)'/><g class='n'><rect x='225' y='110' width='190' height='58' rx='10' fill='#161822' stroke='rgba(255, 255, 255, 0.12)'/><rect x='225' y='110' width='3' height='58' rx='1.5' fill='#8ab4ff'/><text x='239' y='136' font-size='13' font-weight='600' fill='#f4f6fb'>The answer rule</text><text x='239' y='156' font-size='11.5' fill='#aab2c4'>when may this leave the device</text></g><line x1='520' y1='70' x2='520' y2='106' stroke='rgba(255, 255, 255, 0.12)' stroke-width='1.5' class='d'/><polygon points='520,106 515.5,98.8 524.5,98.8' fill='rgba(255, 255, 255, 0.12)'/><g class='n'><rect x='430' y='110' width='190' height='58' rx='10' fill='#161822' stroke='rgba(255, 255, 255, 0.12)'/><rect x='430' y='110' width='3' height='58' rx='1.5' fill='#8ab4ff'/><text x='444' y='136' font-size='13' font-weight='600' fill='#f4f6fb'>The offline queue</text><text x='444' y='156' font-size='11.5' fill='#aab2c4'>and its retry pump</text></g><line x1='110' y1='70' x2='110' y2='182' stroke='rgba(255, 255, 255, 0.12)' stroke-width='1.5' class='d'/><polygon points='110,182 105.5,174.8 114.5,174.8' fill='rgba(255, 255, 255, 0.12)'/><g class='n'><rect x='20' y='186' width='190' height='58' rx='10' fill='#161822' stroke='rgba(255, 255, 255, 0.12)'/><rect x='20' y='186' width='3' height='58' rx='1.5' fill='#8ab4ff'/><text x='34' y='212' font-size='13' font-weight='600' fill='#f4f6fb'>Navigation</text><text x='34' y='232' font-size='11.5' fill='#aab2c4'>through the exam gate</text></g><line x1='315' y1='70' x2='315' y2='182' stroke='rgba(255, 255, 255, 0.12)' stroke-width='1.5' class='d'/><polygon points='315,182 310.5,174.8 319.5,174.8' fill='rgba(255, 255, 255, 0.12)'/><g class='n'><rect x='225' y='186' width='190' height='58' rx='10' fill='#161822' stroke='rgba(255, 255, 255, 0.12)'/><rect x='225' y='186' width='3' height='58' rx='1.5' fill='#8ab4ff'/><text x='239' y='212' font-size='13' font-weight='600' fill='#f4f6fb'>The network calls</text><text x='239' y='232' font-size='11.5' fill='#aab2c4'>one import away</text></g><text x='430' y='214' font-size='11.5' fill='#aab2c4' text-anchor='start' font-weight='400'>and a sixth is always</text><text x='430' y='232' font-size='11.5' fill='#aab2c4' text-anchor='start' font-weight='400'>one story away</text></svg>
+    <figcaption>Five responsibilities, one file, and no rule that says a sixth cannot move in. Every one of them arrived as the smallest change that would get a story done.</figcaption>
+  </figure>
+
+
+<p>The app is a proctored exam client: a million students sit exams on it, usually on school
+Wi-Fi, usually with someone watching them. That prices every decision differently. A failed exam
+is not a bad afternoon, and the modules have to keep shipping while the structure moves
+underneath them.</p>
+
+<h2>MVVM is the right answer, at the size you meet it</h2>
+
+<p>A screen, some published state, a service in the initializer. The whole feature fits in your
+head, and so does the diff. That is where most of us meet MVVM, and it is why most of us are
+right to use it.</p>
+
+<p>The trouble is not that MVVM is wrong. It is that MVVM is a rendering pattern with no opinion
+about anything else — where a rule lives, who owns navigation, which layer may speak in which
+data shape. Nature abhors that vacuum, and the nearest thing to fill it is the view model.</p>
+
+<h2>What one file ended up owning</h2>
+
+<p>Grow a feature for a year and the list stops being a list of one screen's concerns:</p>
+
+<ul>
+  <li>what state each question is in — answered, flagged as unsure, untouched;</li>
+  <li>the rule for when an answer is allowed to leave the device;</li>
+  <li>the offline answer queue and its retry pump;</li>
+  <li>navigation through the exam gate, including the paths that must not be reachable;</li>
+  <li>and the HTTP calls, because importing the network manager was one line and a review
+  away.</li>
+</ul>
+
+<p>None of those arrived as an architectural decision. Each arrived as the smallest possible
+change to get a story done, in the file that was already open. That is how a view model becomes
+an app.</p>
+
+<h2>The tell is the wire type</h2>
+
+<p>You can date the moment a screen stopped owning its own shape. It is when the backend's
+payload shows up at the seam where the UI decides something.</p>
+
+<p>Ours took the API's finish request — a JSON shape with the server's field names on it —
+straight where the screen said "finish". Nothing crashed. It just meant the screen was now
+authored by someone else's schema, and the day that schema changed, the change landed in the
+UI. A screen that speaks wire types cannot be reused, cannot be tested alone, and cannot be
+reasoned about without the API documentation open.</p>
+
+<h2>Testing takes the shape of the code</h2>
+
+<p>Because the rules lived in a file that also knew about UIKit, the network and navigation,
+testing one rule meant building all of it: construct the view model, mock the network manager,
+subscribe to a Combine sink, and hope the thing you cared about fires before the test
+times out.</p>
+
+<p>Fourteen exam suites lived inside the app test target for exactly this reason. A rule about
+the offline answer queue — a rule that is pure logic and could run in milliseconds — could not be
+tested without building the app it was embedded in.</p>
+
+<h2>Why I would still defend it</h2>
+
+<p>At five screens and two engineers, MVVM is not a compromise; it is the cheapest thing that
+works, and every alternative is overhead you have not earned yet. The pattern did not fail here.
+It held exactly as long as the feature fit inside one file, and it kept holding for a while
+after it stopped fitting, because everyone was polite about it.</p>
+
+<h2>Where it breaks</h2>
+
+<p>It breaks on blast radius, not on taste. When every rule can reach everything, no change is
+local: a tweak to the answer state can touch the gate, the queue and the reporting path, and the
+review has to reason about all of it at once. Nobody wrote that down anywhere — it just became
+true.</p>
+
+<p>That is not a skill problem, and it is not fixed by discipline. It is fixed by making some
+things impossible to import. Part two is the wall we built, and the bill that came with it.</p>
+    <div class="sources">
+      <h2>Sources</h2>
+      <ul>
+      <li><a href="https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html" target="_blank" rel="noreferrer">The Clean Architecture — Robert C. Martin</a></li>
+      <li><a href="https://www.swift.org/documentation/api-design-guidelines/" target="_blank" rel="noreferrer">Swift API Design Guidelines</a></li>
+      </ul>
+    </div>
+  </article>
+  <p class="foot">Written from experience shipping iOS apps. No client names, no internal details, no unpublished numbers — everything citable here is public.</p>
+  <nav class="pager">
+    <a href="./four-gates-that-certified-nothing.html">← Four gates that passed without testing anything</a>
+    <a href="./mvvm-to-viper-part-two.html">MVVM to VIPER, part two: the wall, and the bill for it →</a>
+  </nav>
+
+</div>
+</body>
+</html>
