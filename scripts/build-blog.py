@@ -9,6 +9,11 @@ deployed bundle. No dependency, no router, no history-mode trap.
 import html
 import pathlib
 import re
+import shutil
+import sys
+
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
+import lottie_specs
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 OUT = ROOT / "public" / "blog"
@@ -157,6 +162,9 @@ blockquote p{{margin:0}}
   background:var(--figure);padding:18px;overflow-x:auto;
   box-shadow:0 26px 56px -32px rgba(0,0,0,.9),inset 0 1px 0 rgba(255,255,255,.07)}}
 .fig svg{{max-width:100%;height:auto}}
+.fig-lottie{{position:relative;min-height:120px}}
+.fig-lottie svg{{display:block;width:100%;height:auto}}
+.fig-lottie.is-live > svg.poster{{display:none}}
 .fig figcaption{{font-size:13px;line-height:1.55;color:var(--muted);margin-top:14px;
   padding-top:12px;border-top:1px solid var(--line)}}
 .sources{{margin-top:56px;border-top:1px solid var(--line);padding-top:20px;font-size:14px}}
@@ -2180,6 +2188,35 @@ def page(title, description, url, body, extra_head=""):
 """
 
 
+LOTTIE_JS = """
+document.addEventListener('DOMContentLoaded', function(){
+  var nodes = document.querySelectorAll('.fig-lottie');
+  if (!nodes.length || !window.lottie) return;
+  var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  nodes.forEach(function(el){
+    var anim = lottie.loadAnimation({
+      container: el, renderer: 'svg', loop: false, autoplay: false,
+      path: el.getAttribute('data-src')
+    });
+    anim.addEventListener('DOMLoaded', function(){
+      el.classList.add('is-live');
+      var live = el.querySelector('svg:not(.poster)');
+      if (live) live.setAttribute('aria-hidden', 'true');
+      if (reduced) anim.goToAndStop(anim.totalFrames - 1, true);
+    });
+    if (reduced) return;
+    new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if (!e.isIntersecting) { anim.pause(); return; }
+        if (anim.currentFrame >= anim.totalFrames - 1) anim.goToAndPlay(0, true);
+        else anim.play();
+      });
+    }, {threshold: 0.25}).observe(el);
+  });
+});
+"""
+
+
 LEDE_RE = re.compile(r'(<p class="lede">.*?</p>)', re.S)
 
 
@@ -2188,13 +2225,25 @@ def minutes(body_html):
     return max(1, round(words / 220))
 
 
+def _figure_html(slug, n, poster, alt, cap):
+    poster = poster.replace("<svg ", "<svg class='poster' ", 1)
+    return (f'\n  <figure class="fig">\n'
+            f'    <div class="fig-lottie" data-src="/blog/lottie/{slug}-{n}.json" '
+            f'data-alt="{html.escape(alt, quote=True)}" role="img" '
+            f'aria-label="{html.escape(alt, quote=True)}">{poster}</div>\n'
+            f'    <figcaption>{html.escape(cap)}</figcaption>\n  </figure>\n')
+
+
 def render_post(p, i):
-    svg, cap = FIGURES[p["slug"]]
-    figure = (f'\n  <figure class="fig">{svg}\n'
-              f'    <figcaption>{html.escape(cap)}</figcaption>\n  </figure>\n')
+    slug = p["slug"]
+    figs = SCENES[slug]
+    first = _figure_html(slug, 1, FIGURES[slug][0], figs[0][1], figs[0][2])
+    second = _figure_html(slug, 2, figs[1][0].poster(), figs[1][1], figs[1][2])
     body_src = p["body"].strip()
-    body = (LEDE_RE.sub(lambda m: m.group(1) + "\n" + figure, body_src, count=1)
-            if LEDE_RE.search(body_src) else figure + body_src)
+    body = (LEDE_RE.sub(lambda m: m.group(1) + "\n" + first, body_src, count=1)
+            if LEDE_RE.search(body_src) else first + body_src)
+    at = body.find("<h2", body.find("<h2") + 1)
+    body = body[:at] + second + body[at:] if at != -1 else body + second
 
     src = "".join(
         f'      <li><a href="{u}" target="_blank" rel="noreferrer">{html.escape(t)}</a></li>\n'
@@ -2225,7 +2274,9 @@ def render_post(p, i):
         'internal details, no unpublished numbers — everything citable here is public.</p>\n'
         f'{pager}'
     )
-    return page(p["title"], p["summary"], f"{SITE}/blog/{p['slug']}.html", out)
+    extra = ('<script defer src="/vendor/lottie.min.js"></script>\n'
+             f'<script>{LOTTIE_JS}</script>\n')
+    return page(p["title"], p["summary"], f"{SITE}/blog/{p['slug']}.html", out, extra)
 
 
 def render_index():
@@ -2266,6 +2317,18 @@ def render_index():
 
 
 OUT.mkdir(parents=True, exist_ok=True)
+SCENES = lottie_specs.build_all()
+LOTTIE = OUT / "lottie"
+LOTTIE.mkdir(parents=True, exist_ok=True)
+for stale in LOTTIE.glob("*.json"):
+    stale.unlink()
+for slug, figs in SCENES.items():
+    for n, (scene, _alt, _cap) in enumerate(figs, 1):
+        (LOTTIE / f"{slug}-{n}.json").write_text(scene.dumps())
+VENDOR = ROOT / "public" / "vendor"
+VENDOR.mkdir(parents=True, exist_ok=True)
+shutil.copyfile(ROOT / "node_modules" / "lottie-web" / "build" / "player" / "lottie.min.js",
+                VENDOR / "lottie.min.js")
 # Stale pages are worse than missing ones: rename a slug and the old post stays published,
 # still linked from wherever it was linked, with nothing to show that it is gone.
 for stale in OUT.glob("*.html"):

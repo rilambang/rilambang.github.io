@@ -14,6 +14,34 @@
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='0' fill='%232563eb'/><text x='16' y='23' font-family='Georgia,serif' font-size='20' fill='%23ffffff' text-anchor='middle'>R</text></svg>">
 <link rel="stylesheet" href="./blog.css">
+<script defer src="/vendor/lottie.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function(){
+  var nodes = document.querySelectorAll('.fig-lottie');
+  if (!nodes.length || !window.lottie) return;
+  var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  nodes.forEach(function(el){
+    var anim = lottie.loadAnimation({
+      container: el, renderer: 'svg', loop: false, autoplay: false,
+      path: el.getAttribute('data-src')
+    });
+    anim.addEventListener('DOMLoaded', function(){
+      el.classList.add('is-live');
+      var live = el.querySelector('svg:not(.poster)');
+      if (live) live.setAttribute('aria-hidden', 'true');
+      if (reduced) anim.goToAndStop(anim.totalFrames - 1, true);
+    });
+    if (reduced) return;
+    new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if (!e.isIntersecting) { anim.pause(); return; }
+        if (anim.currentFrame >= anim.totalFrames - 1) anim.goToAndPlay(0, true);
+        else anim.play();
+      });
+    }, {threshold: 0.25}).observe(el);
+  });
+});
+</script>
 </head>
 <body>
 <div class="wrap">
@@ -31,7 +59,8 @@
 time it locked the device, the questions were already on screen. This week I moved the lock one
 step earlier, into preparation, where it can do its job before the assessment starts.</p>
 
-  <figure class="fig"><svg viewBox='0 0 640 134' width='640' height='134' role='img' aria-label='Two preparation flows: the old one arms the device lock inside the paper, after the questions are visible; the new one arms it one step earlier, in preparation' font-family='Helvetica Neue,Helvetica,Arial,sans-serif' xmlns='http://www.w3.org/2000/svg'><g class='swap-a'><text x='20' y='22' font-size='11' fill='#8ab4ff' text-anchor='start' font-weight='600'>AFTER — THE LOCK ARMS IN PREPARATION</text><g class='n'><rect x='20' y='38' width='112' height='54' rx='9' fill='#161822' stroke='rgba(255, 255, 255, 0.12)'/><text x='76.0' y='70.0' font-size='12.5' text-anchor='middle' fill='#f4f6fb'>Welcome</text></g><g class='n'><rect x='143' y='38' width='112' height='54' rx='9' fill='#161822' stroke='rgba(255, 255, 255, 0.12)'/><text x='199.0' y='70.0' font-size='12.5' text-anchor='middle' fill='#f4f6fb'>Location</text></g><g class='n'><rect x='266' y='38' width='112' height='54' rx='9' fill='#1b2440' stroke='#8ab4ff'/><text x='322.0' y='70.0' font-size='12.5' text-anchor='middle' fill='#f4f6fb'>Activate mode</text></g><g class='n'><rect x='389' y='38' width='112' height='54' rx='9' fill='#161822' stroke='rgba(255, 255, 255, 0.12)'/><text x='445.0' y='70.0' font-size='12.5' text-anchor='middle' fill='#f4f6fb'>Ready</text></g><g class='n'><rect x='512' y='38' width='112' height='54' rx='9' fill='#161822' stroke='rgba(255, 255, 255, 0.12)'/><text x='568.0' y='70.0' font-size='12.5' text-anchor='middle' fill='#f4f6fb'>Paper</text></g><g><rect x='15.9' y='104' width='16.2' height='6.3' rx='2.25' fill='#8ab4ff'/><path d='M 19.545 104 v-3.15 a 4.455 4.455 0 0 1 8.91 0 v3.15' fill='none' stroke='#8ab4ff' stroke-width='1.4400000000000002'/></g><text x='40' y='112' font-size='11.5' fill='#8ab4ff' text-anchor='start' font-weight='400'>locked before the paper opens</text></g><g class='swap-b'><text x='20' y='22' font-size='11' fill='#aab2c4' text-anchor='start' font-weight='600'>BEFORE — THE LOCK ARMED INSIDE THE PAPER</text><g class='n'><rect x='20' y='38' width='112' height='54' rx='9' fill='#161822' stroke='rgba(255, 255, 255, 0.12)'/><text x='76.0' y='70.0' font-size='12.5' text-anchor='middle' fill='#f4f6fb'>Welcome</text></g><g class='n'><rect x='143' y='38' width='112' height='54' rx='9' fill='#161822' stroke='rgba(255, 255, 255, 0.12)'/><text x='199.0' y='70.0' font-size='12.5' text-anchor='middle' fill='#f4f6fb'>Location</text></g><g class='n'><rect x='389' y='38' width='112' height='54' rx='9' fill='#161822' stroke='rgba(255, 255, 255, 0.12)'/><text x='445.0' y='70.0' font-size='12.5' text-anchor='middle' fill='#f4f6fb'>Ready</text></g><g class='n'><rect x='512' y='38' width='112' height='54' rx='9' fill='#1b2440' stroke='#8ab4ff'/><text x='568.0' y='70.0' font-size='12.5' text-anchor='middle' fill='#f4f6fb'>Paper</text></g><rect x='266' y='38' width='112' height='54' rx='9' fill='none' stroke='rgba(255, 255, 255, 0.12)' stroke-dasharray='6 5'/><text x='322' y='70' font-size='11.5' fill='#aab2c4' text-anchor='middle' font-weight='400'>no step</text><g><rect x='15.9' y='104' width='16.2' height='6.3' rx='2.25' fill='#aab2c4'/><path d='M 19.545 104 v-3.15 a 4.455 4.455 0 0 1 8.91 0 v3.15' fill='none' stroke='#aab2c4' stroke-width='1.4400000000000002'/></g><text x='40' y='112' font-size='11.5' fill='#aab2c4' text-anchor='start' font-weight='400'>questions already on screen</text></g></svg>
+  <figure class="fig">
+    <div class="fig-lottie" data-src="/blog/lottie/exam-mode-one-screen-earlier-1.json" data-alt="Two preparation flows: the device lock arming inside the paper, then one step earlier." role="img" aria-label="Two preparation flows: the device lock arming inside the paper, then one step earlier."><svg class='poster' viewBox='0 0 640 134' width='640' height='134' role='img' aria-label='Two preparation flows: the old one arms the device lock inside the paper, after the questions are visible; the new one arms it one step earlier, in preparation' font-family='Helvetica Neue,Helvetica,Arial,sans-serif' xmlns='http://www.w3.org/2000/svg'><g class='swap-a'><text x='20' y='22' font-size='11' fill='#8ab4ff' text-anchor='start' font-weight='600'>AFTER — THE LOCK ARMS IN PREPARATION</text><g class='n'><rect x='20' y='38' width='112' height='54' rx='9' fill='#161822' stroke='rgba(255, 255, 255, 0.12)'/><text x='76.0' y='70.0' font-size='12.5' text-anchor='middle' fill='#f4f6fb'>Welcome</text></g><g class='n'><rect x='143' y='38' width='112' height='54' rx='9' fill='#161822' stroke='rgba(255, 255, 255, 0.12)'/><text x='199.0' y='70.0' font-size='12.5' text-anchor='middle' fill='#f4f6fb'>Location</text></g><g class='n'><rect x='266' y='38' width='112' height='54' rx='9' fill='#1b2440' stroke='#8ab4ff'/><text x='322.0' y='70.0' font-size='12.5' text-anchor='middle' fill='#f4f6fb'>Activate mode</text></g><g class='n'><rect x='389' y='38' width='112' height='54' rx='9' fill='#161822' stroke='rgba(255, 255, 255, 0.12)'/><text x='445.0' y='70.0' font-size='12.5' text-anchor='middle' fill='#f4f6fb'>Ready</text></g><g class='n'><rect x='512' y='38' width='112' height='54' rx='9' fill='#161822' stroke='rgba(255, 255, 255, 0.12)'/><text x='568.0' y='70.0' font-size='12.5' text-anchor='middle' fill='#f4f6fb'>Paper</text></g><g><rect x='15.9' y='104' width='16.2' height='6.3' rx='2.25' fill='#8ab4ff'/><path d='M 19.545 104 v-3.15 a 4.455 4.455 0 0 1 8.91 0 v3.15' fill='none' stroke='#8ab4ff' stroke-width='1.4400000000000002'/></g><text x='40' y='112' font-size='11.5' fill='#8ab4ff' text-anchor='start' font-weight='400'>locked before the paper opens</text></g><g class='swap-b'><text x='20' y='22' font-size='11' fill='#aab2c4' text-anchor='start' font-weight='600'>BEFORE — THE LOCK ARMED INSIDE THE PAPER</text><g class='n'><rect x='20' y='38' width='112' height='54' rx='9' fill='#161822' stroke='rgba(255, 255, 255, 0.12)'/><text x='76.0' y='70.0' font-size='12.5' text-anchor='middle' fill='#f4f6fb'>Welcome</text></g><g class='n'><rect x='143' y='38' width='112' height='54' rx='9' fill='#161822' stroke='rgba(255, 255, 255, 0.12)'/><text x='199.0' y='70.0' font-size='12.5' text-anchor='middle' fill='#f4f6fb'>Location</text></g><g class='n'><rect x='389' y='38' width='112' height='54' rx='9' fill='#161822' stroke='rgba(255, 255, 255, 0.12)'/><text x='445.0' y='70.0' font-size='12.5' text-anchor='middle' fill='#f4f6fb'>Ready</text></g><g class='n'><rect x='512' y='38' width='112' height='54' rx='9' fill='#1b2440' stroke='#8ab4ff'/><text x='568.0' y='70.0' font-size='12.5' text-anchor='middle' fill='#f4f6fb'>Paper</text></g><rect x='266' y='38' width='112' height='54' rx='9' fill='none' stroke='rgba(255, 255, 255, 0.12)' stroke-dasharray='6 5'/><text x='322' y='70' font-size='11.5' fill='#aab2c4' text-anchor='middle' font-weight='400'>no step</text><g><rect x='15.9' y='104' width='16.2' height='6.3' rx='2.25' fill='#aab2c4'/><path d='M 19.545 104 v-3.15 a 4.455 4.455 0 0 1 8.91 0 v3.15' fill='none' stroke='#aab2c4' stroke-width='1.4400000000000002'/></g><text x='40' y='112' font-size='11.5' fill='#aab2c4' text-anchor='start' font-weight='400'>questions already on screen</text></g></svg></div>
     <figcaption>The lock did not get stronger. It moved one screen earlier, to the last moment before the questions appear.</figcaption>
   </figure>
 
@@ -58,6 +87,11 @@ somewhere in its settings.</p>
 blocks, which looks like a bug in the test setup and is actually the design working. I mention it
 because it is the first thing anyone testing this will report.</p>
 
+
+  <figure class="fig">
+    <div class="fig-lottie" data-src="/blog/lottie/exam-mode-one-screen-earlier-2.json" data-alt="One blocked screen with two word sets: a server verdict and a missing device lock." role="img" aria-label="One blocked screen with two word sets: a server verdict and a missing device lock."><svg class='poster' viewBox='0 0 640 260' width='640' height='260' role='img' aria-label='One blocked screen layout with two word sets, a server verdict and a missing device lock' font-family='Inter,Helvetica Neue,Helvetica,Arial,sans-serif' xmlns='http://www.w3.org/2000/svg'><text x='20.0' y='26.0' font-size='11.5' fill='#aab2c4' text-anchor='start'>One layout, two claims</text><rect x='20.0' y='52.0' width='600.0' height='150.0' rx='14' fill='#161822' stroke='#2c3040' stroke-width='1.2'/><rect x='56.0' y='70.0' width='500.0' height='74.0' rx='10' fill='#161822' stroke='#2c3040' stroke-width='1.2'/><text x='70.0' y='96.0' font-size='13' fill='#f4f6fb' text-anchor='start'>Activate exam mode</text><text x='70.0' y='116.0' font-size='11.5' fill='#aab2c4' text-anchor='start'>Exam mode is not running on this device.</text><rect x='56.0' y='71.0' width='3.0' height='72.0' rx='1.5' fill='#8ab4ff'/><rect x='56.0' y='154.0' width='210.0' height='38.0' rx='9' fill='#161822' stroke='#2c3040' stroke-width='1.2'/><text x='161.0' y='177.5' font-size='12.5' fill='#f4f6fb' text-anchor='middle'>Reload assessment</text><text x='20.0' y='226.0' font-size='11.5' fill='#aab2c4' text-anchor='start'>Sharing the words made both screens wrong.</text></svg></div>
+    <figcaption>One layout, two claims. Sharing the words made both screens wrong.</figcaption>
+  </figure>
 <h2>The lock was one screen too late</h2>
 
 <p>The old flow started the session inside the paper, after the question view had loaded. The

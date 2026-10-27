@@ -14,6 +14,34 @@
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='0' fill='%232563eb'/><text x='16' y='23' font-family='Georgia,serif' font-size='20' fill='%23ffffff' text-anchor='middle'>R</text></svg>">
 <link rel="stylesheet" href="./blog.css">
+<script defer src="/vendor/lottie.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function(){
+  var nodes = document.querySelectorAll('.fig-lottie');
+  if (!nodes.length || !window.lottie) return;
+  var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  nodes.forEach(function(el){
+    var anim = lottie.loadAnimation({
+      container: el, renderer: 'svg', loop: false, autoplay: false,
+      path: el.getAttribute('data-src')
+    });
+    anim.addEventListener('DOMLoaded', function(){
+      el.classList.add('is-live');
+      var live = el.querySelector('svg:not(.poster)');
+      if (live) live.setAttribute('aria-hidden', 'true');
+      if (reduced) anim.goToAndStop(anim.totalFrames - 1, true);
+    });
+    if (reduced) return;
+    new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if (!e.isIntersecting) { anim.pause(); return; }
+        if (anim.currentFrame >= anim.totalFrames - 1) anim.goToAndPlay(0, true);
+        else anim.play();
+      });
+    }, {threshold: 0.25}).observe(el);
+  });
+});
+</script>
 </head>
 <body>
 <div class="wrap">
@@ -31,8 +59,9 @@
 right and the rest is a sequence of small, reversible steps. Get it wrong and you end up with
 two systems that each half-know where you are.</p>
 
-  <figure class="fig"><svg viewBox='0 0 640 230' width='640' height='230' role='img' aria-label='A UIKit to SwiftUI migration as four ordered steps, with a single owner of navigation underneath the whole sequence' font-family='Helvetica Neue,Helvetica,Arial,sans-serif' xmlns='http://www.w3.org/2000/svg'><g class='n'><rect x='20' y='30' width='140' height='58' rx='10' fill='#1b2440' stroke='#8ab4ff'/><rect class='a' x='20' y='30' width='3' height='58' rx='1.5' fill='#8ab4ff'/><text x='34' y='64.0' font-size='13' font-weight='600' fill='#f4f6fb'>Leaf screens</text><rect class='hl' style='--i:0' x='20' y='30' width='140' height='58' rx='10' fill='none' stroke='#8ab4ff' stroke-width='1.8'/></g><line x1='160' y1='59' x2='175' y2='59' stroke='rgba(255, 255, 255, 0.12)' stroke-width='1.5' class='d'/><polygon points='175,59 167.8,54.5 167.8,63.5' fill='rgba(255, 255, 255, 0.12)'/><g class='n'><rect x='175' y='30' width='140' height='58' rx='10' fill='#161822' stroke='rgba(255, 255, 255, 0.12)'/><rect class='a' x='175' y='30' width='3' height='58' rx='1.5' fill='#8ab4ff'/><text x='189' y='64.0' font-size='13' font-weight='600' fill='#f4f6fb'>Shared services</text><rect class='hl' style='--i:1' x='175' y='30' width='140' height='58' rx='10' fill='none' stroke='#8ab4ff' stroke-width='1.8'/></g><line x1='315' y1='59' x2='330' y2='59' stroke='rgba(255, 255, 255, 0.12)' stroke-width='1.5' class='d'/><polygon points='330,59 322.8,54.5 322.8,63.5' fill='rgba(255, 255, 255, 0.12)'/><g class='n'><rect x='330' y='30' width='140' height='58' rx='10' fill='#161822' stroke='rgba(255, 255, 255, 0.12)'/><rect class='a' x='330' y='30' width='3' height='58' rx='1.5' fill='#8ab4ff'/><text x='344' y='64.0' font-size='13' font-weight='600' fill='#f4f6fb'>App shell</text><rect class='hl' style='--i:2' x='330' y='30' width='140' height='58' rx='10' fill='none' stroke='#8ab4ff' stroke-width='1.8'/></g><line x1='470' y1='59' x2='485' y2='59' stroke='rgba(255, 255, 255, 0.12)' stroke-width='1.5' class='d'/><polygon points='485,59 477.8,54.5 477.8,63.5' fill='rgba(255, 255, 255, 0.12)'/><g class='n'><rect x='485' y='30' width='140' height='58' rx='10' fill='#161822' stroke='rgba(255, 255, 255, 0.12)'/><rect class='a' x='485' y='30' width='3' height='58' rx='1.5' fill='#8ab4ff'/><text x='499' y='64.0' font-size='13' font-weight='600' fill='#f4f6fb'>Navigation last</text><rect class='hl' style='--i:3' x='485' y='30' width='140' height='58' rx='10' fill='none' stroke='#8ab4ff' stroke-width='1.8'/></g><g class='n'><rect x='20' y='130' width='600' height='58' rx='10' fill='#161822' stroke='rgba(255, 255, 255, 0.12)'/><rect class='a' x='20' y='130' width='3' height='58' rx='1.5' fill='#8ab4ff'/><text x='34' y='156' font-size='13' font-weight='600' fill='#f4f6fb'>One owner of the stack, for the whole migration</text><text x='34' y='176' font-size='11.5' fill='#aab2c4'>the other side renders content and reports events — it does not push</text></g><text x='20' y='216' font-size='11.5' fill='#aab2c4' text-anchor='start' font-weight='400'>Availability is a plan, not an afterthought: every adoption above your floor needs a fallback.</text></svg>
-    <figcaption>Progress in one direction, with the navigation seam held still.</figcaption>
+  <figure class="fig">
+    <div class="fig-lottie" data-src="/blog/lottie/uikit-to-swiftui-without-a-rewrite-1.json" data-alt="A migration in four ordered steps, with navigation moved last." role="img" aria-label="A migration in four ordered steps, with navigation moved last."><svg class='poster' viewBox='0 0 640 230' width='640' height='230' role='img' aria-label='A UIKit to SwiftUI migration as four ordered steps, with a single owner of navigation underneath the whole sequence' font-family='Helvetica Neue,Helvetica,Arial,sans-serif' xmlns='http://www.w3.org/2000/svg'><g class='n'><rect x='20' y='30' width='140' height='58' rx='10' fill='#1b2440' stroke='#8ab4ff'/><rect class='a' x='20' y='30' width='3' height='58' rx='1.5' fill='#8ab4ff'/><text x='34' y='64.0' font-size='13' font-weight='600' fill='#f4f6fb'>Leaf screens</text><rect class='hl' style='--i:0' x='20' y='30' width='140' height='58' rx='10' fill='none' stroke='#8ab4ff' stroke-width='1.8'/></g><line x1='160' y1='59' x2='175' y2='59' stroke='rgba(255, 255, 255, 0.12)' stroke-width='1.5' class='d'/><polygon points='175,59 167.8,54.5 167.8,63.5' fill='rgba(255, 255, 255, 0.12)'/><g class='n'><rect x='175' y='30' width='140' height='58' rx='10' fill='#161822' stroke='rgba(255, 255, 255, 0.12)'/><rect class='a' x='175' y='30' width='3' height='58' rx='1.5' fill='#8ab4ff'/><text x='189' y='64.0' font-size='13' font-weight='600' fill='#f4f6fb'>Shared services</text><rect class='hl' style='--i:1' x='175' y='30' width='140' height='58' rx='10' fill='none' stroke='#8ab4ff' stroke-width='1.8'/></g><line x1='315' y1='59' x2='330' y2='59' stroke='rgba(255, 255, 255, 0.12)' stroke-width='1.5' class='d'/><polygon points='330,59 322.8,54.5 322.8,63.5' fill='rgba(255, 255, 255, 0.12)'/><g class='n'><rect x='330' y='30' width='140' height='58' rx='10' fill='#161822' stroke='rgba(255, 255, 255, 0.12)'/><rect class='a' x='330' y='30' width='3' height='58' rx='1.5' fill='#8ab4ff'/><text x='344' y='64.0' font-size='13' font-weight='600' fill='#f4f6fb'>App shell</text><rect class='hl' style='--i:2' x='330' y='30' width='140' height='58' rx='10' fill='none' stroke='#8ab4ff' stroke-width='1.8'/></g><line x1='470' y1='59' x2='485' y2='59' stroke='rgba(255, 255, 255, 0.12)' stroke-width='1.5' class='d'/><polygon points='485,59 477.8,54.5 477.8,63.5' fill='rgba(255, 255, 255, 0.12)'/><g class='n'><rect x='485' y='30' width='140' height='58' rx='10' fill='#161822' stroke='rgba(255, 255, 255, 0.12)'/><rect class='a' x='485' y='30' width='3' height='58' rx='1.5' fill='#8ab4ff'/><text x='499' y='64.0' font-size='13' font-weight='600' fill='#f4f6fb'>Navigation last</text><rect class='hl' style='--i:3' x='485' y='30' width='140' height='58' rx='10' fill='none' stroke='#8ab4ff' stroke-width='1.8'/></g><g class='n'><rect x='20' y='130' width='600' height='58' rx='10' fill='#161822' stroke='rgba(255, 255, 255, 0.12)'/><rect class='a' x='20' y='130' width='3' height='58' rx='1.5' fill='#8ab4ff'/><text x='34' y='156' font-size='13' font-weight='600' fill='#f4f6fb'>One owner of the stack, for the whole migration</text><text x='34' y='176' font-size='11.5' fill='#aab2c4'>the other side renders content and reports events — it does not push</text></g><text x='20' y='216' font-size='11.5' fill='#aab2c4' text-anchor='start' font-weight='400'>Availability is a plan, not an afterthought: every adoption above your floor needs a fallback.</text></svg></div>
+    <figcaption>Progress in one direction, with the navigation seam held still until the end.</figcaption>
   </figure>
 
 
@@ -48,6 +77,11 @@ shell is the part every screen depends on, and it's the part you can't ship incr
 navigation are the safe unit of migration, because failure costs you one screen rather than
 the app.</p>
 
+
+  <figure class="fig">
+    <div class="fig-lottie" data-src="/blog/lottie/uikit-to-swiftui-without-a-rewrite-2.json" data-alt="UIKit and SwiftUI screens both reporting events to a single router that owns the stack." role="img" aria-label="UIKit and SwiftUI screens both reporting events to a single router that owns the stack."><svg class='poster' viewBox='0 0 640 280' width='640' height='280' role='img' aria-label='UIKit and SwiftUI screens reporting events to one navigation owner' font-family='Inter,Helvetica Neue,Helvetica,Arial,sans-serif' xmlns='http://www.w3.org/2000/svg'><text x='20.0' y='26.0' font-size='11.5' fill='#aab2c4' text-anchor='start'>One owner of the stack</text><rect x='20.0' y='58.0' width='200.0' height='52.0' rx='9' fill='#161822' stroke='#2c3040' stroke-width='1.2'/><text x='120.0' y='88.5' font-size='12.5' fill='#f4f6fb' text-anchor='middle'>UIKit screens</text><rect x='420.0' y='58.0' width='200.0' height='52.0' rx='9' fill='#161822' stroke='#2c3040' stroke-width='1.2'/><text x='520.0' y='88.5' font-size='12.5' fill='#f4f6fb' text-anchor='middle'>SwiftUI screens</text><rect x='200.0' y='150.0' width='240.0' height='60.0' rx='10' fill='#1b2440' stroke='#8ab4ff' stroke-width='1.2'/><text x='214.0' y='176.0' font-size='13' fill='#f4f6fb' text-anchor='start'>Router</text><text x='214.0' y='196.0' font-size='11.5' fill='#aab2c4' text-anchor='start'>one owner, always</text><rect x='200.0' y='151.0' width='3.0' height='58.0' rx='1.5' fill='#8ab4ff'/><line x1='120.0' y1='110.0' x2='240.0' y2='150.0' stroke='#2c3040' stroke-width='1.5'/><polygon points='240.0,150.0 232.0,145.0 232.0,155.0' fill='#2c3040'/><line x1='520.0' y1='110.0' x2='400.0' y2='150.0' stroke='#2c3040' stroke-width='1.5'/><polygon points='400.0,150.0 408.0,145.0 408.0,155.0' fill='#2c3040'/><text x='20.0' y='122.0' font-size='10.5' fill='#aab2c4' text-anchor='start'>reports events</text><text x='470.0' y='122.0' font-size='10.5' fill='#aab2c4' text-anchor='start'>reports events</text><text x='20.0' y='248.0' font-size='11.5' fill='#aab2c4' text-anchor='start'>Neither side pushes. Both sides describe what happened.</text></svg></div>
+    <figcaption>Neither side pushes. Both describe what happened, and one owner decides what that means.</figcaption>
+  </figure>
 <h2>Pick one direction of interop at a time</h2>
 
 <p>The two directions aren't symmetric and should not be started together:</p>
