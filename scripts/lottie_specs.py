@@ -261,8 +261,11 @@ def uikit_1():
     t = s.travel(cursor, 0.15, 566, 92)
     p = s.press(cursor, s.ring(566, 92, 10), t)
     _mark(s, 40, 32, 240, 56, p, color=ACCENT, fill=TINT, r=18)
-    _st(s, 338, 126, "UIKit", "SwiftUI", p + 0.34, size=18, anchor="start")
-    s.text(PAD, 328, "Same screen. Same rows.", 12, MUTED)
+    # the chrome has settled by p + T_DEFAULT; only then does the word agree
+    _st(s, 338, 126, "UIKit", "SwiftUI", p + 0.40, size=18, anchor="start")
+    # the empty quadrant is the lower right: the caption fills it
+    s.text(600, 296, "Same screen.", 13, MUTED, "end")
+    s.text(600, 320, "Same rows.", 13, MUTED, "end")
     return _finish(s, cursor, p + 0.9, y=320)
 
 

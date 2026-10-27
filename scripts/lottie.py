@@ -45,6 +45,9 @@ T_DOWN = 0.12
 T_UP = 0.20
 T_RIPPLE = 0.45
 EASE_TRAVEL = (0.45, 0, 0.15, 1)
+# 120ms is 3.6 frames at 30fps: land on 4, or the dip is a three-frame blink.
+T_DOWN_F = max(round(T_DOWN * FPS), 1)
+T_UP_F = max(round(T_UP * FPS), 1)
 
 
 def _rgb(hex_color):
@@ -269,9 +272,9 @@ class Node:
         self._apply_scale()
         return self
 
-    def scale_to(self, t, s, d=T_DEFAULT, ease=EASE_OUT):
+    def scale_to(self, t, s, d=T_DEFAULT, ease=EASE_OUT, frames=None):
         t0 = _frames(t)
-        t1 = max(_frames(t + d), t0 + 1)
+        t1 = t0 + frames if frames else max(_frames(t + d), t0 + 1)
         start = self.scale_keys[-1][1][0]
         _key(self.scale_keys, t0, [start, start, 100])
         _key(self.scale_keys, t1, [s, s, 100])
@@ -469,12 +472,18 @@ class Scene:
         return t + T_TRAVEL
 
     def press(self, cursor, ring, t):
-        """Settle, dip, spring, ripple. Returns when the state should flip."""
+        """Settle, dip, spring, ripple. Returns when the state should flip.
+
+        The dip is counted in frames, not seconds: rounding a start and an end
+        time separately gives a 3-frame dip on some scenes and 4 on others.
+        """
         t_down = t + T_DWELL
-        cursor.scale_to(t_down, 86, T_DOWN, EASE_IN)
-        cursor.scale_to(t_down + T_DOWN, 100, T_UP, SPRING)
+        f0 = _frames(t_down)
+        cursor.scale_to(t_down, 86, T_DOWN, EASE_IN, frames=T_DOWN_F)
+        cursor.scale_to((f0 + T_DOWN_F) / FPS, 100, T_UP, SPRING,
+                        frames=T_UP_F)
         self.ripple(ring, t_down, 2.2, T_RIPPLE)
-        return t_down + T_DOWN
+        return (f0 + T_DOWN_F) / FPS
 
     def cursor(self, x, y, t=0.0, opacity=100):
         """A pointer that fades in where it stands, ready to travel."""
