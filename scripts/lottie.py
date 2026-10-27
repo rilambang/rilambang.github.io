@@ -37,6 +37,15 @@ T_DEFAULT = 0.24   # default transition
 T_MOVE = 0.40      # expanding or moving between positions
 T_BEAT = 0.64      # a narrative beat, used sparingly
 
+# A cursor that acts. Slow enough to read, never linear: soft acceleration and
+# a longer deceleration into the target, a beat to settle, then a press.
+T_TRAVEL = 1.05
+T_DWELL = 0.22
+T_DOWN = 0.12
+T_UP = 0.20
+T_RIPPLE = 0.45
+EASE_TRAVEL = (0.45, 0, 0.15, 1)
+
 
 def _rgb(hex_color):
     h = hex_color.lstrip("#")
@@ -45,6 +54,21 @@ def _rgb(hex_color):
 
 def _rgba(hex_color, alpha=1.0):
     return _rgb(hex_color) + [alpha]
+
+
+def _kfs_eased(keys, dim=1):
+    """Like _kfs, but each key carries its own ease: (frame, value, ease)."""
+    out = []
+    for n, k in enumerate(keys):
+        t, v = k[0], k[1]
+        ease = k[2] if len(k) > 2 else EASE_OUT
+        item = {"t": t, "s": v}
+        if n < len(keys) - 1:
+            item["e"] = keys[n + 1][1]
+            item["o"] = {"x": [ease[0]] * dim, "y": [ease[1]] * dim}
+            item["i"] = {"x": [ease[2]] * dim, "y": [ease[3]] * dim}
+        out.append(item)
+    return {"a": 1, "k": out}
 
 
 def _kfs(keys, ease=EASE_OUT, dim=1):
@@ -181,21 +205,31 @@ class Node:
         self.trim = [(l, l["_trim"]) for l in layers if l.get("_trim")]
         self.svg_items = svg_items
         self.final = {"pos": list(origin), "opacity": opacity, "scale": 100}
+        # The layer is born at 100. Anything created hidden has to say so, or it
+        # shows on frame 0 and the poster disagrees with the animation.
+        self._apply_opacity()
         for layer in layers:
             layer.pop("_trim", None)
             scene.layers.append(layer)
 
     def _apply_pos(self):
         for layer, base in zip(self.layers, self.base):
-            keys = [(t, [base[0] + p[0] - self.origin[0],
-                         base[1] + p[1] - self.origin[1], 0])
-                    for t, p in self.pos_keys]
-            layer["ks"]["p"] = _kfs(keys, dim=3)
+            keys = []
+            for k in self.pos_keys:
+                t, p = k[0], k[1]
+                ease = k[2] if len(k) > 2 else EASE_OUT
+                keys.append((t, [base[0] + p[0] - self.origin[0],
+                                 base[1] + p[1] - self.origin[1], 0], ease))
+            layer["ks"]["p"] = _kfs_eased(keys, dim=3)
         self.final["pos"] = list(self.pos_keys[-1][1])
 
     def _apply_opacity(self):
         for layer in self.layers:
-            layer["ks"]["o"] = _kfs(self.opacity_keys, dim=1)
+            # one key is a constant: lottie-web's svg renderer throws on an
+            # animated opacity with no end value.
+            layer["ks"]["o"] = (_const(self.opacity_keys[0][1][0])
+                                if len(self.opacity_keys) == 1
+                                else _kfs(self.opacity_keys, dim=1))
         self.final["opacity"] = self.opacity_keys[-1][1][0]
 
     def _apply_scale(self):
@@ -209,6 +243,9 @@ class Node:
         _key(self.pos_keys, t0, list(self.pos))
         self.pos = [x, y]
         _key(self.pos_keys, t1, list(self.pos))
+        # tag the segment so the curve is the one the caller asked for
+        self.pos_keys = [k if k[0] != t1 else (k[0], k[1], ease)
+                         for k in self.pos_keys]
         self._apply_pos()
         return self
 
@@ -426,6 +463,25 @@ class Scene:
         return node
 
     # ── helpers ────────────────────────────────────────────────────────────
+    def travel(self, cursor, t, x, y):
+        """Move the pointer to a target. Returns the frame it settles on."""
+        cursor.move_to(t, x, y, T_TRAVEL, EASE_TRAVEL)
+        return t + T_TRAVEL
+
+    def press(self, cursor, ring, t):
+        """Settle, dip, spring, ripple. Returns when the state should flip."""
+        t_down = t + T_DWELL
+        cursor.scale_to(t_down, 86, T_DOWN, EASE_IN)
+        cursor.scale_to(t_down + T_DOWN, 100, T_UP, SPRING)
+        self.ripple(ring, t_down, 2.2, T_RIPPLE)
+        return t_down + T_DOWN
+
+    def cursor(self, x, y, t=0.0, opacity=100):
+        """A pointer that fades in where it stands, ready to travel."""
+        node = self.pointer(x, y, opacity=0)
+        node.fade(t, opacity, T_HOVER)
+        return node
+
     def ripple(self, node, t, scale_to=2.4, d=T_HOVER):
         """A press ring: out of the touch point and gone before the state flips.
 

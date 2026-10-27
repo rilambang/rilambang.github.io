@@ -14,6 +14,67 @@
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='0' fill='%232563eb'/><text x='16' y='23' font-family='Georgia,serif' font-size='20' fill='%23ffffff' text-anchor='middle'>R</text></svg>">
 <link rel="stylesheet" href="./blog.css">
+<script defer src="../vendor/lottie.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function(){
+  var figs = document.querySelectorAll('.fig-lottie');
+  if (!figs.length || !window.lottie) return;
+  var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  figs.forEach(function(el){
+    var W = +el.getAttribute('data-w'), H = +el.getAttribute('data-h');
+    var labels = [].slice.call(el.querySelectorAll('.fig-label')).map(function(n){
+      var a = n.getAttribute('data-alpha'), p = n.getAttribute('data-path');
+      return {
+        el: n,
+        a: a ? a.split(' ').map(function(s){
+          var q = s.split(':'); return [+q[0], +q[1]];
+        }) : null,
+        p: p ? p.split(' ').map(Number) : null
+      };
+    });
+    function alphaAt(list, f){
+      var i = 0;
+      while (i + 1 < list.length && list[i + 1][0] <= f) i += 1;
+      if (i + 1 >= list.length) return list[i][1];
+      var t0 = list[i][0], t1 = list[i + 1][0];
+      var u = t1 > t0 ? (f - t0) / (t1 - t0) : 1;
+      return list[i][1] + (list[i + 1][1] - list[i][1]) * u;
+    }
+    function paint(f){
+      labels.forEach(function(l){
+        if (l.a) l.el.style.opacity = (alphaAt(l.a, f) / 100).toFixed(3);
+        if (l.p) {
+          var i = Math.min(Math.round(f), l.p.length / 2 - 1) * 2;
+          // cqw is 1% of the container width, both axes: y divides by W too
+          l.el.style.translate = (l.p[i] / W * 100).toFixed(3) + 'cqw ' +
+                                 (l.p[i + 1] / W * 100).toFixed(3) + 'cqw';
+        }
+      });
+    }
+    var anim = lottie.loadAnimation({
+      container: el, renderer: 'svg', loop: false, autoplay: false,
+      path: el.getAttribute('data-src')
+    });
+    anim.addEventListener('enterFrame', function(){ paint(anim.currentFrame); });
+    anim.addEventListener('DOMLoaded', function(){
+      el.classList.add('is-live');
+      var live = el.querySelector('svg:not(.poster)');
+      if (live) live.setAttribute('aria-hidden', 'true');
+      if (reduced) { anim.goToAndStop(anim.totalFrames - 1, true); paint(anim.totalFrames); return; }
+      anim.goToAndStop(0, true); paint(0);
+      // Play once, then hold the result. Scrolling back is not a rewind.
+      var played = false;
+      new IntersectionObserver(function(entries){
+        entries.forEach(function(e){
+          if (!e.isIntersecting) { if (!played) anim.pause(); return; }
+          if (played) return;
+          played = true; anim.play();
+        });
+      }, {threshold: 0.25}).observe(el);
+    });
+  });
+});
+</script>
 </head>
 <body>
 <div class="wrap">
@@ -31,8 +92,9 @@
 engineering that matters isn't the model either — it's the document you write so a tool
 with an empty context window can work inside a codebase that took years to shape.</p>
 
-  <figure class="fig"><svg viewBox='0 0 640 394' width='640' height='394' role='img' aria-label='Four checkpoints in an agent workflow: what is written once, what is written per task, the evidence accepted, and what stays a person&#x27;s decision' font-family='Helvetica Neue,Helvetica,Arial,sans-serif' xmlns='http://www.w3.org/2000/svg'><g class='n'><rect x='20' y='16' width='470' height='64' rx='10' fill='#1b2440' stroke='#8ab4ff'/><rect class='a' x='20' y='16' width='3' height='64' rx='1.5' fill='#8ab4ff'/><text x='34' y='42' font-size='13' font-weight='600' fill='#f4f6fb'>Written once</text><text x='34' y='62' font-size='11.5' fill='#aab2c4'>conventions, boundaries, roles, stop conditions</text></g><line x1='255' y1='80' x2='255' y2='102' stroke='rgba(255, 255, 255, 0.12)' stroke-width='1.5' class='d'/><polygon points='255,102 250.5,94.8 259.5,94.8' fill='rgba(255, 255, 255, 0.12)'/><g class='n'><rect x='20' y='106' width='470' height='64' rx='10' fill='#161822' stroke='rgba(255, 255, 255, 0.12)'/><rect class='a' x='20' y='106' width='3' height='64' rx='1.5' fill='#8ab4ff'/><text x='34' y='132' font-size='13' font-weight='600' fill='#f4f6fb'>Written per task</text><text x='34' y='152' font-size='11.5' fill='#aab2c4'>the brief: exact paths, the invariant, what proves it</text></g><line x1='255' y1='170' x2='255' y2='192' stroke='rgba(255, 255, 255, 0.12)' stroke-width='1.5' class='d'/><polygon points='255,192 250.5,184.8 259.5,184.8' fill='rgba(255, 255, 255, 0.12)'/><g class='n'><rect x='20' y='196' width='470' height='64' rx='10' fill='#1b2440' stroke='#8ab4ff'/><rect class='a' x='20' y='196' width='3' height='64' rx='1.5' fill='#8ab4ff'/><text x='34' y='222' font-size='13' font-weight='600' fill='#f4f6fb'>The only proof</text><text x='34' y='242' font-size='11.5' fill='#aab2c4'>a hash, a byte count, a test that was red</text></g><line x1='255' y1='260' x2='255' y2='282' stroke='rgba(255, 255, 255, 0.12)' stroke-width='1.5' class='d'/><polygon points='255,282 250.5,274.8 259.5,274.8' fill='rgba(255, 255, 255, 0.12)'/><g class='n'><rect x='20' y='286' width='470' height='64' rx='10' fill='#1b2440' stroke='#8ab4ff'/><rect class='a' x='20' y='286' width='3' height='64' rx='1.5' fill='#8ab4ff'/><text x='34' y='312' font-size='13' font-weight='600' fill='#f4f6fb'>Still a person</text><text x='34' y='332' font-size='11.5' fill='#aab2c4'>specificity, secrets, anything irreversible</text></g><line x1='512' y1='16' x2='512' y2='350' stroke='rgba(255, 255, 255, 0.12)' stroke-width='1.5'/><line x1='500' y1='180' x2='524' y2='180' stroke='rgba(255, 255, 255, 0.12)' stroke-width='1.5'/><circle class='loopdot' cx='255' cy='80' r='5' fill='#8ab4ff'/><text x='528' y='92' font-size='11.5' fill='#aab2c4' text-anchor='start' font-weight='400'>you write</text><text x='528' y='262' font-size='11.5' fill='#aab2c4' text-anchor='start' font-weight='400'>you check</text><text x='20' y='380' font-size='11.5' fill='#aab2c4' text-anchor='start' font-weight='400'>A blank context window each time. The document is the only memory.</text></svg>
-    <figcaption>Four checkpoints. Two are writing, and the two that matter most are the ones I will not take on trust.</figcaption>
+  <figure class="fig">
+    <div class="fig-lottie" data-src="./lottie/ai-native-development-process-1.json" data-w="640" data-h="240" role="img" aria-label="Conventions, brief and evidence: what the agent is allowed to work from"><svg viewBox='0 0 640 240' width='640' height='240' class='poster' aria-hidden='true' xmlns='http://www.w3.org/2000/svg'><rect x='20.0' y='66.0' width='193.3' height='108.0' rx='10' fill='#161822' stroke='#2c3040' stroke-width='1.2'/><rect x='223.3' y='66.0' width='193.3' height='108.0' rx='10' fill='#161822' stroke='#2c3040' stroke-width='1.2'/><rect x='223.3' y='66.0' width='193.3' height='108.0' rx='10' fill='#1b2440' stroke='#8ab4ff' stroke-width='1.2'/><rect x='426.7' y='66.0' width='193.3' height='108.0' rx='10' fill='#161822' stroke='#2c3040' stroke-width='1.2'/><rect x='426.7' y='66.0' width='193.3' height='108.0' rx='10' fill='#1b2440' stroke='#8ab4ff' stroke-width='1.2'/></svg><div class='fig-labels' aria-hidden='true'><span class='fig-label' data-i='0' style='left:18.229%;top:52.500%;font-size:2.5000cqw;color:#f4f6fb;--a1:1.00;transform:translate(-50%,calc(-100% + .24em))'>Conventions</span><span class='fig-label' data-i='1' style='left:50.000%;top:52.500%;font-size:2.5000cqw;color:#f4f6fb;--a1:1.00;transform:translate(-50%,calc(-100% + .24em))'>Brief</span><span class='fig-label' data-i='2' style='left:81.771%;top:52.500%;font-size:2.5000cqw;color:#f4f6fb;--a1:1.00;transform:translate(-50%,calc(-100% + .24em))'>Evidence</span></div></div>
+    <figcaption>The agent works from the brief, not from the whole repo.</figcaption>
   </figure>
 
 
@@ -51,6 +113,11 @@ dozen pull requests. A tool with an empty context window can read neither. Writt
 they become the thing every task is briefed from — which is why that file matters more than
 the prompt, and why "I run an agent in my editor" describes almost none of the work.</p>
 
+
+  <figure class="fig">
+    <div class="fig-lottie" data-src="./lottie/ai-native-development-process-2.json" data-w="640" data-h="300" role="img" aria-label="An agent proposing a change and a human merging it"><svg viewBox='0 0 640 300' width='640' height='300' class='poster' aria-hidden='true' xmlns='http://www.w3.org/2000/svg'><rect x='40.0' y='44.0' width='560.0' height='44.0' rx='8' fill='#161822' stroke='#2c3040' stroke-width='1.2'/><rect x='40.0' y='96.0' width='560.0' height='44.0' rx='8' fill='#161822' stroke='#2c3040' stroke-width='1.2'/><rect x='40.0' y='172.0' width='560.0' height='44.0' rx='8' fill='#1b2440' stroke='#8ab4ff' stroke-width='1.2'/><rect x='40.0' y='172.0' width='560.0' height='44.0' rx='8' fill='#1b2440' stroke='#8ab4ff' stroke-width='1.2'/></svg><div class='fig-labels' aria-hidden='true'><span class='fig-label' data-i='0' style='left:3.125%;top:6.667%;font-size:1.8750cqw;color:#aab2c4;--a1:1.00;transform:translate(0,calc(-100% + .24em))'>Proposed change</span><span class='fig-label' data-i='1' style='left:8.750%;top:23.667%;font-size:2.3438cqw;color:#f4f6fb;--a1:1.00;transform:translate(0,calc(-100% + .24em))'>Edit 3 files</span><span class='fig-label' data-i='2' style='left:91.250%;top:23.667%;font-size:2.0312cqw;color:#aab2c4;--a1:1.00;transform:translate(-100%,calc(-100% + .24em))'>agent</span><span class='fig-label' data-i='3' style='left:8.750%;top:41.000%;font-size:2.3438cqw;color:#f4f6fb;--a1:1.00;transform:translate(0,calc(-100% + .24em))'>Run the tests</span><span class='fig-label' data-i='4' style='left:91.250%;top:41.000%;font-size:2.0312cqw;color:#86e0a6;--a1:1.00;transform:translate(-100%,calc(-100% + .24em))'>green</span><span class='fig-label' data-i='5' style='left:8.750%;top:66.333%;font-size:2.3438cqw;color:#f4f6fb;--a1:1.00;transform:translate(0,calc(-100% + .24em))'>Merge</span><span class='fig-label' data-i='6' style='left:91.250%;top:66.333%;font-size:2.0312cqw;color:#aab2c4;--a1:0.00;transform:translate(-100%,calc(-100% + .24em))' data-alpha='0:100 1:100 2:100 3:100 4:100 5:100 6:100 7:100 8:100 9:100 10:100 11:100 12:100 13:100 14:100 15:100 16:100 17:100 18:100 19:100 20:100 21:100 22:100 23:100 24:100 25:100 26:100 27:100 28:100 29:100 30:100 31:100 32:100 33:100 34:100 35:100 36:100 37:100 38:100 39:100 40:100 41:100 42:100 43:100 44:100 45:100 46:100 47:85 48:15 49:0 50:0 51:0 52:0 53:0 54:0 55:0 56:0 57:0 58:0 59:0 60:0 61:0 62:0 63:0 64:0 65:0 66:0 67:0 68:0 69:0 70:0 71:0 72:0 73:0 74:0 75:0 76:0 77:0 78:0 79:0 80:0 81:0 82:0 83:0 84:0 85:0 86:0 87:0 88:0 89:0 90:0 91:0 92:0 93:0 94:0 95:0 96:0 97:0 98:0 99:0 100:0 101:0 102:0 103:0 104:0 105:0 106:0 107:0 108:0 109:0 110:0 111:0 112:0 113:0 114:0 115:0 116:0 117:0 118:0 119:0 120:0 121:0 122:0 123:0 124:0 125:0 126:0 127:0 128:0 129:0 130:0 131:0 132:0 133:0 134:0 135:0 136:0 137:0 138:0 139:0 140:0 141:0 142:0 143:0 144:0 145:0 146:0 147:0 148:0 149:0 150:0 151:0 152:0 153:0 154:0 155:0 156:0 157:0 158:0 159:0 160:0 161:0 162:0 163:0 164:0 165:0'>waiting</span><span class='fig-label' data-i='7' style='left:91.250%;top:66.333%;font-size:2.0312cqw;color:#86e0a6;--a1:1.00;transform:translate(-100%,calc(-100% + .24em))' data-alpha='0:0 1:0 2:0 3:0 4:0 5:0 6:0 7:0 8:0 9:0 10:0 11:0 12:0 13:0 14:0 15:0 16:0 17:0 18:0 19:0 20:0 21:0 22:0 23:0 24:0 25:0 26:0 27:0 28:0 29:0 30:0 31:0 32:0 33:0 34:0 35:0 36:0 37:0 38:0 39:0 40:0 41:0 42:0 43:0 44:0 45:0 46:0 47:15 48:85 49:100 50:100 51:100 52:100 53:100 54:100 55:100 56:100 57:100 58:100 59:100 60:100 61:100 62:100 63:100 64:100 65:100 66:100 67:100 68:100 69:100 70:100 71:100 72:100 73:100 74:100 75:100 76:100 77:100 78:100 79:100 80:100 81:100 82:100 83:100 84:100 85:100 86:100 87:100 88:100 89:100 90:100 91:100 92:100 93:100 94:100 95:100 96:100 97:100 98:100 99:100 100:100 101:100 102:100 103:100 104:100 105:100 106:100 107:100 108:100 109:100 110:100 111:100 112:100 113:100 114:100 115:100 116:100 117:100 118:100 119:100 120:100 121:100 122:100 123:100 124:100 125:100 126:100 127:100 128:100 129:100 130:100 131:100 132:100 133:100 134:100 135:100 136:100 137:100 138:100 139:100 140:100 141:100 142:100 143:100 144:100 145:100 146:100 147:100 148:100 149:100 150:100 151:100 152:100 153:100 154:100 155:100 156:100 157:100 158:100 159:100 160:100 161:100 162:100 163:100 164:100 165:100'>human</span></div></div>
+    <figcaption>The agent proposes; the human merges.</figcaption>
+  </figure>
 <h2>What the IDE now gives you, and what it doesn't</h2>
 
 <p>This stopped being a bolt-on. The Xcode 26 release notes describe "coding intelligence

@@ -43,8 +43,9 @@ function painter(el, W, H){
       if (l.a) l.el.style.opacity = (alphaAt(l.a, f) / 100).toFixed(3);
       if (l.p) {
         var i = Math.min(Math.round(f), l.p.length / 2 - 1) * 2;
+        // cqw is 1% of the container width, both axes: y divides by W too
         l.el.style.translate = (l.p[i] / W * 100).toFixed(3) + 'cqw ' +
-                               (l.p[i + 1] / H * 100).toFixed(3) + 'cqw';
+                               (l.p[i + 1] / W * 100).toFixed(3) + 'cqw';
       }
     });
   };

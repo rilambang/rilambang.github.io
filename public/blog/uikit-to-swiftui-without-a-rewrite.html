@@ -14,6 +14,67 @@
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='0' fill='%232563eb'/><text x='16' y='23' font-family='Georgia,serif' font-size='20' fill='%23ffffff' text-anchor='middle'>R</text></svg>">
 <link rel="stylesheet" href="./blog.css">
+<script defer src="../vendor/lottie.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function(){
+  var figs = document.querySelectorAll('.fig-lottie');
+  if (!figs.length || !window.lottie) return;
+  var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  figs.forEach(function(el){
+    var W = +el.getAttribute('data-w'), H = +el.getAttribute('data-h');
+    var labels = [].slice.call(el.querySelectorAll('.fig-label')).map(function(n){
+      var a = n.getAttribute('data-alpha'), p = n.getAttribute('data-path');
+      return {
+        el: n,
+        a: a ? a.split(' ').map(function(s){
+          var q = s.split(':'); return [+q[0], +q[1]];
+        }) : null,
+        p: p ? p.split(' ').map(Number) : null
+      };
+    });
+    function alphaAt(list, f){
+      var i = 0;
+      while (i + 1 < list.length && list[i + 1][0] <= f) i += 1;
+      if (i + 1 >= list.length) return list[i][1];
+      var t0 = list[i][0], t1 = list[i + 1][0];
+      var u = t1 > t0 ? (f - t0) / (t1 - t0) : 1;
+      return list[i][1] + (list[i + 1][1] - list[i][1]) * u;
+    }
+    function paint(f){
+      labels.forEach(function(l){
+        if (l.a) l.el.style.opacity = (alphaAt(l.a, f) / 100).toFixed(3);
+        if (l.p) {
+          var i = Math.min(Math.round(f), l.p.length / 2 - 1) * 2;
+          // cqw is 1% of the container width, both axes: y divides by W too
+          l.el.style.translate = (l.p[i] / W * 100).toFixed(3) + 'cqw ' +
+                                 (l.p[i + 1] / W * 100).toFixed(3) + 'cqw';
+        }
+      });
+    }
+    var anim = lottie.loadAnimation({
+      container: el, renderer: 'svg', loop: false, autoplay: false,
+      path: el.getAttribute('data-src')
+    });
+    anim.addEventListener('enterFrame', function(){ paint(anim.currentFrame); });
+    anim.addEventListener('DOMLoaded', function(){
+      el.classList.add('is-live');
+      var live = el.querySelector('svg:not(.poster)');
+      if (live) live.setAttribute('aria-hidden', 'true');
+      if (reduced) { anim.goToAndStop(anim.totalFrames - 1, true); paint(anim.totalFrames); return; }
+      anim.goToAndStop(0, true); paint(0);
+      // Play once, then hold the result. Scrolling back is not a rewind.
+      var played = false;
+      new IntersectionObserver(function(entries){
+        entries.forEach(function(e){
+          if (!e.isIntersecting) { if (!played) anim.pause(); return; }
+          if (played) return;
+          played = true; anim.play();
+        });
+      }, {threshold: 0.25}).observe(el);
+    });
+  });
+});
+</script>
 </head>
 <body>
 <div class="wrap">
@@ -31,8 +92,9 @@
 right and the rest is a sequence of small, reversible steps. Get it wrong and you end up with
 two systems that each half-know where you are.</p>
 
-  <figure class="fig"><svg viewBox='0 0 640 230' width='640' height='230' role='img' aria-label='A UIKit to SwiftUI migration as four ordered steps, with a single owner of navigation underneath the whole sequence' font-family='Helvetica Neue,Helvetica,Arial,sans-serif' xmlns='http://www.w3.org/2000/svg'><g class='n'><rect x='20' y='30' width='140' height='58' rx='10' fill='#1b2440' stroke='#8ab4ff'/><rect class='a' x='20' y='30' width='3' height='58' rx='1.5' fill='#8ab4ff'/><text x='34' y='64.0' font-size='13' font-weight='600' fill='#f4f6fb'>Leaf screens</text><rect class='hl' style='--i:0' x='20' y='30' width='140' height='58' rx='10' fill='none' stroke='#8ab4ff' stroke-width='1.8'/></g><line x1='160' y1='59' x2='175' y2='59' stroke='rgba(255, 255, 255, 0.12)' stroke-width='1.5' class='d'/><polygon points='175,59 167.8,54.5 167.8,63.5' fill='rgba(255, 255, 255, 0.12)'/><g class='n'><rect x='175' y='30' width='140' height='58' rx='10' fill='#161822' stroke='rgba(255, 255, 255, 0.12)'/><rect class='a' x='175' y='30' width='3' height='58' rx='1.5' fill='#8ab4ff'/><text x='189' y='64.0' font-size='13' font-weight='600' fill='#f4f6fb'>Shared services</text><rect class='hl' style='--i:1' x='175' y='30' width='140' height='58' rx='10' fill='none' stroke='#8ab4ff' stroke-width='1.8'/></g><line x1='315' y1='59' x2='330' y2='59' stroke='rgba(255, 255, 255, 0.12)' stroke-width='1.5' class='d'/><polygon points='330,59 322.8,54.5 322.8,63.5' fill='rgba(255, 255, 255, 0.12)'/><g class='n'><rect x='330' y='30' width='140' height='58' rx='10' fill='#161822' stroke='rgba(255, 255, 255, 0.12)'/><rect class='a' x='330' y='30' width='3' height='58' rx='1.5' fill='#8ab4ff'/><text x='344' y='64.0' font-size='13' font-weight='600' fill='#f4f6fb'>App shell</text><rect class='hl' style='--i:2' x='330' y='30' width='140' height='58' rx='10' fill='none' stroke='#8ab4ff' stroke-width='1.8'/></g><line x1='470' y1='59' x2='485' y2='59' stroke='rgba(255, 255, 255, 0.12)' stroke-width='1.5' class='d'/><polygon points='485,59 477.8,54.5 477.8,63.5' fill='rgba(255, 255, 255, 0.12)'/><g class='n'><rect x='485' y='30' width='140' height='58' rx='10' fill='#161822' stroke='rgba(255, 255, 255, 0.12)'/><rect class='a' x='485' y='30' width='3' height='58' rx='1.5' fill='#8ab4ff'/><text x='499' y='64.0' font-size='13' font-weight='600' fill='#f4f6fb'>Navigation last</text><rect class='hl' style='--i:3' x='485' y='30' width='140' height='58' rx='10' fill='none' stroke='#8ab4ff' stroke-width='1.8'/></g><g class='n'><rect x='20' y='130' width='600' height='58' rx='10' fill='#161822' stroke='rgba(255, 255, 255, 0.12)'/><rect class='a' x='20' y='130' width='3' height='58' rx='1.5' fill='#8ab4ff'/><text x='34' y='156' font-size='13' font-weight='600' fill='#f4f6fb'>One owner of the stack, for the whole migration</text><text x='34' y='176' font-size='11.5' fill='#aab2c4'>the other side renders content and reports events — it does not push</text></g><text x='20' y='216' font-size='11.5' fill='#aab2c4' text-anchor='start' font-weight='400'>Availability is a plan, not an afterthought: every adoption above your floor needs a fallback.</text></svg>
-    <figcaption>Progress in one direction, with the navigation seam held still.</figcaption>
+  <figure class="fig">
+    <div class="fig-lottie" data-src="./lottie/uikit-to-swiftui-without-a-rewrite-1.json" data-w="640" data-h="340" role="img" aria-label="One screen converted: the navigation chrome changes owner and the same four rows stay put"><svg viewBox='0 0 640 340' width='640' height='340' class='poster' aria-hidden='true' xmlns='http://www.w3.org/2000/svg'><rect x='40.0' y='32.0' width='240.0' height='276.0' rx='18' fill='#161822' stroke='#2c3040' stroke-width='1.2'/><rect x='40.0' y='32.0' width='240.0' height='56.0' rx='18' fill='#1b2440' stroke='#2c3040' stroke-width='1.2'/><line x1='60.0' y1='142.0' x2='260.0' y2='142.0' stroke='#2c3040' stroke-width='1'/><line x1='60.0' y1='182.0' x2='260.0' y2='182.0' stroke='#2c3040' stroke-width='1'/><line x1='60.0' y1='222.0' x2='260.0' y2='222.0' stroke='#2c3040' stroke-width='1'/><line x1='60.0' y1='262.0' x2='260.0' y2='262.0' stroke='#2c3040' stroke-width='1'/><rect x='320.0' y='60.0' width='280.0' height='96.0' rx='12' fill='#161822' stroke='#2c3040' stroke-width='1.2'/><rect x='40.0' y='32.0' width='240.0' height='56.0' rx='18' fill='#1b2440' stroke='#8ab4ff' stroke-width='1.2'/></svg><div class='fig-labels' aria-hidden='true'><span class='fig-label' data-i='0' style='left:25.000%;top:20.000%;font-size:2.3438cqw;color:#f4f6fb;--a1:1.00;transform:translate(-50%,calc(-100% + .24em))'>Exam</span><span class='fig-label' data-i='1' style='left:11.250%;top:36.471%;font-size:2.1875cqw;color:#f4f6fb;--a1:1.00;transform:translate(0,calc(-100% + .24em))'>Welcome</span><span class='fig-label' data-i='2' style='left:11.250%;top:48.235%;font-size:2.1875cqw;color:#f4f6fb;--a1:1.00;transform:translate(0,calc(-100% + .24em))'>Location</span><span class='fig-label' data-i='3' style='left:11.250%;top:60.000%;font-size:2.1875cqw;color:#f4f6fb;--a1:1.00;transform:translate(0,calc(-100% + .24em))'>Ready</span><span class='fig-label' data-i='4' style='left:11.250%;top:71.765%;font-size:2.1875cqw;color:#f4f6fb;--a1:1.00;transform:translate(0,calc(-100% + .24em))'>Paper</span><span class='fig-label' data-i='5' style='left:52.812%;top:27.059%;font-size:1.8750cqw;color:#aab2c4;--a1:1.00;transform:translate(0,calc(-100% + .24em))'>Navigation owner</span><span class='fig-label' data-i='6' style='left:52.812%;top:37.059%;font-size:2.8125cqw;color:#aab2c4;--a1:0.00;transform:translate(0,calc(-100% + .24em))' data-alpha='0:100 1:100 2:100 3:100 4:100 5:100 6:100 7:100 8:100 9:100 10:100 11:100 12:100 13:100 14:100 15:100 16:100 17:100 18:100 19:100 20:100 21:100 22:100 23:100 24:100 25:100 26:100 27:100 28:100 29:100 30:100 31:100 32:100 33:100 34:100 35:100 36:100 37:100 38:100 39:100 40:100 41:100 42:100 43:100 44:100 45:100 46:100 47:100 48:100 49:100 50:100 51:100 52:100 53:100 54:100 55:100 56:100 57:85 58:15 59:0 60:0 61:0 62:0 63:0 64:0 65:0 66:0 67:0 68:0 69:0 70:0 71:0 72:0 73:0 74:0 75:0 76:0 77:0 78:0 79:0 80:0 81:0 82:0 83:0 84:0 85:0 86:0 87:0 88:0 89:0 90:0 91:0 92:0 93:0 94:0 95:0 96:0 97:0 98:0 99:0 100:0 101:0 102:0 103:0 104:0 105:0 106:0 107:0 108:0 109:0 110:0 111:0 112:0 113:0 114:0 115:0 116:0 117:0 118:0 119:0 120:0 121:0 122:0 123:0 124:0 125:0 126:0 127:0 128:0 129:0 130:0 131:0 132:0 133:0 134:0 135:0 136:0 137:0 138:0 139:0 140:0 141:0 142:0 143:0 144:0 145:0 146:0 147:0 148:0 149:0 150:0 151:0 152:0 153:0 154:0 155:0 156:0 157:0 158:0 159:0 160:0 161:0 162:0 163:0 164:0 165:0'>UIKit</span><span class='fig-label' data-i='7' style='left:52.812%;top:37.059%;font-size:2.8125cqw;color:#86e0a6;--a1:1.00;transform:translate(0,calc(-100% + .24em))' data-alpha='0:0 1:0 2:0 3:0 4:0 5:0 6:0 7:0 8:0 9:0 10:0 11:0 12:0 13:0 14:0 15:0 16:0 17:0 18:0 19:0 20:0 21:0 22:0 23:0 24:0 25:0 26:0 27:0 28:0 29:0 30:0 31:0 32:0 33:0 34:0 35:0 36:0 37:0 38:0 39:0 40:0 41:0 42:0 43:0 44:0 45:0 46:0 47:0 48:0 49:0 50:0 51:0 52:0 53:0 54:0 55:0 56:0 57:15 58:85 59:100 60:100 61:100 62:100 63:100 64:100 65:100 66:100 67:100 68:100 69:100 70:100 71:100 72:100 73:100 74:100 75:100 76:100 77:100 78:100 79:100 80:100 81:100 82:100 83:100 84:100 85:100 86:100 87:100 88:100 89:100 90:100 91:100 92:100 93:100 94:100 95:100 96:100 97:100 98:100 99:100 100:100 101:100 102:100 103:100 104:100 105:100 106:100 107:100 108:100 109:100 110:100 111:100 112:100 113:100 114:100 115:100 116:100 117:100 118:100 119:100 120:100 121:100 122:100 123:100 124:100 125:100 126:100 127:100 128:100 129:100 130:100 131:100 132:100 133:100 134:100 135:100 136:100 137:100 138:100 139:100 140:100 141:100 142:100 143:100 144:100 145:100 146:100 147:100 148:100 149:100 150:100 151:100 152:100 153:100 154:100 155:100 156:100 157:100 158:100 159:100 160:100 161:100 162:100 163:100 164:100 165:100'>SwiftUI</span><span class='fig-label' data-i='8' style='left:3.125%;top:96.471%;font-size:1.8750cqw;color:#aab2c4;--a1:1.00;transform:translate(0,calc(-100% + .24em))'>Same screen. Same rows.</span></div></div>
+    <figcaption>Navigation changes owner; the content does not move.</figcaption>
   </figure>
 
 
@@ -48,6 +110,11 @@ shell is the part every screen depends on, and it's the part you can't ship incr
 navigation are the safe unit of migration, because failure costs you one screen rather than
 the app.</p>
 
+
+  <figure class="fig">
+    <div class="fig-lottie" data-src="./lottie/uikit-to-swiftui-without-a-rewrite-2.json" data-w="640" data-h="320" role="img" aria-label="One file moving from the UIKit views folder into a SwiftUI folder"><svg viewBox='0 0 640 320' width='640' height='320' class='poster' aria-hidden='true' xmlns='http://www.w3.org/2000/svg'><rect x='40.0' y='40.0' width='260.0' height='232.0' rx='14' fill='#161822' stroke='#2c3040' stroke-width='1.2'/><rect x='340.0' y='40.0' width='260.0' height='232.0' rx='14' fill='#161822' stroke='#2c3040' stroke-width='1.2'/><rect x='372.0' y='76.0' width='196.0' height='64.0' rx='10' fill='#1b2440' stroke='#8ab4ff' stroke-width='1.2'/></svg><div class='fig-labels' aria-hidden='true'><span class='fig-label' data-i='0' style='left:3.125%;top:6.250%;font-size:1.8750cqw;color:#aab2c4;--a1:1.00;transform:translate(0,calc(-100% + .24em))'>Views/</span><span class='fig-label' data-i='1' style='left:56.250%;top:6.250%;font-size:1.8750cqw;color:#aab2c4;--a1:1.00;transform:translate(0,calc(-100% + .24em))'>SwiftUI/</span><span class='fig-label' data-i='2' style='left:73.438%;top:36.250%;font-size:2.3438cqw;color:#8ab4ff;--a1:0.00;transform:translate(-50%,calc(-100% + .24em))' data-alpha='0:100 1:100 2:100 3:100 4:100 5:100 6:100 7:100 8:100 9:100 10:100 11:100 12:100 13:100 14:100 15:100 16:100 17:100 18:100 19:100 20:100 21:100 22:100 23:100 24:100 25:100 26:100 27:100 28:100 29:100 30:100 31:100 32:100 33:100 34:100 35:100 36:100 37:100 38:100 39:100 40:100 41:100 42:100 43:100 44:100 45:100 46:100 47:100 48:100 49:100 50:100 51:100 52:100 53:100 54:100 55:100 56:100 57:100 58:100 59:100 60:100 61:100 62:100 63:100 64:100 65:100 66:100 67:100 68:100 69:100 70:100 71:100 72:100 73:100 74:100 75:100 76:100 77:100 78:100 79:0 80:0 81:0 82:0 83:0 84:0 85:0 86:0 87:0 88:0 89:0 90:0 91:0 92:0 93:0 94:0 95:0 96:0 97:0 98:0 99:0 100:0 101:0 102:0 103:0 104:0 105:0 106:0 107:0 108:0 109:0 110:0 111:0 112:0 113:0 114:0 115:0 116:0 117:0 118:0 119:0 120:0 121:0 122:0 123:0 124:0 125:0 126:0 127:0 128:0 129:0 130:0 131:0 132:0 133:0 134:0 135:0 136:0 137:0 138:0 139:0 140:0 141:0 142:0 143:0 144:0 145:0 146:0 147:0 148:0 149:0 150:0 151:0 152:0 153:0 154:0 155:0 156:0 157:0 158:0 159:0 160:0 161:0 162:0 163:0 164:0 165:0' data-path='-300.0 0.0 -300.0 0.0 -300.0 0.0 -300.0 0.0 -300.0 0.0 -300.0 0.0 -300.0 0.0 -300.0 0.0 -300.0 0.0 -300.0 0.0 -300.0 0.0 -300.0 0.0 -300.0 0.0 -300.0 0.0 -300.0 0.0 -300.0 0.0 -300.0 0.0 -300.0 0.0 -300.0 0.0 -300.0 0.0 -300.0 0.0 -300.0 0.0 -300.0 0.0 -300.0 0.0 -300.0 0.0 -300.0 0.0 -300.0 0.0 -300.0 0.0 -300.0 0.0 -300.0 0.0 -300.0 0.0 -300.0 0.0 -300.0 0.0 -300.0 0.0 -300.0 0.0 -300.0 0.0 -300.0 0.0 -300.0 0.0 -300.0 0.0 -300.0 0.0 -300.0 0.0 -300.0 0.0 -300.0 0.0 -300.0 0.0 -300.0 0.0 -300.0 0.0 -300.0 0.0 -300.0 0.0 -300.0 0.0 -299.7 0.0 -298.9 0.0 -297.3 0.0 -295.0 0.0 -291.8 0.0 -287.5 0.0 -282.0 0.0 -275.1 0.0 -266.3 0.0 -255.3 0.0 -241.5 0.0 -224.4 0.0 -203.2 0.0 -178.0 0.0 -150.0 0.0 -122.0 0.0 -96.8 0.0 -75.6 0.0 -58.5 0.0 -44.7 0.0 -33.7 0.0 -24.9 0.0 -18.0 0.0 -12.5 0.0 -8.2 0.0 -5.0 0.0 -2.7 0.0 -1.1 0.0 -0.3 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0'>ExamScreen.swift</span><span class='fig-label' data-i='3' style='left:73.438%;top:36.250%;font-size:2.3438cqw;color:#8ab4ff;--a1:1.00;transform:translate(-50%,calc(-100% + .24em))' data-alpha='0:0 1:0 2:0 3:0 4:0 5:0 6:0 7:0 8:0 9:0 10:0 11:0 12:0 13:0 14:0 15:0 16:0 17:0 18:0 19:0 20:0 21:0 22:0 23:0 24:0 25:0 26:0 27:0 28:0 29:0 30:0 31:0 32:0 33:0 34:0 35:0 36:0 37:0 38:0 39:0 40:0 41:0 42:0 43:0 44:0 45:0 46:0 47:0 48:0 49:0 50:0 51:0 52:0 53:0 54:0 55:0 56:0 57:0 58:0 59:0 60:0 61:0 62:0 63:0 64:0 65:0 66:0 67:0 68:0 69:0 70:0 71:0 72:0 73:0 74:0 75:0 76:0 77:0 78:0 79:100 80:100 81:100 82:100 83:100 84:100 85:100 86:100 87:100 88:100 89:100 90:100 91:100 92:100 93:100 94:100 95:100 96:100 97:100 98:100 99:100 100:100 101:100 102:100 103:100 104:100 105:100 106:100 107:100 108:100 109:100 110:100 111:100 112:100 113:100 114:100 115:100 116:100 117:100 118:100 119:100 120:100 121:100 122:100 123:100 124:100 125:100 126:100 127:100 128:100 129:100 130:100 131:100 132:100 133:100 134:100 135:100 136:100 137:100 138:100 139:100 140:100 141:100 142:100 143:100 144:100 145:100 146:100 147:100 148:100 149:100 150:100 151:100 152:100 153:100 154:100 155:100 156:100 157:100 158:100 159:100 160:100 161:100 162:100 163:100 164:100 165:100'>ExamScreen.swift</span><span class='fig-label' data-i='4' style='left:3.125%;top:95.000%;font-size:1.8750cqw;color:#aab2c4;--a1:1.00;transform:translate(0,calc(-100% + .24em))'>One file, one boundary, one instance.</span></div></div>
+    <figcaption>The file moves once, and lands once.</figcaption>
+  </figure>
 <h2>Pick one direction of interop at a time</h2>
 
 <p>The two directions aren't symmetric and should not be started together:</p>

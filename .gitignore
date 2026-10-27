@@ -6,3 +6,6 @@ dist/
 # public in this repo, and it only guards that one document.
 *.docx
 *.pdf
+
+# Review contact sheets, generated locally
+.shots/

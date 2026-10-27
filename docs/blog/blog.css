@@ -57,6 +57,13 @@ blockquote p{margin:0}
   background:var(--figure);padding:18px;overflow-x:auto;
   box-shadow:0 26px 56px -32px rgba(0,0,0,.9),inset 0 1px 0 rgba(255,255,255,.07)}
 .fig svg{max-width:100%;height:auto}
+.fig-lottie{position:relative;container-type:inline-size;line-height:1}
+.fig-lottie svg{display:block;width:100%;height:auto}
+.fig-lottie.is-live > svg.poster{display:none}
+.fig-labels{position:absolute;inset:0;z-index:1;pointer-events:none;
+  font-family:Inter,Helvetica Neue,Helvetica,Arial,sans-serif}
+.fig-label{position:absolute;white-space:nowrap;font-weight:400;
+  opacity:var(--a1,1)}
 .fig figcaption{font-size:13px;line-height:1.55;color:var(--muted);margin-top:14px;
   padding-top:12px;border-top:1px solid var(--line)}
 .sources{margin-top:56px;border-top:1px solid var(--line);padding-top:20px;font-size:14px}

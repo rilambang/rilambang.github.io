@@ -14,6 +14,67 @@
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='0' fill='%232563eb'/><text x='16' y='23' font-family='Georgia,serif' font-size='20' fill='%23ffffff' text-anchor='middle'>R</text></svg>">
 <link rel="stylesheet" href="./blog.css">
+<script defer src="../vendor/lottie.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function(){
+  var figs = document.querySelectorAll('.fig-lottie');
+  if (!figs.length || !window.lottie) return;
+  var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  figs.forEach(function(el){
+    var W = +el.getAttribute('data-w'), H = +el.getAttribute('data-h');
+    var labels = [].slice.call(el.querySelectorAll('.fig-label')).map(function(n){
+      var a = n.getAttribute('data-alpha'), p = n.getAttribute('data-path');
+      return {
+        el: n,
+        a: a ? a.split(' ').map(function(s){
+          var q = s.split(':'); return [+q[0], +q[1]];
+        }) : null,
+        p: p ? p.split(' ').map(Number) : null
+      };
+    });
+    function alphaAt(list, f){
+      var i = 0;
+      while (i + 1 < list.length && list[i + 1][0] <= f) i += 1;
+      if (i + 1 >= list.length) return list[i][1];
+      var t0 = list[i][0], t1 = list[i + 1][0];
+      var u = t1 > t0 ? (f - t0) / (t1 - t0) : 1;
+      return list[i][1] + (list[i + 1][1] - list[i][1]) * u;
+    }
+    function paint(f){
+      labels.forEach(function(l){
+        if (l.a) l.el.style.opacity = (alphaAt(l.a, f) / 100).toFixed(3);
+        if (l.p) {
+          var i = Math.min(Math.round(f), l.p.length / 2 - 1) * 2;
+          // cqw is 1% of the container width, both axes: y divides by W too
+          l.el.style.translate = (l.p[i] / W * 100).toFixed(3) + 'cqw ' +
+                                 (l.p[i + 1] / W * 100).toFixed(3) + 'cqw';
+        }
+      });
+    }
+    var anim = lottie.loadAnimation({
+      container: el, renderer: 'svg', loop: false, autoplay: false,
+      path: el.getAttribute('data-src')
+    });
+    anim.addEventListener('enterFrame', function(){ paint(anim.currentFrame); });
+    anim.addEventListener('DOMLoaded', function(){
+      el.classList.add('is-live');
+      var live = el.querySelector('svg:not(.poster)');
+      if (live) live.setAttribute('aria-hidden', 'true');
+      if (reduced) { anim.goToAndStop(anim.totalFrames - 1, true); paint(anim.totalFrames); return; }
+      anim.goToAndStop(0, true); paint(0);
+      // Play once, then hold the result. Scrolling back is not a rewind.
+      var played = false;
+      new IntersectionObserver(function(entries){
+        entries.forEach(function(e){
+          if (!e.isIntersecting) { if (!played) anim.pause(); return; }
+          if (played) return;
+          played = true; anim.play();
+        });
+      }, {threshold: 0.25}).observe(el);
+    });
+  });
+});
+</script>
 </head>
 <body>
 <div class="wrap">
@@ -32,8 +93,9 @@ the exam view model know the network layer, the router, the answer queue, and th
 invigilator?</em> I had no good answer, so the next three architecture passes were spent earning
 one. This is part one of three.</p>
 
-  <figure class="fig"><svg viewBox='0 0 640 262' width='640' height='262' role='img' aria-label='Five responsibilities fanning into a single view model file' font-family='Helvetica Neue,Helvetica,Arial,sans-serif' xmlns='http://www.w3.org/2000/svg'><g class='n'><rect x='20' y='16' width='600' height='54' rx='10' fill='#1b2440' stroke='#8ab4ff'/><rect class='a' x='20' y='16' width='3' height='54' rx='1.5' fill='#8ab4ff'/><text x='34' y='42' font-size='13' font-weight='600' fill='#f4f6fb'>The exam screen&#x27;s view model</text><text x='34' y='62' font-size='11.5' fill='#aab2c4'>one file, and no rule about what may not move into it</text></g><line x1='110' y1='70' x2='110' y2='106' stroke='rgba(255, 255, 255, 0.12)' stroke-width='1.5' class='d'/><polygon points='110,106 105.5,98.8 114.5,98.8' fill='rgba(255, 255, 255, 0.12)'/><g class='pull' style='--i:0'><g class='n'><rect x='20' y='110' width='190' height='58' rx='10' fill='#161822' stroke='rgba(255, 255, 255, 0.12)'/><rect class='a' x='20' y='110' width='3' height='58' rx='1.5' fill='#8ab4ff'/><text x='34' y='136' font-size='13' font-weight='600' fill='#f4f6fb'>Question state</text><text x='34' y='156' font-size='11.5' fill='#aab2c4'>answered, flagged, untouched</text></g></g><line x1='315' y1='70' x2='315' y2='106' stroke='rgba(255, 255, 255, 0.12)' stroke-width='1.5' class='d'/><polygon points='315,106 310.5,98.8 319.5,98.8' fill='rgba(255, 255, 255, 0.12)'/><g class='pull' style='--i:1'><g class='n'><rect x='225' y='110' width='190' height='58' rx='10' fill='#161822' stroke='rgba(255, 255, 255, 0.12)'/><rect class='a' x='225' y='110' width='3' height='58' rx='1.5' fill='#8ab4ff'/><text x='239' y='136' font-size='13' font-weight='600' fill='#f4f6fb'>The answer rule</text><text x='239' y='156' font-size='11.5' fill='#aab2c4'>when may this leave the device</text></g></g><line x1='520' y1='70' x2='520' y2='106' stroke='rgba(255, 255, 255, 0.12)' stroke-width='1.5' class='d'/><polygon points='520,106 515.5,98.8 524.5,98.8' fill='rgba(255, 255, 255, 0.12)'/><g class='pull' style='--i:2'><g class='n'><rect x='430' y='110' width='190' height='58' rx='10' fill='#161822' stroke='rgba(255, 255, 255, 0.12)'/><rect class='a' x='430' y='110' width='3' height='58' rx='1.5' fill='#8ab4ff'/><text x='444' y='136' font-size='13' font-weight='600' fill='#f4f6fb'>The offline queue</text><text x='444' y='156' font-size='11.5' fill='#aab2c4'>and its retry pump</text></g></g><line x1='110' y1='70' x2='110' y2='182' stroke='rgba(255, 255, 255, 0.12)' stroke-width='1.5' class='d'/><polygon points='110,182 105.5,174.8 114.5,174.8' fill='rgba(255, 255, 255, 0.12)'/><g class='pull' style='--i:3'><g class='n'><rect x='20' y='186' width='190' height='58' rx='10' fill='#161822' stroke='rgba(255, 255, 255, 0.12)'/><rect class='a' x='20' y='186' width='3' height='58' rx='1.5' fill='#8ab4ff'/><text x='34' y='212' font-size='13' font-weight='600' fill='#f4f6fb'>Navigation</text><text x='34' y='232' font-size='11.5' fill='#aab2c4'>through the exam gate</text></g></g><line x1='315' y1='70' x2='315' y2='182' stroke='rgba(255, 255, 255, 0.12)' stroke-width='1.5' class='d'/><polygon points='315,182 310.5,174.8 319.5,174.8' fill='rgba(255, 255, 255, 0.12)'/><g class='pull' style='--i:4'><g class='n'><rect x='225' y='186' width='190' height='58' rx='10' fill='#161822' stroke='rgba(255, 255, 255, 0.12)'/><rect class='a' x='225' y='186' width='3' height='58' rx='1.5' fill='#8ab4ff'/><text x='239' y='212' font-size='13' font-weight='600' fill='#f4f6fb'>The network calls</text><text x='239' y='232' font-size='11.5' fill='#aab2c4'>one import away</text></g></g><text x='430' y='214' font-size='11.5' fill='#aab2c4' text-anchor='start' font-weight='400'>and a sixth is always</text><text x='430' y='232' font-size='11.5' fill='#aab2c4' text-anchor='start' font-weight='400'>one story away</text></svg>
-    <figcaption>Five responsibilities, one file, and no rule that says a sixth cannot move in. Every one of them arrived as the smallest change that would get a story done.</figcaption>
+  <figure class="fig">
+    <div class="fig-lottie" data-src="./lottie/mvvm-to-viper-part-one-1.json" data-w="640" data-h="320" role="img" aria-label="A view model absorbing navigation from the view"><svg viewBox='0 0 640 320' width='640' height='320' class='poster' aria-hidden='true' xmlns='http://www.w3.org/2000/svg'><rect x='40.0' y='44.0' width='260.0' height='240.0' rx='14' fill='#161822' stroke='#2c3040' stroke-width='1.2'/><rect x='340.0' y='44.0' width='260.0' height='240.0' rx='14' fill='#161822' stroke='#2c3040' stroke-width='1.2'/><rect x='340.0' y='232.0' width='260.0' height='44.0' rx='8' fill='#2a1a22' stroke='#ff9d9d' stroke-width='1.2'/></svg><div class='fig-labels' aria-hidden='true'><span class='fig-label' data-i='0' style='left:9.375%;top:24.375%;font-size:2.1875cqw;color:#aab2c4;--a1:1.00;transform:translate(0,calc(-100% + .24em))'>ExamView</span><span class='fig-label' data-i='1' style='left:9.375%;top:39.375%;font-size:2.1875cqw;color:#f4f6fb;--a1:1.00;transform:translate(0,calc(-100% + .24em))'>score</span><span class='fig-label' data-i='2' style='left:9.375%;top:51.875%;font-size:2.1875cqw;color:#f4f6fb;--a1:1.00;transform:translate(0,calc(-100% + .24em))'>timer</span><span class='fig-label' data-i='3' style='left:9.375%;top:64.375%;font-size:2.1875cqw;color:#f4f6fb;--a1:1.00;transform:translate(0,calc(-100% + .24em))'>questions</span><span class='fig-label' data-i='4' style='left:56.250%;top:24.375%;font-size:2.1875cqw;color:#aab2c4;--a1:1.00;transform:translate(0,calc(-100% + .24em))'>ExamViewModel</span><span class='fig-label' data-i='5' style='left:56.250%;top:39.375%;font-size:2.1875cqw;color:#f4f6fb;--a1:1.00;transform:translate(0,calc(-100% + .24em))'>score</span><span class='fig-label' data-i='6' style='left:56.250%;top:51.875%;font-size:2.1875cqw;color:#f4f6fb;--a1:1.00;transform:translate(0,calc(-100% + .24em))'>timer</span><span class='fig-label' data-i='7' style='left:56.250%;top:64.375%;font-size:2.1875cqw;color:#f4f6fb;--a1:1.00;transform:translate(0,calc(-100% + .24em))'>questions</span><span class='fig-label' data-i='8' style='left:56.250%;top:79.375%;font-size:2.1875cqw;color:#ff9d9d;--a1:0.00;transform:translate(0,calc(-100% + .24em))'>navigate(to:)</span><span class='fig-label' data-i='9' style='left:56.250%;top:79.375%;font-size:2.1875cqw;color:#ff9d9d;--a1:1.00;transform:translate(0,calc(-100% + .24em))' data-alpha='0:0 1:0 2:0 3:0 4:0 5:0 6:0 7:0 8:0 9:0 10:0 11:0 12:0 13:0 14:0 15:0 16:0 17:0 18:0 19:0 20:0 21:0 22:0 23:0 24:0 25:0 26:0 27:0 28:0 29:0 30:0 31:0 32:0 33:0 34:0 35:0 36:0 37:0 38:0 39:0 40:0 41:0 42:0 43:0 44:0 45:0 46:0 47:2 48:10 49:31 50:69 51:90 52:98 53:100 54:100 55:100 56:100 57:100 58:100 59:100 60:100 61:100 62:100 63:100 64:100 65:100 66:100 67:100 68:100 69:100 70:100 71:100 72:100 73:100 74:100 75:100 76:100 77:100 78:100 79:100 80:100 81:100 82:100 83:100 84:100 85:100 86:100 87:100 88:100 89:100 90:100 91:100 92:100 93:100 94:100 95:100 96:100 97:100 98:100 99:100 100:100 101:100 102:100 103:100 104:100 105:100 106:100 107:100 108:100 109:100 110:100 111:100 112:100 113:100 114:100 115:100 116:100 117:100 118:100 119:100 120:100 121:100 122:100 123:100 124:100 125:100 126:100 127:100 128:100 129:100 130:100 131:100 132:100 133:100 134:100 135:100 136:100 137:100 138:100 139:100 140:100 141:100 142:100 143:100 144:100 145:100 146:100 147:100 148:100 149:100 150:100 151:100 152:100 153:100 154:100 155:100 156:100 157:100 158:100 159:100 160:100 161:100 162:100 163:100 164:100 165:100'>navigate(to:)</span></div></div>
+    <figcaption>The view model quietly takes the screen&#x27;s ownership.</figcaption>
   </figure>
 
 
@@ -52,6 +114,11 @@ right to use it.</p>
 about anything else — where a rule lives, who owns navigation, which layer may speak in which
 data shape. Nature abhors that vacuum, and the nearest thing to fill it is the view model.</p>
 
+
+  <figure class="fig">
+    <div class="fig-lottie" data-src="./lottie/mvvm-to-viper-part-one-2.json" data-w="640" data-h="240" role="img" aria-label="A screen, six use cases and one router: who owns navigation"><svg viewBox='0 0 640 240' width='640' height='240' class='poster' aria-hidden='true' xmlns='http://www.w3.org/2000/svg'><rect x='20.0' y='66.0' width='193.3' height='108.0' rx='10' fill='#161822' stroke='#2c3040' stroke-width='1.2'/><rect x='223.3' y='66.0' width='193.3' height='108.0' rx='10' fill='#161822' stroke='#2c3040' stroke-width='1.2'/><rect x='426.7' y='66.0' width='193.3' height='108.0' rx='10' fill='#161822' stroke='#2c3040' stroke-width='1.2'/><rect x='426.7' y='66.0' width='193.3' height='108.0' rx='10' fill='#1b2440' stroke='#8ab4ff' stroke-width='1.2'/></svg><div class='fig-labels' aria-hidden='true'><span class='fig-label' data-i='0' style='left:18.229%;top:52.500%;font-size:2.5000cqw;color:#f4f6fb;--a1:1.00;transform:translate(-50%,calc(-100% + .24em))'>Screen</span><span class='fig-label' data-i='1' style='left:50.000%;top:52.500%;font-size:2.5000cqw;color:#f4f6fb;--a1:1.00;transform:translate(-50%,calc(-100% + .24em))'>6 use cases</span><span class='fig-label' data-i='2' style='left:81.771%;top:52.500%;font-size:2.5000cqw;color:#f4f6fb;--a1:1.00;transform:translate(-50%,calc(-100% + .24em))'>Router</span></div></div>
+    <figcaption>One screen, one owner: the router owns where you go next.</figcaption>
+  </figure>
 <h2>What one file ended up owning</h2>
 
 <p>Grow a feature for a year and the list stops being a list of one screen's concerns:</p>
