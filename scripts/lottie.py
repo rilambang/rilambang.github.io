@@ -586,8 +586,8 @@ def _svg_item(it, dx, dy, sx, sy, op):
         stroke = (f" stroke='{it['stroke']}' stroke-width='{it['sw']}'"
                   if it.get("stroke") else "")
         return (f"<rect x='{x:.1f}' y='{y:.1f}' width='{it['w'] * sx:.1f}' "
-                f"height='{it['h'] * sy:.1f}' rx='{it['r']}' fill='{it['fill']}'"
-                f"{stroke}{a}/>")
+                f"height='{it['h'] * sy:.1f}' rx='{it['r']}' "
+                f"fill='{it['fill'] or 'none'}'{stroke}{a}/>")
     if k == "line":
         return (f"<line x1='{it['x1'] + dx:.1f}' y1='{it['y1'] + dy:.1f}' "
                 f"x2='{it['x2'] + dx:.1f}' y2='{it['y2'] + dy:.1f}' "

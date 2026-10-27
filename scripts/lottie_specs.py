@@ -60,6 +60,17 @@ def _swap(s, x, y, old, new, t, size=13, color=OK):
     return a, b
 
 
+def _bow(s, x1, y1, x2, y2, bow, color=LINE, width=1.1, n=8):
+    """A curved edge: the detours a script phase adds to the graph."""
+    mx, my = (x1 + x2) / 2, (y1 + y2) / 2 + bow
+    pts = []
+    for i in range(n + 1):
+        t = i / n
+        pts.append(((1 - t) ** 2 * x1 + 2 * (1 - t) * t * mx + t * t * x2 - x1,
+                    (1 - t) ** 2 * y1 + 2 * (1 - t) * t * my + t * t * y2 - y1))
+    return s.poly(x1, y1, pts, stroke=color, width=width)
+
+
 def _shield(s, cx, cy, s_=1.0):
     """Outline to filled, never nothing to something."""
     pts = [(0, -9), (7, -5), (7, 1), (0, 9), (-7, 1), (-7, -5)]
@@ -202,20 +213,36 @@ def buildgraph_1():
     s.text(PAD, 20, "Build graph", 12, MUTED)
     s.rect(40, 110, 130, 100, SURFACE, LINE, 12)
     s.text(105, 166, "App", 16, INK, "middle")
+
+    # the phase is a row you can press, not empty canvas
+    s.rect(490, 36, 130, 44, SURFACE, LINE, 8)
+    run = s.text(504, 62, "Run Script", 12.5, INK)
+    gone = s.text(504, 62, "removed", 12.5, OK, opacity=0)
+
+    # three edges per module from three App ports; the eight the phase adds
+    # are bowed, so the graph reads as a tangle until they leave
     mods = ["Feature A", "Feature B", "Core", "UI kit"]
     ys = [48, 116, 184, 252]
+    ports = [130, 160, 190]
+    extra = []
     for lab, y in zip(mods, ys):
         s.rect(330, y, 150, 48, SURFACE, LINE, 8)
         s.text(346, y + 30, lab, 14, INK)
-        s.line(170, 160, 330, y + 24, LINE, 1.2)
-    extra = [s.line(170, 160, 330, y + dy, LINE, 1.0)
-             for y in ys for dy in (8, 40)]
+        for k, py in enumerate(ports):
+            ty = y + 12 + k * 12
+            if k == 1:
+                s.line(170, py, 330, ty, LINE, 1.4)
+            else:
+                extra.append(_bow(s, 170, py, 330, ty,
+                                  -16 if k == 0 else 16))
 
     cursor = s.cursor(600, 300)
-    t = s.travel(cursor, 0.15, 480, 60)
-    p = s.press(cursor, s.ring(480, 60, 10), t)
+    t = s.travel(cursor, 0.15, 598, 58)
+    p = s.press(cursor, s.ring(598, 58, 10), t)
     for e in extra:
         e.fade(p + 0.1, 0, T_DEFAULT, EASE_IN)
+    run.fade(p, 0, T_FLIP, EASE_IN)
+    gone.fade(p, 100, T_FLIP)
     _st(s, 150, 262, "12 edges", "4 edges", p)
     return _finish(s, cursor, p + 1.0, y=300)
 
@@ -662,6 +689,7 @@ def exam_mode_1():
     _paper, paper_lit = _step(s, 386, Y1, ["Paper"])
     paper_glow = s.rect(386, Y1, 112, BOX_H, ACCENT, None, 10, opacity=0)
     _, paper_shield = _shield(s, 442, Y1 + 86)
+    lock1 = s.rect(386, Y1, 112, BOX_H, None, OK, 10, opacity=0)
 
     _step(s, 20, Y2, ["Welcome"], lit=True)
     _step(s, 142, Y2, ["Location"], lit=True)
@@ -670,6 +698,7 @@ def exam_mode_1():
     _paper2, paper2_lit = _step(s, 508, Y2, ["Paper"])
     act_glow = s.rect(264, Y2, 112, BOX_H, ACCENT, None, 10, opacity=0)
     _, act_shield = _shield(s, 320, Y2 + 86)
+    lock2 = s.rect(264, Y2, 112, BOX_H, None, OK, 10, opacity=0)
 
     ring1 = s.ring(442, Y1 + 86, 10)
     ring2 = s.ring(320, Y2 + 86, 10)
@@ -686,12 +715,14 @@ def exam_mode_1():
     # was already open: the wrong moment
     t2 = s.travel(cursor, p1 + 0.56, 320, Y2 + 86)
     paper_shield.show(p1 + 0.24, T_DEFAULT)
+    lock1.show(p1 + 0.24, T_DEFAULT)
 
     p2 = s.press(cursor, ring2, t2)
     act_glow.fade(p2 - 0.12, 22, T_FLIP)
     act_glow.fade(p2 - 0.04, 0, T_HOVER, EASE_IN)
     act_lit.show(p2, T_FLIP)
     act_shield.show(p2 + 0.04, T_DEFAULT)
+    lock2.show(p2 + 0.04, T_DEFAULT)
 
     ready_lit.show(p2 + 0.46, T_FLIP)
     paper2_lit.show(p2 + 0.66, T_FLIP)
