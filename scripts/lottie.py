@@ -36,6 +36,7 @@ T_HOVER = 0.16     # hover / focus
 T_DEFAULT = 0.24   # default transition
 T_MOVE = 0.40      # expanding or moving between positions
 T_BEAT = 0.64      # a narrative beat, used sparingly
+T_ARROW = 0.55     # an arrow drawing itself: 400-700ms, soft at the head
 
 # A cursor that acts. Slow enough to read, never linear: soft acceleration and
 # a longer deceleration into the target, a beat to settle, then a press.
@@ -394,13 +395,14 @@ class Scene:
         stroke = {"ty": "st", "c": _const(_rgba(color)), "o": _const(100),
                   "w": _const(width), "lc": 2, "lj": 1, "ml": 4, "bm": 0}
         group = {"ty": "gr", "it": [shape, stroke]}
+        item = None
         if trim:
-            tprop = {"s": _const(0), "e": _const(100), "o": _const(0), "m": 1}
-            group["it"].append({"ty": "tm", **tprop})
+            item = {"ty": "tm", "s": _const(0), "e": _const(100), "o": _const(0), "m": 1}
+            group["it"].append(item)
         group["it"].append(_tr())
         layer = _layer(self, "line", [group], x1, y1)
         if trim:
-            layer["_trim"] = tprop["e"]
+            layer["_trim"] = item
         items = [{"kind": "line", "x1": x1, "y1": y1, "x2": x2, "y2": y2,
                   "color": color, "w": width}]
         node = Node(self, [layer], (x1, y1), items)

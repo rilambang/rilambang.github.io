@@ -10,9 +10,11 @@ way to make it look cheap.
 Timing comes from the tokens in lottie.py -- travel, dwell, press, ripple --
 never from a per-figure guess. Nothing here is linear.
 """
+import math
+
 from lottie import (Scene, ACCENT, INK, MUTED, LINE, SURFACE, TINT, OK, DIM,
-                    T_FLIP, T_HOVER, T_DEFAULT, T_MOVE, T_BEAT, EASE_IN,
-                    EASE_IN_OUT)
+                    T_FLIP, T_HOVER, T_DEFAULT, T_MOVE, T_BEAT, T_ARROW,
+                    EASE_IN, EASE_IN_OUT)
 
 PAD = 20
 BOX_H = 108
@@ -69,6 +71,49 @@ def _bow(s, x1, y1, x2, y2, bow, color=LINE, width=1.1, n=8):
         pts.append(((1 - t) ** 2 * x1 + 2 * (1 - t) * t * mx + t * t * x2 - x1,
                     (1 - t) ** 2 * y1 + 2 * (1 - t) * t * my + t * t * y2 - y1))
     return s.poly(x1, y1, pts, stroke=color, width=width)
+
+
+def _flow(s, x1, y1, x2, y2, t, d=T_ARROW, gap=0, color=DIM, width=1.5,
+          label=None, size=12):
+    """An arrow that draws itself; the head lands when the line gets there.
+
+    The line is trim-drawn from tail to tip, the head is filled geometry
+    oriented along the path, and it only appears on arrival. Whatever the head
+    points at changes state at the returned time, never before. A gap breaks
+    the line behind a short label.
+    """
+    dx, dy = x2 - x1, y2 - y1
+    length = math.hypot(dx, dy)
+    ux, uy = dx / length, dy / length
+    # the stroke stops under the head, so the tip is one piece of ink
+    tipx, tipy = round(x2 - ux * 5, 2), round(y2 - uy * 5, 2)
+    if gap:
+        mx, my = (x1 + x2) / 2, (y1 + y2) / 2
+        segs = [(x1, y1, mx - ux * gap / 2, my - uy * gap / 2),
+                (mx + ux * gap / 2, my + uy * gap / 2, tipx, tipy)]
+    else:
+        segs = [(x1, y1, tipx, tipy)]
+    segs = [tuple(round(v, 2) for v in seg) for seg in segs]
+    total = sum(math.hypot(bx - ax, by - ay) for ax, ay, bx, by in segs)
+    at = t
+    for ax, ay, bx, by in segs:
+        dd = max(d * math.hypot(bx - ax, by - ay) / total, 1 / 30)
+        s.line(ax, ay, bx, by, color, width).draw_on(at, dd)
+        at += dd
+    head = s.poly(x2, y2, [(0, 0),
+                           (round(-ux * 9 - uy * 4.6, 2),
+                            round(-uy * 9 + ux * 4.6, 2)),
+                           (round(-ux * 9 + uy * 4.6, 2),
+                            round(-uy * 9 - ux * 4.6, 2))],
+                  fill=color)
+    head.opacity_keys = [(0, [0])]
+    head._apply_opacity()
+    head.show(t + d - 0.04, T_FLIP)
+    if label:
+        lab = s.text((x1 + x2) / 2, (y1 + y2) / 2 + 4, label, size, MUTED,
+                     "middle", opacity=0)
+        lab.fade(t + d * 0.4, 100, T_HOVER)
+    return t + d
 
 
 def _shield(s, cx, cy, s_=1.0, half=False):
@@ -279,31 +324,43 @@ def buildgraph_2():
 
 # ── 4. UIKit to SwiftUI without a rewrite ───────────────────────────────────
 def uikit_1():
-    """Navigation changes owner; the content does not move."""
-    s = Scene("uikit-to-swiftui-without-a-rewrite-1", 340, 5.5,
+    """Navigation changes owner; the content does not move.
+
+    Two phones, before and after. One arrow lands on the nav bar and the word
+    flips when the head gets there; one lands on the rows, and the bracket
+    under both says they did not move.
+    """
+    s = Scene("uikit-to-swiftui-without-a-rewrite-1", 340, 3.8,
               "One screen converted: the navigation chrome changes owner and "
               "the same four rows stay put")
-    s.rect(40, 32, 240, 276, SURFACE, LINE, 18)
-    bar = s.rect(40, 32, 240, 56, TINT, LINE, 18)
-    s.text(160, 68, "Exam", 15, INK, "middle")
-    for i, lab in enumerate(["Welcome", "Location", "Ready", "Paper"]):
-        s.text(72, 124 + i * 40, lab, 14, INK)
-        s.line(60, 142 + i * 40, 260, 142 + i * 40, LINE, 1)
+    s.text(PAD + 4, 26, "Before", 12, MUTED)
+    s.text(404, 26, "After", 12, MUTED)
 
-    s.rect(320, 60, 280, 96, SURFACE, LINE, 12)
-    s.text(338, 92, "Navigation owner", 12, MUTED)
-    _ = bar
+    for x in (24, 400):
+        s.rect(x, 36, 216, 248, SURFACE, LINE, 18)
+        s.rect(x, 36, 216, 52, TINT, LINE, 18)
+        s.text(x + 16, 68, "Exam", 15, INK)
+        for i, lab in enumerate(["Welcome", "Location", "Ready", "Paper"]):
+            s.text(x + 16, 124 + i * 44, lab, 14, INK)
+            if i < 3:
+                s.line(x + 12, 140 + i * 44, x + 204, 140 + i * 44, LINE, 1)
+    s.text(224, 68, "UIKit", 11, MUTED, "end")
 
-    cursor = s.cursor(600, 300)
-    t = s.travel(cursor, 0.15, 566, 92)
-    p = s.press(cursor, s.ring(566, 92, 10), t)
-    _mark(s, 40, 32, 240, 56, p, color=ACCENT, fill=TINT, r=18)
-    # the chrome has settled by p + T_DEFAULT; only then does the word agree
-    _st(s, 338, 126, "UIKit", "SwiftUI", p + 0.40, size=18, anchor="start")
-    # the empty quadrant is the lower right: the caption fills it
-    s.text(600, 296, "Same screen.", 13, MUTED, "end")
-    s.text(600, 320, "Same rows.", 13, MUTED, "end")
-    return _finish(s, cursor, p + 0.9, y=320)
+    owner = s.rect(400, 36, 216, 52, None, ACCENT, 18, opacity=0)
+
+    t1 = _flow(s, 244, 62, 396, 62, 0.25, gap=74, label="new owner")
+    _st(s, 600, 68, "UIKit", "SwiftUI", t1, size=11, color=ACCENT)
+    owner.fade(t1, 100, T_DEFAULT)
+
+    t2 = _flow(s, 244, 212, 396, 212, 0.95)
+    bracket = s.poly(24, 300, [(0, 8), (0, 0), (592, 0), (592, 8)],
+                     stroke=OK, width=1.5)
+    bracket.opacity_keys = [(0, [0])]
+    bracket._apply_opacity()
+    bracket.fade(t2, 100, T_DEFAULT)
+    s.text(320, 326, "same rows", 12, OK, "middle",
+           opacity=0).fade(t2, 100, T_DEFAULT)
+    return s
 
 
 def uikit_2():
@@ -680,14 +737,15 @@ def mvvm3_2():
 def exam_mode_1():
     """The lock moves from inside the paper to the step before it.
 
-    Before: the paper opens, then the shield fills. Now: the shield fills, and
-    only then does the flow reach Ready. Same cursor, same gesture, one screen
-    earlier -- the difference is where the green lands, so it is read, not
-    captioned.
+    The before row is the premise, already true at rest: the paper opened and
+    the lock was still arming. Two arrows leave that paper: one lands on
+    Activate, where the lock lives now, and one lands on Paper, which now
+    arrives after it. The head is the beat; the state changes when it gets
+    there.
     """
-    s = Scene("exam-mode-one-screen-earlier-1", 340, 5.5,
+    s = Scene("exam-mode-one-screen-earlier-1", 340, 3.9,
               "The exam-mode lock moving from inside the paper to the step "
-              "before it: the same cursor, one screen earlier")
+              "before it: one screen earlier")
 
     Y1, Y2 = 48, 200
     s.text(PAD, 32, "Before", 12, MUTED)
@@ -696,49 +754,31 @@ def exam_mode_1():
     _step(s, 20, Y1, ["Welcome"], lit=True)
     _step(s, 142, Y1, ["Location"], lit=True)
     _step(s, 264, Y1, ["Ready"], lit=True)
-    _paper, paper_lit = _step(s, 386, Y1, ["Paper"])
-    paper_glow = s.rect(386, Y1, 112, BOX_H, ACCENT, None, 10, opacity=0)
+    _step(s, 386, Y1, ["Paper"], lit=True)
+    s.rect(386, Y1, 112, BOX_H, None, OK, 10)
     _, paper_shield = _shield(s, 442, Y1 + 86, half=True)
-    lock1 = s.rect(386, Y1, 112, BOX_H, None, OK, 10, opacity=0)
+    paper_shield.opacity_keys = [(0, [100])]
+    paper_shield._apply_opacity()
 
     _step(s, 20, Y2, ["Welcome"], lit=True)
     _step(s, 142, Y2, ["Location"], lit=True)
-    _act, act_lit = _step(s, 264, Y2, ["Activate", "exam mode"])
-    _ready, ready_lit = _step(s, 386, Y2, ["Ready"])
-    _paper2, paper2_lit = _step(s, 508, Y2, ["Paper"])
-    act_glow = s.rect(264, Y2, 112, BOX_H, ACCENT, None, 10, opacity=0)
-    _, act_shield = _shield(s, 320, Y2 + 86)
+    _, act_lit = _step(s, 264, Y2, ["Activate", "exam mode"])
+    _, ready_lit = _step(s, 386, Y2, ["Ready"])
+    _, paper2_lit = _step(s, 508, Y2, ["Paper"])
     lock2 = s.rect(264, Y2, 112, BOX_H, None, OK, 10, opacity=0)
+    act_out, act_shield = _shield(s, 320, Y2 + 86)
+    act_out.opacity_keys = [(0, [0])]
+    act_out._apply_opacity()
 
-    ring1 = s.ring(442, Y1 + 86, 10)
-    ring2 = s.ring(320, Y2 + 86, 10)
-    cursor = s.cursor(600, 300)
+    t1 = _flow(s, 442, Y1 + 110, 320, Y2 - 4, 0.20, gap=36, label="lock")
+    act_lit.show(t1, T_FLIP)
+    lock2.show(t1, T_FLIP)
+    act_out.show(t1, T_DEFAULT)
+    act_shield.show(t1, T_DEFAULT)
+    ready_lit.show(t1 + 0.20, T_FLIP)
 
-    t1 = s.travel(cursor, 0.15, 442, Y1 + 86)
-    p1 = s.press(cursor, ring1, t1)
-
-    paper_glow.fade(p1 - 0.12, 22, T_FLIP)
-    paper_glow.fade(p1 - 0.04, 0, T_HOVER, EASE_IN)
-    paper_lit.show(p1, T_FLIP)
-
-    # the hand leaves before the lock fills, and the lock arms after the paper
-    # was already open: the wrong moment
-    t2 = s.travel(cursor, p1 + 0.56, 320, Y2 + 86)
-    paper_shield.show(p1 + 0.24, T_DEFAULT)
-    lock1.show(p1 + 0.24, T_DEFAULT)
-
-    p2 = s.press(cursor, ring2, t2)
-    act_glow.fade(p2 - 0.12, 22, T_FLIP)
-    act_glow.fade(p2 - 0.04, 0, T_HOVER, EASE_IN)
-    act_lit.show(p2, T_FLIP)
-    act_shield.show(p2 + 0.04, T_DEFAULT)
-    lock2.show(p2 + 0.04, T_DEFAULT)
-
-    ready_lit.show(p2 + 0.46, T_FLIP)
-    paper2_lit.show(p2 + 0.66, T_FLIP)
-
-    cursor.move_to(p2 + 0.76, 390, 306, T_DEFAULT)
-    cursor.fade(p2 + 0.86, 0, T_HOVER, EASE_IN)
+    t2 = _flow(s, 442, Y1 + 110, 564, Y2 - 4, 0.85, gap=38, label="after")
+    paper2_lit.show(t2, T_FLIP)
     return s
 
 

@@ -52,7 +52,7 @@ document.addEventListener('DOMContentLoaded', function(){
       });
     }
     var anim = lottie.loadAnimation({
-      container: el, renderer: 'svg', loop: false, autoplay: false,
+      container: el, renderer: 'svg', loop: true, autoplay: false,
       path: el.getAttribute('data-src')
     });
     anim.addEventListener('enterFrame', function(){ paint(anim.currentFrame); });
@@ -62,13 +62,10 @@ document.addEventListener('DOMContentLoaded', function(){
       if (live) live.setAttribute('aria-hidden', 'true');
       if (reduced) { anim.goToAndStop(anim.totalFrames - 1, true); paint(anim.totalFrames); return; }
       anim.goToAndStop(0, true); paint(0);
-      // Play once, then hold the result. Scrolling back is not a rewind.
-      var played = false;
+      // Loop while it is on screen; off screen it costs nothing.
       new IntersectionObserver(function(entries){
         entries.forEach(function(e){
-          if (!e.isIntersecting) { if (!played) anim.pause(); return; }
-          if (played) return;
-          played = true; anim.play();
+          if (e.isIntersecting) anim.play(); else anim.pause();
         });
       }, {threshold: 0.25}).observe(el);
     });
