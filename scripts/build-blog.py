@@ -188,32 +188,56 @@ blockquote p{{margin:0}}
   border:1px solid var(--line);border-radius:999px;padding:9px 0;text-align:center;
   background:rgba(255,255,255,.04);height:fit-content}}
 /* ── motion ────────────────────────────────────────────────────────────────
-   Transform only, never opacity, on anything a reader needs. Diagrams draw their
-   connectors, which are decoration: if an animation never runs, a box is a few
-   pixels low and a line is already there, and nothing is ever invisible. The one
-   looping layer is the travelling accent segment, and it starts at opacity 0.      */
+   Entry rise and connector draw, then one story move per figure. Transform and
+   opacity only, and the unanimated state is the finished state: nothing a reader
+   needs is ever hidden behind an animation that did not run. Each figure holds
+   its result for most of the cycle, so the loop reads as an example, not a gif. */
 @keyframes rise{{from{{transform:translateY(16px)}}to{{transform:none}}}}
 @keyframes draw{{to{{stroke-dashoffset:0}}}}
-@keyframes flow{{0%{{stroke-dashoffset:0;opacity:0}}
-  12%,88%{{opacity:.9}}100%{{stroke-dashoffset:-32;opacity:0}}}}
-@keyframes bar{{0%,100%{{opacity:1}}50%{{opacity:.4}}}}
+/* a step lighting up in read order */
+@keyframes fig-lit{{0%,100%{{opacity:0}}4%,14%{{opacity:1}}}}
+/* two states in one place; A is the resting state when animation is off */
+@keyframes fig-swap-a{{0%,2%{{opacity:1}}8%,42%{{opacity:0}}52%,100%{{opacity:1}}}}
+@keyframes fig-swap-b{{0%,2%{{opacity:0}}8%,40%{{opacity:1}}50%,100%{{opacity:0}}}}
+/* the third copy ageing away from the other two */
+@keyframes fig-drift{{0%,18%{{transform:translate(0,0);opacity:1}}
+  55%,80%{{transform:translate(14px,10px);opacity:.55}}
+  100%{{transform:translate(0,0);opacity:1}}}}
+/* a responsibility inching toward the file that swallows it */
+@keyframes fig-pull{{0%,12%{{transform:translateY(0)}}
+  36%,56%{{transform:translateY(-18px)}}80%,100%{{transform:translateY(0)}}}}
+/* a cell rebuilding, once per cycle */
+@keyframes fig-flash{{0%,100%{{opacity:0}}3%,9%{{opacity:.5}}}}
+/* the agent loop: down the four checkpoints and back up the side */
+@keyframes fig-loop{{0%{{transform:translate(0,0);opacity:0}}
+  4%{{opacity:1}}18%{{transform:translate(0,90px)}}
+  32%{{transform:translate(0,180px)}}44%{{transform:translate(0,270px)}}
+  50%{{transform:translate(257px,270px)}}72%{{transform:translate(257px,-64px)}}
+  78%{{transform:translate(0,-64px)}}94%{{transform:translate(0,0);opacity:1}}
+  100%{{transform:translate(0,0);opacity:0}}}}
 .post-head > *{{animation:rise .6s cubic-bezier(.22,.7,.3,1) both}}
 .post-head > :nth-child(2){{animation-delay:.05s}}
 .post-head > :nth-child(3){{animation-delay:.1s}}
 .fig .d{{stroke-dasharray:var(--len,320);stroke-dashoffset:var(--len,320);
   animation:draw .9s ease-out .2s both}}
-/* The loop: an accent segment travels each connector, and the accent bar on every
-   box breathes. Both are decoration layered over a diagram that is already complete,
-   so no state the page depends on ever lives in the animation. */
-.fig .p{{stroke-dasharray:8 24;stroke-linecap:round;opacity:0;
-  animation:flow 2.8s linear infinite}}
-.fig .a{{animation:bar 4.2s ease-in-out infinite}}
 .fig .n{{animation:rise .7s cubic-bezier(.22,.7,.3,1) both}}
 .fig .n:nth-child(2){{animation-delay:.06s}}
 .fig .n:nth-child(3){{animation-delay:.12s}}
 .fig .n:nth-child(4){{animation-delay:.18s}}
 .fig .n:nth-child(5){{animation-delay:.24s}}
 .fig .n:nth-child(6){{animation-delay:.3s}}
+/* Story motion. The accent bar no longer breathes on its own: movement has an
+   argument in each figure, or it does not happen. */
+.fig .hl{{opacity:0;animation:fig-lit 8s ease-in-out infinite;
+  animation-delay:calc(var(--i,0) * .8s)}}
+.fig .swap-a{{animation:fig-swap-a 10s ease-in-out 2s infinite}}
+.fig .swap-b{{opacity:0;animation:fig-swap-b 10s ease-in-out 2s infinite}}
+.fig .drift{{animation:fig-drift 9s ease-in-out infinite}}
+.fig .pull{{animation:fig-pull 9s ease-in-out infinite;
+  animation-delay:calc(var(--i,0) * .3s)}}
+.fig .flash{{opacity:0;animation:fig-flash 7s ease-out infinite;
+  animation-delay:calc(var(--i,0) * .07s)}}
+.fig .loopdot{{opacity:0;animation:fig-loop 11s linear infinite}}
 /* scroll-reveal, guarded: unsupported engine applies nothing and shows everything */
 @supports (animation-timeline:view()){{
   article > h2,article > p,article > ul,article > ol,article > blockquote,
@@ -223,7 +247,9 @@ blockquote p{{margin:0}}
 }}
 @media (prefers-reduced-motion:reduce){{
   html{{scroll-behavior:auto}}
-  .post-head > *,.fig .d,.fig .p,.fig .n,.fig .a,article > h2,article > p,article > ul,article > ol,
+  .post-head > *,.fig .d,.fig .n,.fig .hl,.fig .swap-a,.fig .swap-b,
+  .fig .drift,.fig .pull,.fig .flash,.fig .loopdot,
+  article > h2,article > p,article > ul,article > ol,
   article > blockquote,article > pre,article > figure{{animation:none}}
   .fig .d{{stroke-dasharray:none;stroke-dashoffset:0}}
 }}
@@ -254,32 +280,37 @@ F_WARM = TOK["warm"]
 FONT = "font-family='Helvetica Neue,Helvetica,Arial,sans-serif'"
 
 
-def _box(x, y, w, h, title, sub="", accent=False, n=0):
+def _hi(x, y, w, h, i, r=10):
+    """A highlight ring that lights in read order. Hidden unless the loop reaches it,
+    so with motion off it is simply absent."""
+    return (f"<rect class='hl' style='--i:{i}' x='{x}' y='{y}' width='{w}' height='{h}' "
+            f"rx='{r}' fill='none' stroke='{F_ACC}' stroke-width='1.8'/>")
+
+
+def _box(x, y, w, h, title, sub="", accent=False, n=0, hi=False, i=0, sub2=""):
     fill = F_TINT if accent else TOK["surface"]
     stroke = F_ACC if accent else F_LINE
     t = (f"<text x='{x + 14}' y='{y + (26 if sub else h / 2 + 5)}' font-size='13' "
          f"font-weight='600' fill='{F_INK}'>{html.escape(title)}</text>")
     s = ""
     if sub:
-        s = (f"<text x='{x + 14}' y='{y + 46}' font-size='11.5' fill='{F_MUTED}'>"
+        cls = " class='swap-a'" if sub2 else ""
+        s = (f"<text{cls} x='{x + 14}' y='{y + 46}' font-size='11.5' fill='{F_MUTED}'>"
              f"{html.escape(sub)}</text>")
+        if sub2:
+            s += (f"<text class='swap-b' x='{x + 14}' y='{y + 46}' font-size='11.5' "
+                  f"fill='{F_MUTED}'>{html.escape(sub2)}</text>")
+    mark = _hi(x, y, w, h, i) if hi else ""
     return (f"<g class='n'><rect x='{x}' y='{y}' width='{w}' height='{h}' rx='10' "
             f"fill='{fill}' stroke='{stroke}'/>"
             f"<rect class='a' x='{x}' y='{y}' width='3' height='{h}' rx='1.5' fill='{F_ACC}'/>"
-            f"{t}{s}</g>")
+            f"{t}{s}{mark}</g>")
 
 
 def _line(x1, y1, x2, y2, draw=True):
     cls = " class='d'" if draw else ""
-    base = (f"<line x1='{x1}' y1='{y1}' x2='{x2}' y2='{y2}' stroke='{F_LINE}' "
+    return (f"<line x1='{x1}' y1='{y1}' x2='{x2}' y2='{y2}' stroke='{F_LINE}' "
             f"stroke-width='1.5'{cls}/>")
-    if not draw:
-        return base
-    # A short accent segment sliding along the connector, forever. The connector
-    # itself stays solid and already drawn; this is the only part that loops, so a
-    # reader who never runs the animation still sees the whole diagram.
-    return base + (f"<line class='p' x1='{x1}' y1='{y1}' x2='{x2}' y2='{y2}' "
-                   f"stroke='{F_ACC}' stroke-width='1.5'/>")
 
 
 def _arrow(x1, y1, x2, y2):
@@ -309,17 +340,19 @@ def _svg(label, h, body, w=640):
 
 def fig_two_questions():
     b = _box(20, 16, 280, 62, "Is the device supervised?",
-             "MDM or Apple Configurator")
+             "MDM or Apple Configurator", hi=True, i=0)
     b += _box(340, 16, 280, 62, "Does the OS already have a mode?",
-              "before you design a countermeasure")
+              "before you design a countermeasure", hi=True, i=1)
     for x in (160, 480):
         b += _arrow(x, 78, x, 132)
     b += _line(110, 132, 520, 132)
     for x in (110, 310, 520):
         b += _arrow(x, 132, x, 168)
-    b += _box(20, 170, 180, 72, "Assessment mode", "after Apple grants it", accent=True)
-    b += _box(220, 170, 180, 72, "Single app mode", "and it supersedes")
-    b += _box(420, 170, 200, 72, "A human proctor", "where every system ends up")
+    b += _box(20, 170, 180, 72, "Assessment mode", "after Apple grants it",
+              accent=True, hi=True, i=2)
+    b += _box(220, 170, 180, 72, "Single app mode", "and it supersedes", hi=True, i=3)
+    b += _box(420, 170, 200, 72, "A human proctor", "where every system ends up",
+              hi=True, i=4)
     b += _cap(20, 272, "The framework covers the app. It does not cover the room.")
     return _svg("Two questions decide what a proctored exam app can enforce, "
                 "and three outcomes they lead to", 286, b)
@@ -345,18 +378,25 @@ def fig_layers():
 
 
 def fig_incremental():
-    def grid(x, y, accent_col, label, sub):
+    def grid(x, y, accent_col, label, sub, pulse):
         g = ""
         for i in range(4):
             for j in range(3):
+                idx = i * 3 + j
                 cx, cy = x + i * 34, y + j * 30
-                on = (i * 3 + j) == accent_col
+                on = idx == accent_col
                 g += (f"<rect x='{cx}' y='{cy}' width='28' height='24' rx='5' "
                       f"fill='{F_ACC if on else F_WARM}' stroke='{F_LINE}'/>")
+                if idx in pulse:
+                    g += (f"<rect class='flash' style='--i:{pulse.index(idx)}' "
+                          f"x='{cx}' y='{cy}' width='28' height='24' rx='5' "
+                          f"fill='{F_ACC}'/>")
         return _cap(x, y - 12, label, 12.5, F_INK, weight="600") + g + _cap(x, y + 118, sub)
+    all_cells = list(range(12))
+    one_group = [3, 4, 6, 7]
     b = _box(20, 16, 600, 40, "One target: a change recompiles its neighbours")
-    b += grid(40, 96, 5, "one file changed", "eleven boxes rebuild anyway")
-    b += grid(360, 96, 5, "the same change, split", "one group rebuilds")
+    b += grid(40, 96, 5, "one file changed", "eleven boxes rebuild anyway", all_cells)
+    b += grid(360, 96, 5, "the same change, split", "one group rebuilds", one_group)
     b += _cap(20, 250, "Same edit, same machine. The unit of work is the only thing that moved.")
     return _svg("The same one-file change rebuilding almost a whole single target, "
                 "against rebuilding one module of several", 268, b)
@@ -367,7 +407,7 @@ def fig_migration():
     b = ""
     for i, s in enumerate(steps):
         x = 20 + i * 155
-        b += _box(x, 30, 140, 58, s, "", accent=(i == 0))
+        b += _box(x, 30, 140, 58, s, "", accent=(i == 0), hi=True, i=i)
         if i < 3:
             b += _arrow(x + 140, 59, x + 155, 59)
     b += _box(20, 130, 600, 58, "One owner of the stack, for the whole migration",
@@ -389,7 +429,7 @@ def fig_three_copies():
     b += _box(20, 152, 395, 62, "One value, two owners",
               "a rename is a two-file change and review can see it", accent=True)
     b += _arrow(525, 78, 525, 150)
-    b += _box(430, 152, 190, 62, "Drift", "it just ages badly")
+    b += "<g class='drift'>" + _box(430, 152, 190, 62, "Drift", "it just ages badly") + "</g>"
     b += _cap(20, 246, "The third box is the one that decides whether the system survives screen three.")
     return _svg("A design value with two traceable owners and a third copy that drifts "
                 "away from both", 260, b)
@@ -406,7 +446,7 @@ def fig_review_order():
     b = ""
     for i, (n, t, last) in enumerate(rows):
         y = 16 + i * 46
-        b += _box(20, y, 600, 38, "")
+        b += _box(20, y, 600, 38, "", hi=True, i=i)
         b += _cap(40, y + 25, n, 12.5, F_ACC, weight="600")
         b += _cap(64, y + 25, t, 13, F_MUTED if last else F_INK)
     b += _cap(20, 268, "Read in this order. Starting at 5 wastes the attention that 2 needed.")
@@ -446,6 +486,7 @@ def fig_agent_loop():
             b += _arrow(255, y + 64, 255, y + 86)
     b += _line(512, 16, 512, 350, draw=False)
     b += _line(500, 180, 524, 180, draw=False)
+    b += f"<circle class='loopdot' cx='255' cy='80' r='5' fill='{F_ACC}'/>"
     b += _cap(528, 92, "you write")
     b += _cap(528, 262, "you check")
     b += _cap(20, 380, "A blank context window each time. The document is the only memory.")
@@ -455,8 +496,10 @@ def fig_agent_loop():
 
 def fig_pinning():
     b = _box(20, 16, 180, 64, "App commit", "what the repository records")
-    b += _box(230, 16, 180, 64, "Dependency row", "ref: main", accent=True)
-    b += _box(440, 16, 180, 64, "Code compiled", "whatever main was")
+    b += _box(230, 16, 180, 64, "Dependency row", "ref: main", accent=True,
+              sub2="the resolved revision")
+    b += _box(440, 16, 180, 64, "Code compiled", "whatever main was",
+              sub2="exactly that revision")
     b += _arrow(200, 48, 230, 48)
     b += _arrow(410, 48, 440, 48)
     b += _cap(20, 108, "Two of the three are pinned. The build is only as "
@@ -513,9 +556,9 @@ def fig_one_file():
         (225, "The network calls", "one import away"),
     ]
     ys = [110, 110, 110, 186, 186]
-    for (x, t, s), y in zip(boxes, ys):
+    for n, ((x, t, s), y) in enumerate(zip(boxes, ys)):
         b += _arrow(x + 90, 70, x + 90, y - 4)
-        b += _box(x, y, 190, 58, t, s)
+        b += (f"<g class='pull' style='--i:{n}'>" + _box(x, y, 190, 58, t, s) + "</g>")
     b += _cap(430, 214, "and a sixth is always", 11.5)
     b += _cap(430, 232, "one story away", 11.5)
     return _svg("Five responsibilities fanning into a single view model file", 262, b)
@@ -569,6 +612,79 @@ def fig_three_acts():
                 "what each one cost", bottom + 20, b)
 
 
+def _chip(x, y, w, h, label, accent=False):
+    fill = F_TINT if accent else TOK["surface"]
+    stroke = F_ACC if accent else F_LINE
+    return (f"<g class='n'><rect x='{x}' y='{y}' width='{w}' height='{h}' rx='9' "
+            f"fill='{fill}' stroke='{stroke}'/>"
+            f"<text x='{x + w / 2}' y='{y + h / 2 + 5}' font-size='12.5' "
+            f"text-anchor='middle' fill='{F_INK}'>{html.escape(label)}</text></g>")
+
+
+def _lock(cx, cy, color=None, scale=1.0):
+    c = color or F_ACC
+    w = 9 * scale
+    return (f"<g><rect x='{cx - w}' y='{cy}' width='{w * 2}' height='{7 * scale}' "
+            f"rx='{2.5 * scale}' fill='{c}'/>"
+            f"<path d='M {cx - w * 0.55} {cy} v-{3.5 * scale} "
+            f"a {w * 0.55} {w * 0.55} 0 0 1 {w * 1.1} 0 v{3.5 * scale}' "
+            f"fill='none' stroke='{c}' stroke-width='{1.6 * scale}'/></g>")
+
+
+def fig_exam_lock():
+    """The same flow, two placements. Both rows share one position and crossfade, so
+    the only thing that changes is where the lock arms relative to the paper."""
+    after = _cap(20, 22, "AFTER — THE LOCK ARMS IN PREPARATION", 11, F_ACC, weight="600")
+    for i, s in enumerate(["Welcome", "Location", "Activate mode", "Ready", "Paper"]):
+        after += _chip(20 + i * 123, 38, 112, 54, s, accent=(i == 2))
+    after += _lock(24, 104, scale=.9)
+    after += _cap(40, 112, "locked before the paper opens", 11.5, F_ACC)
+
+    before = _cap(20, 22, "BEFORE — THE LOCK ARMED INSIDE THE PAPER", 11, F_MUTED,
+                  weight="600")
+    for i, s in ((0, "Welcome"), (1, "Location"), (3, "Ready"), (4, "Paper")):
+        before += _chip(20 + i * 123, 38, 112, 54, s, accent=(i == 4))
+    before += (f"<rect x='266' y='38' width='112' height='54' rx='9' fill='none' "
+               f"stroke='{F_LINE}' stroke-dasharray='6 5'/>")
+    before += _cap(322, 70, "no step", 11.5, F_MUTED, anchor="middle")
+    before += _lock(24, 104, color=F_MUTED, scale=.9)
+    before += _cap(40, 112, "questions already on screen", 11.5, F_MUTED)
+
+    b = "<g class='swap-a'>" + after + "</g><g class='swap-b'>" + before + "</g>"
+    return _svg("Two preparation flows: the old one arms the device lock inside the paper, "
+                "after the questions are visible; the new one arms it one step earlier, "
+                "in preparation", 134, b)
+
+
+def fig_two_blocks():
+    """One card, two claims. The card and button never move; only the words change,
+    which is the argument."""
+    def words(title, line1, line2, outcome):
+        g = _cap(56, 84, title, 22, F_INK, weight="600")
+        g += _cap(56, 120, line1, 13.5, F_MUTED)
+        g += _cap(56, 142, line2, 13.5, F_MUTED)
+        g += _cap(56, 234, outcome, 11.5, F_MUTED)
+        return g
+
+    b = (f"<rect x='20' y='24' width='600' height='228' rx='16' fill='{TOK['surface']}' "
+         f"stroke='{F_LINE}'/>")
+    b += (f"<rect x='56' y='166' width='210' height='38' rx='9' fill='{F_TINT}' "
+          f"stroke='{F_ACC}'/>")
+    b += _cap(161, 190, "Reload assessment", 12.5, F_INK, anchor="middle", weight="600")
+    server = words("Assessment blocked",
+                   "The system detected activity that breaks the rules.",
+                   "Contact your teacher or institution admin.",
+                   "Reload cannot lift a server verdict.")
+    self_lock = words("Activate exam mode",
+                      "Exam mode is not running on this device.",
+                      "Reload re-arms the lock and returns the paper.",
+                      "Reload is the fix here.")
+    b += "<g class='swap-a'>" + server + "</g><g class='swap-b'>" + self_lock + "</g>"
+    return _svg("One blocked screen layout with two word sets: a server verdict that only a "
+                "teacher can lift, and a missing device lock that the student fixes by "
+                "reloading", 270, b)
+
+
 FIGURES = {
     "kiosk-and-assessment-apps": (
         fig_two_questions(),
@@ -616,7 +732,18 @@ FIGURES = {
         fig_three_acts(),
         "Three passes over one app. The middle row is where the code got better and the "
         "work got heavier — and the last row is why VIPER was worth paying for, here."),
+    "exam-mode-one-screen-earlier": (
+        fig_exam_lock(),
+        "The lock did not get stronger. It moved one screen earlier, to the last moment "
+        "before the questions appear."),
 }
+
+FIG_TWO_BLOCKS = (
+    f'<figure class="fig">{fig_two_blocks()}\n'
+    f'    <figcaption>One layout, two claims. The server verdict points at a person; the '
+    f'missing lock points at the reload button. Sharing the words made both screens '
+    f'wrong.</figcaption>\n  </figure>'
+)
 
 POSTS = [
 
@@ -1880,6 +2007,143 @@ compiler can tell the next engineer no without me in the room.</p>
             ("The Clean Architecture — Robert C. Martin", "https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html"),
             ("Creating Swift Packages — WWDC19 session 410", "https://developer.apple.com/videos/play/wwdc2019/410/"),
             ("Improving the speed of incremental builds — Apple Developer Documentation", "https://developer.apple.com/documentation/xcode/improving-the-speed-of-incremental-builds"),
+        ],
+    },
+    {
+        "slug": "exam-mode-one-screen-earlier",
+        "tag": "Platform rules",
+        "title": "Exam mode, one screen earlier",
+        "summary": "The lock used to start inside the paper, after the questions were visible. Moving it into preparation closed that gap — and the blocked screen turned out to be a copy problem before it was a layout problem.",
+        "body": """
+<p class="lede">The exam mode in the school app I work on used to begin inside the paper. By the
+time it locked the device, the questions were already on screen. This week I moved the lock one
+step earlier, into preparation, where it can do its job before the assessment starts.</p>
+
+<p>That sounds like a small reorder. It wasn't. Moving the lock exposed three states around it
+that had been wrong for as long as the lock existed, and the screen that shows them is where
+most of the work went.</p>
+
+<h2>The framework fails closed, and that is the point</h2>
+
+<p>Apple's Automatic Assessment Configuration is the part of iOS that lets an app take the device
+for the length of an assessment. You create an <code>AEAssessmentSession</code>, start it, and
+until it ends the student is in your app: no app switcher, no Home, no notifications from
+anything else. The app needs an entitlement Apple grants by request, and it needs no device
+management — a student's own iPad can run it exactly like a school-owned one.</p>
+
+<p>The property that matters is that it fails closed. If the session cannot start — the
+entitlement is missing, the device does not support it, another session is already running — the
+call returns an error and nothing is locked. The only honest response is to refuse to open the
+paper. An assessment app that shows the questions anyway is not secure; it just has a lock icon
+somewhere in its settings.</p>
+
+<p>The simulator cannot start a session at all. On a simulator every proctored exam therefore
+blocks, which looks like a bug in the test setup and is actually the design working. I mention it
+because it is the first thing anyone testing this will report.</p>
+
+<h2>The lock was one screen too late</h2>
+
+<p>The old flow started the session inside the paper, after the question view had loaded. The
+lock was real. It was also late by exactly the window that mattered: the paper was on screen, and
+the device was not yet locked. A student could leave, look something up, come back, and the app
+would only notice when the session finally began.</p>
+
+<p>Preparation gained one step for exams the server marks as remote-blocked:</p>
+
+<pre>Welcome → Location → Activate exam mode → Ready → paper</pre>
+
+<p>Everything else keeps the shorter flow:</p>
+
+<pre>Welcome → Location → Ready → paper</pre>
+
+<p>Those exams never lock at all. The decision comes from the server, not the client, so a
+student cannot opt into the shorter path by choosing another device or clearing storage. The new
+step shows the state it is in: a shield that goes from "not active" to "active", and a button that
+changes from "Activate exam mode" to "Next". Once the lock is live, the screen cannot offer to
+activate it again — the indicator and the button read the same state.</p>
+
+<h2>A refused start used to unlock the device</h2>
+
+<p>Starting the paper can be refused for reasons that have nothing to do with the student: the
+server rejects the attempt, the account is not eligible, another session is running. The old
+behaviour was to treat that as the end of the lock. The student stayed on the preparation screen,
+the device unlocked, and the lock prompt appeared later inside the paper. In between, they could
+roam the app mid-exam.</p>
+
+<p>Now a refusal keeps the lock. The student stays on Ready, the error appears as its own toast,
+and the only way out is the back button, which ends the session explicitly. That felt backwards
+for a minute — the exam did not start, so why hold the device? Because the alternative is an
+unlocked student one tap away from leaving, and the back button is right there. The lock ends when
+the flow is abandoned on purpose, not when something fails.</p>
+
+<h2>Eight hours is not cheating</h2>
+
+<p>The framework ends a session on its own after eight hours. A long paper can reach that limit,
+and when it did, the app used to see "session ended" and treat it exactly like an isolation: a
+blocked screen, an accusation, and a report against a student who had done nothing but keep
+working.</p>
+
+<p>Now the expiry gets an opaque cover, a spinner, and the line "Re-securing the assessment…"
+while a fresh session starts underneath. The paper comes back with the answers intact, and no
+report is filed. If the new session cannot start, the student lands on the blocked screen with
+the self-lock wording — and still no report, because nothing was accused. The session simply
+could not start, and that is a technical fact, not a verdict about a person.</p>
+
+<h2>Two blocked screens, one layout</h2>
+
+<p>The app has two ways to be blocked, and they make different claims. The server can isolate a
+student: that is a judgement about behaviour, it applies to every exam, only a teacher or an
+institution admin can lift it, and reloading cannot help. Or the app's own lock is not running on
+an exam that requires it: that is a technical fact about this device, and reloading genuinely
+fixes it.</p>
+
+<p>Both states share one layout. Illustration, spacing, typography, and the button are identical;
+only the title and body change. That sameness is deliberate. The pixels were never the problem —
+the words were.</p>
+""" + FIG_TWO_BLOCKS + """
+<p>The two screens used to share their copy, and the shared copy described the self-lock case.
+So a student whose exam mode was on, and whose session had failed to renew, was told they had left
+the lock screen and offered a reload that could never clear it. The screen was making a claim
+about them that it had no evidence for.</p>
+
+<p>The fix was to give each state its own words and its own title. The server block says
+"Assessment blocked" and names the human to contact. The self-lock says "Activate exam mode",
+which is the name the student already met in preparation, and tells them to reload. The reload
+button stays on both screens because the layout is shared, but it means two different things, and
+only one of them works.</p>
+
+<p>That is the design lesson I keep coming back to: a screen that makes a claim about the user
+must know which claim it is making. Copy is behaviour. Sharing it between two states is a shared
+bug, and no amount of visual polish fixes a sentence that accuses the wrong person.</p>
+
+<h2>What testing this actually looks like</h2>
+
+<p>The simulator always blocks, and that is correctness, not a defect. Device verification is the
+only verification that counts for the session itself: start it, refuse it, watch a refusal hold
+the lock, renew after a long session, and confirm the renewal files no report. A simulator pass
+proves the blocked path and nothing about the lock.</p>
+
+<p>UI snapshot references are references, not gates. Each one records what a screen looked like
+when it was last touched, so a copy change is supposed to move it. Treating a reference as a test
+means either freezing wording that is wrong or teaching the team to re-record without reading. I
+re-recorded them, looked at the diff, and kept them out of the gate.</p>
+
+<p>The pair is the test worth writing: the server block must never show the self-lock copy, and
+the self-lock block must never show the server copy. Both are one wrong string away from telling
+a student something false about themselves.</p>
+
+<h2>The lock is the easy part</h2>
+
+<p>Starting an assessment session is a handful of lines. Keeping it honest is the rest: where it
+starts, what happens when it fails, what happens when the framework ends it at eight hours, and
+what the screen says when it is gone. The lock did not get stronger this week. It got earlier,
+and the states around it stopped lying.</p>
+""",
+        "sources": [
+            ("Automatic Assessment Configuration — Apple Developer Documentation", "https://developer.apple.com/documentation/automaticassessmentconfiguration"),
+            ("AEAssessmentSession — Apple Developer Documentation", "https://developer.apple.com/documentation/automaticassessmentconfiguration/aeassessmentsession"),
+            ("AEAssessmentError — Apple Developer Documentation", "https://developer.apple.com/documentation/automaticassessmentconfiguration/aeassessmenterror"),
+            ("com.apple.developer.automatic-assessment-configuration — entitlement and request form", "https://developer.apple.com/documentation/bundleresources/entitlements/com.apple.developer.automatic-assessment-configuration"),
         ],
     },
 ]

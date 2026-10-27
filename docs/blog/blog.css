@@ -88,32 +88,56 @@ blockquote p{margin:0}
   border:1px solid var(--line);border-radius:999px;padding:9px 0;text-align:center;
   background:rgba(255,255,255,.04);height:fit-content}
 /* ── motion ────────────────────────────────────────────────────────────────
-   Transform only, never opacity, on anything a reader needs. Diagrams draw their
-   connectors, which are decoration: if an animation never runs, a box is a few
-   pixels low and a line is already there, and nothing is ever invisible. The one
-   looping layer is the travelling accent segment, and it starts at opacity 0.      */
+   Entry rise and connector draw, then one story move per figure. Transform and
+   opacity only, and the unanimated state is the finished state: nothing a reader
+   needs is ever hidden behind an animation that did not run. Each figure holds
+   its result for most of the cycle, so the loop reads as an example, not a gif. */
 @keyframes rise{from{transform:translateY(16px)}to{transform:none}}
 @keyframes draw{to{stroke-dashoffset:0}}
-@keyframes flow{0%{stroke-dashoffset:0;opacity:0}
-  12%,88%{opacity:.9}100%{stroke-dashoffset:-32;opacity:0}}
-@keyframes bar{0%,100%{opacity:1}50%{opacity:.4}}
+/* a step lighting up in read order */
+@keyframes fig-lit{0%,100%{opacity:0}4%,14%{opacity:1}}
+/* two states in one place; A is the resting state when animation is off */
+@keyframes fig-swap-a{0%,2%{opacity:1}8%,42%{opacity:0}52%,100%{opacity:1}}
+@keyframes fig-swap-b{0%,2%{opacity:0}8%,40%{opacity:1}50%,100%{opacity:0}}
+/* the third copy ageing away from the other two */
+@keyframes fig-drift{0%,18%{transform:translate(0,0);opacity:1}
+  55%,80%{transform:translate(14px,10px);opacity:.55}
+  100%{transform:translate(0,0);opacity:1}}
+/* a responsibility inching toward the file that swallows it */
+@keyframes fig-pull{0%,12%{transform:translateY(0)}
+  36%,56%{transform:translateY(-18px)}80%,100%{transform:translateY(0)}}
+/* a cell rebuilding, once per cycle */
+@keyframes fig-flash{0%,100%{opacity:0}3%,9%{opacity:.5}}
+/* the agent loop: down the four checkpoints and back up the side */
+@keyframes fig-loop{0%{transform:translate(0,0);opacity:0}
+  4%{opacity:1}18%{transform:translate(0,90px)}
+  32%{transform:translate(0,180px)}44%{transform:translate(0,270px)}
+  50%{transform:translate(257px,270px)}72%{transform:translate(257px,-64px)}
+  78%{transform:translate(0,-64px)}94%{transform:translate(0,0);opacity:1}
+  100%{transform:translate(0,0);opacity:0}}
 .post-head > *{animation:rise .6s cubic-bezier(.22,.7,.3,1) both}
 .post-head > :nth-child(2){animation-delay:.05s}
 .post-head > :nth-child(3){animation-delay:.1s}
 .fig .d{stroke-dasharray:var(--len,320);stroke-dashoffset:var(--len,320);
   animation:draw .9s ease-out .2s both}
-/* The loop: an accent segment travels each connector, and the accent bar on every
-   box breathes. Both are decoration layered over a diagram that is already complete,
-   so no state the page depends on ever lives in the animation. */
-.fig .p{stroke-dasharray:8 24;stroke-linecap:round;opacity:0;
-  animation:flow 2.8s linear infinite}
-.fig .a{animation:bar 4.2s ease-in-out infinite}
 .fig .n{animation:rise .7s cubic-bezier(.22,.7,.3,1) both}
 .fig .n:nth-child(2){animation-delay:.06s}
 .fig .n:nth-child(3){animation-delay:.12s}
 .fig .n:nth-child(4){animation-delay:.18s}
 .fig .n:nth-child(5){animation-delay:.24s}
 .fig .n:nth-child(6){animation-delay:.3s}
+/* Story motion. The accent bar no longer breathes on its own: movement has an
+   argument in each figure, or it does not happen. */
+.fig .hl{opacity:0;animation:fig-lit 8s ease-in-out infinite;
+  animation-delay:calc(var(--i,0) * .8s)}
+.fig .swap-a{animation:fig-swap-a 10s ease-in-out 2s infinite}
+.fig .swap-b{opacity:0;animation:fig-swap-b 10s ease-in-out 2s infinite}
+.fig .drift{animation:fig-drift 9s ease-in-out infinite}
+.fig .pull{animation:fig-pull 9s ease-in-out infinite;
+  animation-delay:calc(var(--i,0) * .3s)}
+.fig .flash{opacity:0;animation:fig-flash 7s ease-out infinite;
+  animation-delay:calc(var(--i,0) * .07s)}
+.fig .loopdot{opacity:0;animation:fig-loop 11s linear infinite}
 /* scroll-reveal, guarded: unsupported engine applies nothing and shows everything */
 @supports (animation-timeline:view()){
   article > h2,article > p,article > ul,article > ol,article > blockquote,
@@ -123,7 +147,9 @@ blockquote p{margin:0}
 }
 @media (prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}
-  .post-head > *,.fig .d,.fig .p,.fig .n,.fig .a,article > h2,article > p,article > ul,article > ol,
+  .post-head > *,.fig .d,.fig .n,.fig .hl,.fig .swap-a,.fig .swap-b,
+  .fig .drift,.fig .pull,.fig .flash,.fig .loopdot,
+  article > h2,article > p,article > ul,article > ol,
   article > blockquote,article > pre,article > figure{animation:none}
   .fig .d{stroke-dasharray:none;stroke-dashoffset:0}
 }
