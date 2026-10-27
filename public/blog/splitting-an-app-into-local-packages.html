@@ -14,34 +14,6 @@
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='0' fill='%232563eb'/><text x='16' y='23' font-family='Georgia,serif' font-size='20' fill='%23ffffff' text-anchor='middle'>R</text></svg>">
 <link rel="stylesheet" href="./blog.css">
-<script defer src="/vendor/lottie.min.js"></script>
-<script>
-document.addEventListener('DOMContentLoaded', function(){
-  var nodes = document.querySelectorAll('.fig-lottie');
-  if (!nodes.length || !window.lottie) return;
-  var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  nodes.forEach(function(el){
-    var anim = lottie.loadAnimation({
-      container: el, renderer: 'svg', loop: false, autoplay: false,
-      path: el.getAttribute('data-src')
-    });
-    anim.addEventListener('DOMLoaded', function(){
-      el.classList.add('is-live');
-      var live = el.querySelector('svg:not(.poster)');
-      if (live) live.setAttribute('aria-hidden', 'true');
-      if (reduced) anim.goToAndStop(anim.totalFrames - 1, true);
-    });
-    if (reduced) return;
-    new IntersectionObserver(function(entries){
-      entries.forEach(function(e){
-        if (!e.isIntersecting) { anim.pause(); return; }
-        if (anim.currentFrame >= anim.totalFrames - 1) anim.goToAndPlay(0, true);
-        else anim.play();
-      });
-    }, {threshold: 0.25}).observe(el);
-  });
-});
-</script>
 </head>
 <body>
 <div class="wrap">
@@ -59,8 +31,7 @@ document.addEventListener('DOMContentLoaded', function(){
 quarter. The gap between those two numbers is where most modularisation projects quietly
 stall.</p>
 
-  <figure class="fig">
-    <div class="fig-lottie" data-src="/blog/lottie/splitting-an-app-into-local-packages-1.json" data-alt="Four layers from app shell down to leaves, with dependencies pointing downward." role="img" aria-label="Four layers from app shell down to leaves, with dependencies pointing downward."><svg class='poster' viewBox='0 0 640 414' width='640' height='414' role='img' aria-label='A modular app as four layers from a thin app shell down to leaf packages, with dependencies pointing downward' font-family='Helvetica Neue,Helvetica,Arial,sans-serif' xmlns='http://www.w3.org/2000/svg'><g class='n'><rect x='20' y='90' width='530' height='44' rx='10' fill='#161822' stroke='rgba(255, 255, 255, 0.12)'/><rect class='a' x='20' y='90' width='3' height='44' rx='1.5' fill='#8ab4ff'/><text x='34' y='116' font-size='13' font-weight='600' fill='#f4f6fb'>App shell</text><text x='34' y='136' font-size='11.5' fill='#aab2c4'>composition, navigation, configuration</text></g><g class='n'><rect x='26' y='170' width='552' height='44' rx='10' fill='#161822' stroke='rgba(255, 255, 255, 0.12)'/><rect class='a' x='26' y='170' width='3' height='44' rx='1.5' fill='#8ab4ff'/><text x='40' y='196' font-size='13' font-weight='600' fill='#f4f6fb'>Feature modules</text><text x='40' y='216' font-size='11.5' fill='#aab2c4'>the screens and their state</text></g><g class='n'><rect x='32' y='250' width='574' height='44' rx='10' fill='#161822' stroke='rgba(255, 255, 255, 0.12)'/><rect class='a' x='32' y='250' width='3' height='44' rx='1.5' fill='#8ab4ff'/><text x='46' y='276' font-size='13' font-weight='600' fill='#f4f6fb'>Shared services</text><text x='46' y='296' font-size='11.5' fill='#aab2c4'>networking, persistence, logging</text></g><g class='n'><rect x='38' y='330' width='596' height='44' rx='10' fill='#161822' stroke='rgba(255, 255, 255, 0.12)'/><rect class='a' x='38' y='330' width='3' height='44' rx='1.5' fill='#8ab4ff'/><text x='52' y='356' font-size='13' font-weight='600' fill='#f4f6fb'>Leaves</text><text x='52' y='376' font-size='11.5' fill='#aab2c4'>tokens and models — nothing depends on them</text></g><line x1='285.0' y1='134' x2='285.0' y2='166' stroke='rgba(255, 255, 255, 0.12)' stroke-width='1.5' class='d'/><polygon points='285.0,166 280.5,158.8 289.5,158.8' fill='rgba(255, 255, 255, 0.12)'/><line x1='302.0' y1='214' x2='302.0' y2='246' stroke='rgba(255, 255, 255, 0.12)' stroke-width='1.5' class='d'/><polygon points='302.0,246 297.5,238.8 306.5,238.8' fill='rgba(255, 255, 255, 0.12)'/><line x1='319.0' y1='294' x2='319.0' y2='326' stroke='rgba(255, 255, 255, 0.12)' stroke-width='1.5' class='d'/><polygon points='319.0,326 314.5,318.8 323.5,318.8' fill='rgba(255, 255, 255, 0.12)'/><text x='20' y='400' font-size='11.5' fill='#aab2c4' text-anchor='start' font-weight='400'>depends on ↓   A cycle used to be invisible; here it is a compile error.</text></svg></div>
+  <figure class="fig"><svg viewBox='0 0 640 414' width='640' height='414' role='img' aria-label='A modular app as four layers from a thin app shell down to leaf packages, with dependencies pointing downward' font-family='Helvetica Neue,Helvetica,Arial,sans-serif' xmlns='http://www.w3.org/2000/svg'><g class='n'><rect x='20' y='90' width='530' height='44' rx='10' fill='#161822' stroke='rgba(255, 255, 255, 0.12)'/><rect class='a' x='20' y='90' width='3' height='44' rx='1.5' fill='#8ab4ff'/><text x='34' y='116' font-size='13' font-weight='600' fill='#f4f6fb'>App shell</text><text x='34' y='136' font-size='11.5' fill='#aab2c4'>composition, navigation, configuration</text></g><g class='n'><rect x='26' y='170' width='552' height='44' rx='10' fill='#161822' stroke='rgba(255, 255, 255, 0.12)'/><rect class='a' x='26' y='170' width='3' height='44' rx='1.5' fill='#8ab4ff'/><text x='40' y='196' font-size='13' font-weight='600' fill='#f4f6fb'>Feature modules</text><text x='40' y='216' font-size='11.5' fill='#aab2c4'>the screens and their state</text></g><g class='n'><rect x='32' y='250' width='574' height='44' rx='10' fill='#161822' stroke='rgba(255, 255, 255, 0.12)'/><rect class='a' x='32' y='250' width='3' height='44' rx='1.5' fill='#8ab4ff'/><text x='46' y='276' font-size='13' font-weight='600' fill='#f4f6fb'>Shared services</text><text x='46' y='296' font-size='11.5' fill='#aab2c4'>networking, persistence, logging</text></g><g class='n'><rect x='38' y='330' width='596' height='44' rx='10' fill='#161822' stroke='rgba(255, 255, 255, 0.12)'/><rect class='a' x='38' y='330' width='3' height='44' rx='1.5' fill='#8ab4ff'/><text x='52' y='356' font-size='13' font-weight='600' fill='#f4f6fb'>Leaves</text><text x='52' y='376' font-size='11.5' fill='#aab2c4'>tokens and models — nothing depends on them</text></g><line x1='285.0' y1='134' x2='285.0' y2='166' stroke='rgba(255, 255, 255, 0.12)' stroke-width='1.5' class='d'/><polygon points='285.0,166 280.5,158.8 289.5,158.8' fill='rgba(255, 255, 255, 0.12)'/><line x1='302.0' y1='214' x2='302.0' y2='246' stroke='rgba(255, 255, 255, 0.12)' stroke-width='1.5' class='d'/><polygon points='302.0,246 297.5,238.8 306.5,238.8' fill='rgba(255, 255, 255, 0.12)'/><line x1='319.0' y1='294' x2='319.0' y2='326' stroke='rgba(255, 255, 255, 0.12)' stroke-width='1.5' class='d'/><polygon points='319.0,326 314.5,318.8 323.5,318.8' fill='rgba(255, 255, 255, 0.12)'/><text x='20' y='400' font-size='11.5' fill='#aab2c4' text-anchor='start' font-weight='400'>depends on ↓   A cycle used to be invisible; here it is a compile error.</text></svg>
     <figcaption>The shape that pays: leaves that depend on nothing, a thin shell that owns composition, and a cycle that cannot compile.</figcaption>
   </figure>
 
@@ -80,11 +51,6 @@ invisible in code review, and usually caught by a user rather than a test. Sweep
 <code>Bundle.main</code> and <code>UIImage(named:)</code> <em>before</em> moving anything, and
 decide per call site whether it belongs to the package or to the app.</p>
 
-
-  <figure class="fig">
-    <div class="fig-lottie" data-src="/blog/lottie/splitting-an-app-into-local-packages-2.json" data-alt="Two feature modules pointing at each other until one edge is removed and the graph builds." role="img" aria-label="Two feature modules pointing at each other until one edge is removed and the graph builds."><svg class='poster' viewBox='0 0 640 260' width='640' height='260' role='img' aria-label='Two feature modules pointing at each other, and the compiler rejecting the cycle' font-family='Inter,Helvetica Neue,Helvetica,Arial,sans-serif' xmlns='http://www.w3.org/2000/svg'><text x='20.0' y='26.0' font-size='11.5' fill='#aab2c4' text-anchor='start'>A cycle cannot compile</text><rect x='110.0' y='62.0' width='160.0' height='54.0' rx='9' fill='#1b2440' stroke='#8ab4ff' stroke-width='1.2'/><text x='190.0' y='93.5' font-size='12.5' fill='#f4f6fb' text-anchor='middle'>Feature A</text><rect x='370.0' y='62.0' width='160.0' height='54.0' rx='9' fill='#1b2440' stroke='#8ab4ff' stroke-width='1.2'/><text x='450.0' y='93.5' font-size='12.5' fill='#f4f6fb' text-anchor='middle'>Feature B</text><line x1='270.0' y1='78.0' x2='370.0' y2='78.0' stroke='#2c3040' stroke-width='1.5'/><polygon points='370.0,78.0 362.0,73.0 362.0,83.0' fill='#2c3040'/><rect x='300.0' y='52.0' width='6.0' height='74.0' rx='3' fill='#ff8a8a'/><text x='320.0' y='150.0' font-size='12' fill='#ff8a8a' text-anchor='middle'>rejected</text><text x='20.0' y='190.0' font-size='11.5' fill='#aab2c4' text-anchor='start'>One edge removed, and the graph builds again.</text><text x='20.0' y='214.0' font-size='11.5' fill='#aab2c4' text-anchor='start'>The compiler is the reviewer that never gets tired.</text></svg></div>
-    <figcaption>A cycle is not a style problem. It is the one dependency rule the compiler can enforce for free.</figcaption>
-  </figure>
 <h2>2. <code>internal</code> becomes <code>public</code>, and everything gets worse</h2>
 
 <p>The moment code lives in another module, <code>internal</code> stops being enough. The
