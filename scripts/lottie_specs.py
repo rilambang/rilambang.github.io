@@ -71,12 +71,22 @@ def _bow(s, x1, y1, x2, y2, bow, color=LINE, width=1.1, n=8):
     return s.poly(x1, y1, pts, stroke=color, width=width)
 
 
-def _shield(s, cx, cy, s_=1.0):
-    """Outline to filled, never nothing to something."""
+def _shield(s, cx, cy, s_=1.0, half=False):
+    """Outline to filled, never nothing to something.
+
+    half fills only the top half: the lock was still arming when the paper
+    opened. The outline stays whole either way.
+    """
     pts = [(0, -9), (7, -5), (7, 1), (0, 9), (-7, 1), (-7, -5)]
     pts = [(p[0] * s_, p[1] * s_) for p in pts]
     outline = s.poly(cx, cy, pts + [pts[0]], stroke=DIM, width=1.8)
-    fill = s.poly(cx, cy, pts, fill=OK, width=0)
+    if half:
+        # the cut at y=0 meets the two vertical sides at x = +-7
+        shape = [(-7 * s_, 0), (-7 * s_, -5 * s_), (0, -9 * s_),
+                 (7 * s_, -5 * s_), (7 * s_, 0)]
+    else:
+        shape = pts
+    fill = s.poly(cx, cy, shape, fill=OK, width=0)
     fill.opacity_keys = [(0, [0])]
     fill._apply_opacity()
     return outline, fill
@@ -688,7 +698,7 @@ def exam_mode_1():
     _step(s, 264, Y1, ["Ready"], lit=True)
     _paper, paper_lit = _step(s, 386, Y1, ["Paper"])
     paper_glow = s.rect(386, Y1, 112, BOX_H, ACCENT, None, 10, opacity=0)
-    _, paper_shield = _shield(s, 442, Y1 + 86)
+    _, paper_shield = _shield(s, 442, Y1 + 86, half=True)
     lock1 = s.rect(386, Y1, 112, BOX_H, None, OK, 10, opacity=0)
 
     _step(s, 20, Y2, ["Welcome"], lit=True)
