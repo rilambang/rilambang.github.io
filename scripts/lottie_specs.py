@@ -411,22 +411,20 @@ def uikit_2():
               "One file moving from the UIKit views folder into a SwiftUI "
               "folder, drawn once at rest")
     s.text(56, 66, "Views/", 12, MUTED)
-    s.text(376, 66, "SwiftUI/", 12, MUTED)
-    s.rect(40, 36, 240, 214, SURFACE, LINE, 14)
-    s.rect(360, 36, 240, 214, SURFACE, LINE, 14)
-    home = s.rect(360, 36, 240, 214, None, ACCENT, 14, opacity=0)
+    s.text(416, 66, "SwiftUI/", 12, MUTED)
+    s.rect(40, 36, 200, 250, SURFACE, LINE, 14)
+    s.rect(400, 36, 200, 250, SURFACE, LINE, 14)
+    home = s.rect(400, 36, 200, 250, None, ACCENT, 14, opacity=0)
 
-    card = s.rect(72, 88, 196, 64, TINT, ACCENT, 10)
-    label = s.text(170, 128, "ExamScreen.swift", 15, ACCENT, "middle")
+    card = s.rect(56, 96, 168, 64, TINT, ACCENT, 10)
+    label = s.text(140, 136, "ExamScreen.swift", 14, ACCENT, "middle")
 
-    t1 = _flow(s, 92, 16, 352, 16, 0.20, gap=84, label="the boundary")
+    t1 = _flow(s, 240, 64, 396, 64, 0.20, gap=78, label="the boundary")
     home.fade(t1, 100, T_DEFAULT)
-    s.text(376, 66, "SwiftUI/", 12, ACCENT, opacity=0).fade(t1, 100, T_FLIP)
-
-    t2 = _flow(s, 268, 120, 376, 120, t1 + 0.55, gap=72, label="moves once")
-    card.move_to(t2 + 0.02, 470, 120, 0.6, EASE_IN_OUT)
-    label.move_to(t2 + 0.02, 470, 128, 0.6, EASE_IN_OUT)
-    s.text(PAD, 296, "One file, one boundary, one instance.", 12, MUTED)
+    t2 = _flow(s, 224, 128, 396, 128, t1 + 0.55, gap=70, label="moves once")
+    card.move_to(t2 + 0.02, 500, 128, 0.6, EASE_IN_OUT)
+    label.move_to(t2 + 0.02, 500, 136, 0.6, EASE_IN_OUT)
+    s.text(PAD, 306, "One file, one boundary, one instance.", 12, MUTED)
     return s
 
 
@@ -501,8 +499,8 @@ def review_1():
         boxes.append((s.rect(40, y, 440, 44, SURFACE, LINE, 8),
                       s.text(56, y + 27, lab, 15, INK)))
 
-    t1 = _flow(s, 505, 168, 478, 76, 0.20)
-    _flow(s, 505, 72, 478, 118, 0.75)
+    t1 = _flow(s, 490, 168, 490, 74, 0.20)
+    _flow(s, 522, 70, 522, 170, 0.80)
     # risk to the top, style and behaviour one row down: absolute positions
     for (box, lab), y in zip([boxes[2], boxes[0], boxes[1]], [44, 96, 148]):
         box.move_to(t1 + 0.10, 240, y + 22, 0.7, EASE_IN_OUT)
@@ -550,16 +548,14 @@ def stack_1():
     ys = [44 + i * 52 for i in range(4)]
     for lab, y in zip(["SwiftUI", "SwiftData", "URLSession", "Swift Testing"],
                       ys):
-        _row(s, 40, y, 440, lab, "", OK, h=44)
+        _row(s, 40, y, 440, lab, "keep", OK, h=44)
     _row(s, 40, 256, 440, "A dependency nobody can debug", "", MUTED, h=44,
          tint=TINT, stroke=ACCENT)
 
-    t1 = _flow(s, 490, 272, 484, 66, 0.20, gap=44, label="3am")
-    for y in ys:
-        _st(s, 464, y + 27, "", "keep", t1, color=OK)
+    t1 = _flow(s, 520, 74, 520, 250, 0.20, gap=77, label="debuggable?")
     t2 = _verdict(s, 40, 256, 440, t1 + 0.55, h=44, start=300, end=80,
                   mark="#ff9d9d")
-    _st(s, 464, 283, "drop", "removed", t2, color="#ff9d9d")
+    _swap(s, 464, 283, "drop", "removed", t2, color="#ff9d9d")
     return s
 
 
@@ -578,11 +574,10 @@ def stack_2():
          tint=TINT, stroke=ACCENT)
 
     s.text(496, 282, "3am pages", 12, MUTED)
-    three = s.text(496, 240, "3", 40, INK, opacity=0)
+    three = s.text(496, 240, "3", 40, INK)
     four = s.text(496, 240, "4", 40, "#ff9d9d", opacity=0)
 
     t1 = _flow(s, 470, 70, 500, 208, 0.20)
-    three.fade(t1, 100, T_FLIP)
     t2 = _flow(s, 470, 122, 516, 208, t1 + 0.55)
     three.fade(t2, 0, T_FLIP, EASE_IN)
     four.fade(t2, 100, T_FLIP)
@@ -616,7 +611,7 @@ def ai_2():
 
     t1 = _flow(s, 500, 66, 482, 118, 0.20)
     _st(s, 464, 123, "", "green", t1, color=OK)
-    t2 = _flow(s, 520, 118, 482, 190, t1 + 0.55, gap=46, label="a human")
+    t2 = _flow(s, 500, 118, 482, 190, t1 + 0.55)
     _st(s, 464, 199, "waiting", "human", t2)
     _mark(s, 40, 172, 440, 44, t2, color=ACCENT, fill=TINT)
     return s
@@ -657,13 +652,12 @@ def green_2():
     _row(s, 40, 48, 560, "swift-argument-parser", "1.3.0", h=44)
     _row(s, 40, 100, 560, "networking", "", h=44)
     s.text(40, 176, "Pinned to", 12, MUTED)
-    pin = s.text(40, 216, "main", 30, INK, opacity=0)
+    pin = s.text(40, 216, "main", 30, INK)
     version = s.text(40, 216, "1.3.0", 30, OK, opacity=0)
     branch = s.text(584, 127, "branch: main", 13, "#ff9d9d", "end", opacity=0)
     fixed = s.text(584, 127, "1.3.0", 13, OK, "end", opacity=0)
 
     t1 = _flow(s, 584, 124, 120, 204, 0.20)
-    pin.fade(t1, 100, T_FLIP)
     branch.fade(t1, 100, T_FLIP)
 
     t2 = t1 + 0.55 + T_ARROW
@@ -711,17 +705,25 @@ def gates_2():
     s.text(PAD, 20, "Uploads", 12, MUTED)
     for y, lab in ((48, "TestFlight internal"), (100, "TestFlight external"),
                    (152, "App Store")):
-        _row(s, 40, y, 560, lab, "", MUTED, h=44)
+        _row(s, 40, y, 440, lab, "", MUTED, h=44)
     head = s.text(40, 236, "Three uploads. One build.", 15, INK)
 
-    t = 0.20
+    # the same number, once, beside all three: the brace is what says "one"
+    brace = s.poly(516, 48, [(8, 0), (0, 0), (0, 148), (8, 148)],
+                   stroke=MUTED, width=1.5)
+    brace.opacity_keys = [(0, [0])]
+    brace._apply_opacity()
+    stamp = s.text(528, 126, "build 42", 13, "#ff9d9d", opacity=0)
+
+    t1 = _flow(s, 470, 122, 508, 122, 0.20)
+    brace.fade(t1, 100, T_DEFAULT)
+    stamp.fade(t1, 100, T_DEFAULT)
     for y in (48, 100, 152):
-        t = _verdict(s, 40, y, 560, t, h=44, start=170, mark="#ff9d9d")
-        _st(s, 584, y + 27, "build 42", "build 42", t, color="#ff9d9d")
-        t += 0.14
-    head.fade(t - 0.14, 0, T_FLIP, EASE_IN)
+        _mark(s, 40, y, 440, 44, t1, color="#ff9d9d", fill="#2a1a22")
+    t2 = _flow(s, 516, 200, 150, 220, t1 + 0.55)
+    head.fade(t2, 0, T_FLIP, EASE_IN)
     s.text(40, 236, "Nobody can tell them apart.", 15, "#ff9d9d",
-           opacity=0).fade(t - 0.14, 100, T_FLIP)
+           opacity=0).fade(t2, 100, T_FLIP)
     return s
 
 
@@ -804,7 +806,6 @@ def mvvm2_2():
     _row(s, 40, 36, 560, "Packages", "43", h=44)
     _row(s, 40, 122, 560, "Targets", "", h=44)
     _row(s, 40, 208, 560, "Clean build", "", h=44, tint=TINT, stroke=ACCENT)
-    s.text(584, 235, "4:40", 13, MUTED, "end")
 
     t1 = _flow(s, 320, 80, 320, 118, 0.20)
     _st(s, 584, 149, "", "129", t1)
