@@ -1,0 +1,230 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>What a year of AI-native iOS development still can&#x27;t prove</title>
+<meta name="description" content="I audited the agent setup behind a year of iOS work and scored it seven out of ten. Nine failure modes, each with the number that makes it concrete — and the two gaps that keep it from a ten.">
+<link rel="canonical" href="https://rilambang.github.io/blog/what-a-year-of-ai-native-ios-still-cant-prove.html">
+<meta property="og:type" content="article">
+<meta property="og:title" content="What a year of AI-native iOS development still can&#x27;t prove">
+<meta property="og:description" content="I audited the agent setup behind a year of iOS work and scored it seven out of ten. Nine failure modes, each with the number that makes it concrete — and the two gaps that keep it from a ten.">
+<meta property="og:url" content="https://rilambang.github.io/blog/what-a-year-of-ai-native-ios-still-cant-prove.html">
+<meta property="og:image" content="https://rilambang.github.io/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='0' fill='%232563eb'/><text x='16' y='23' font-family='Georgia,serif' font-size='20' fill='%23ffffff' text-anchor='middle'>R</text></svg>">
+<link rel="stylesheet" href="./blog.css">
+<script defer src="../vendor/lottie.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function(){
+  var figs = document.querySelectorAll('.fig-lottie');
+  if (!figs.length || !window.lottie) return;
+  var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  figs.forEach(function(el){
+    var W = +el.getAttribute('data-w'), H = +el.getAttribute('data-h');
+    var labels = [].slice.call(el.querySelectorAll('.fig-label')).map(function(n){
+      var a = n.getAttribute('data-alpha'), p = n.getAttribute('data-path');
+      return {
+        el: n,
+        a: a ? a.split(' ').map(function(s){
+          var q = s.split(':'); return [+q[0], +q[1]];
+        }) : null,
+        p: p ? p.split(' ').map(Number) : null
+      };
+    });
+    function alphaAt(list, f){
+      var i = 0;
+      while (i + 1 < list.length && list[i + 1][0] <= f) i += 1;
+      if (i + 1 >= list.length) return list[i][1];
+      var t0 = list[i][0], t1 = list[i + 1][0];
+      var u = t1 > t0 ? (f - t0) / (t1 - t0) : 1;
+      return list[i][1] + (list[i + 1][1] - list[i][1]) * u;
+    }
+    function paint(f){
+      labels.forEach(function(l){
+        if (l.a) l.el.style.opacity = (alphaAt(l.a, f) / 100).toFixed(3);
+        if (l.p) {
+          var i = Math.min(Math.round(f), l.p.length / 2 - 1) * 2;
+          // cqw is 1% of the container width, both axes: y divides by W too
+          l.el.style.translate = (l.p[i] / W * 100).toFixed(3) + 'cqw ' +
+                                 (l.p[i + 1] / W * 100).toFixed(3) + 'cqw';
+        }
+      });
+    }
+    var anim = lottie.loadAnimation({
+      container: el, renderer: 'svg', loop: true, autoplay: false,
+      path: el.getAttribute('data-src')
+    });
+    anim.addEventListener('enterFrame', function(){ paint(anim.currentFrame); });
+    anim.addEventListener('DOMLoaded', function(){
+      el.classList.add('is-live');
+      var live = el.querySelector('svg:not(.poster)');
+      if (live) live.setAttribute('aria-hidden', 'true');
+      if (reduced) { anim.goToAndStop(anim.totalFrames - 1, true); paint(anim.totalFrames); return; }
+      anim.goToAndStop(0, true); paint(0);
+      // Loop while it is on screen; off screen it costs nothing.
+      new IntersectionObserver(function(entries){
+        entries.forEach(function(e){
+          if (e.isIntersecting) anim.play(); else anim.pause();
+        });
+      }, {threshold: 0.25}).observe(el);
+    });
+  });
+});
+</script>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <a class="who" href="/">Muhammad Ilham Rilambang</a>
+    <a href="./index.html">Blog</a>
+  </div>
+  <header class="post-head">
+    <p class="chip">Process</p>
+    <h1>What a year of AI-native iOS development still can&#x27;t prove</h1>
+    <p class="meta">5 min read · Muhammad Ilham Rilambang</p>
+  </header>
+  <article>
+<p class="lede">I gave my AI-native iOS setup a year, then audited it. The score was seven out of
+ten. The strong parts were the ones I had deliberately built: a context file every tool reads,
+specs that survive a handover, guardrails around what an agent may touch, and a verification path
+that ends in a command. The weak parts were the ones I assumed would take care of themselves:
+measurement and portability.</p>
+
+<p>That gap is the useful part. Nine failure modes follow, each with the number that makes it
+concrete rather than a feeling.</p>
+
+
+  <figure class="fig">
+    <div class="fig-lottie" data-src="./lottie/what-a-year-of-ai-native-ios-still-cant-prove-1.json" data-w="640" data-h="340" role="img" aria-label="Three tool instruction files pointing at one AGENTS.md, and an 18 KB copy leaking into the docs it points to"><svg viewBox='0 0 640 340' width='640' height='340' class='poster' aria-hidden='true' xmlns='http://www.w3.org/2000/svg'><rect x='20.0' y='44.0' width='220.0' height='44.0' rx='8' fill='#161822' stroke='#2c3040' stroke-width='1.2'/><rect x='20.0' y='104.0' width='220.0' height='44.0' rx='8' fill='#161822' stroke='#2c3040' stroke-width='1.2'/><rect x='20.0' y='164.0' width='220.0' height='44.0' rx='8' fill='#161822' stroke='#2c3040' stroke-width='1.2'/><rect x='320.0' y='44.0' width='280.0' height='104.0' rx='12' fill='#161822' stroke='#2c3040' stroke-width='1.2'/><line x1='244.0' y1='66.0' x2='311.1' y2='75.3' stroke='#7b8496' stroke-width='1.5'/><polygon points='316.0,76.0 306.4,79.3 307.7,70.2' fill='#7b8496'/><line x1='244.0' y1='126.0' x2='311.4' y2='97.9' stroke='#7b8496' stroke-width='1.5'/><polygon points='316.0,96.0 309.5,103.7 305.9,95.2' fill='#7b8496'/><line x1='244.0' y1='186.0' x2='312.4' y2='119.5' stroke='#7b8496' stroke-width='1.5'/><polygon points='316.0,116.0 312.8,125.6 306.3,119.0' fill='#7b8496'/><rect x='320.0' y='230.0' width='280.0' height='64.0' rx='12' fill='#161822' stroke='#2c3040' stroke-width='1.2'/><rect x='320.0' y='230.0' width='280.0' height='64.0' rx='12' fill='none' stroke='#ff9d9d' stroke-width='1.2'/><line x1='460.0' y1='152.0' x2='460.0' y2='167.0' stroke='#7b8496' stroke-width='1.5'/><line x1='460.0' y1='211.0' x2='460.0' y2='221.0' stroke='#7b8496' stroke-width='1.5'/><polygon points='460.0,226.0 455.4,217.0 464.6,217.0' fill='#7b8496'/></svg><div class='fig-labels' aria-hidden='true'><span class='fig-label' data-i='0' style='left:3.125%;top:8.235%;font-size:1.8750cqw;color:#aab2c4;--a1:1.00;transform:translate(0,calc(-100% + .24em))'>Tool files</span><span class='fig-label' data-i='1' style='left:5.625%;top:20.882%;font-size:2.0312cqw;color:#f4f6fb;--a1:1.00;transform:translate(0,calc(-100% + .24em))'>CLAUDE.md</span><span class='fig-label' data-i='2' style='left:5.625%;top:38.529%;font-size:2.0312cqw;color:#f4f6fb;--a1:1.00;transform:translate(0,calc(-100% + .24em))'>GEMINI.md</span><span class='fig-label' data-i='3' style='left:5.625%;top:56.176%;font-size:2.0312cqw;color:#f4f6fb;--a1:1.00;transform:translate(0,calc(-100% + .24em))'>copilot-instructions.md</span><span class='fig-label' data-i='4' style='left:71.875%;top:24.118%;font-size:2.8125cqw;color:#f4f6fb;--a1:1.00;transform:translate(-50%,calc(-100% + .24em))'>AGENTS.md</span><span class='fig-label' data-i='5' style='left:71.875%;top:34.706%;font-size:1.8750cqw;color:#aab2c4;--a1:0.00;transform:translate(-50%,calc(-100% + .24em))' data-alpha='0:100 1:100 2:100 3:100 4:100 5:100 6:100 7:100 8:100 9:100 10:100 11:100 12:100 13:100 14:100 15:100 16:100 17:100 18:100 19:100 20:100 21:100 22:100 23:100 24:100 25:100 26:100 27:100 28:100 29:100 30:100 31:100 32:100 33:100 34:100 35:100 36:100 37:100 38:100 39:100 40:100 41:100 42:100 43:100 44:100 45:100 46:100 47:100 48:100 49:100 50:100 51:100 52:100 53:100 54:100 55:100 56:100 57:100 58:100 59:100 60:100 61:100 62:100 63:100 64:100 65:100 66:100 67:100 68:100 69:100 70:100 71:100 72:100 73:100 74:100 75:100 76:100 77:100 78:100 79:100 80:100 81:100 82:100 83:100 84:100 85:100 86:50 87:0 88:0 89:0 90:0 91:0 92:0 93:0 94:0 95:0 96:0 97:0 98:0 99:0 100:0 101:0 102:0 103:0 104:0 105:0 106:0 107:0 108:0 109:0 110:0 111:0 112:0 113:0 114:0 115:0 116:0 117:0 118:0 119:0 120:0'>pointer</span><span class='fig-label' data-i='6' style='left:71.875%;top:34.706%;font-size:1.8750cqw;color:#ff9d9d;--a1:1.00;transform:translate(-50%,calc(-100% + .24em))' data-alpha='0:0 1:0 2:0 3:0 4:0 5:0 6:0 7:0 8:0 9:0 10:0 11:0 12:0 13:0 14:0 15:0 16:0 17:0 18:0 19:0 20:0 21:0 22:0 23:0 24:0 25:0 26:0 27:0 28:0 29:0 30:0 31:0 32:0 33:0 34:0 35:0 36:0 37:0 38:0 39:0 40:0 41:0 42:0 43:0 44:0 45:0 46:0 47:0 48:0 49:0 50:0 51:0 52:0 53:0 54:0 55:0 56:0 57:0 58:0 59:0 60:0 61:0 62:0 63:0 64:0 65:0 66:0 67:0 68:0 69:0 70:0 71:0 72:0 73:0 74:0 75:0 76:0 77:0 78:0 79:0 80:0 81:0 82:0 83:0 84:0 85:0 86:50 87:100 88:100 89:100 90:100 91:100 92:100 93:100 94:100 95:100 96:100 97:100 98:100 99:100 100:100 101:100 102:100 103:100 104:100 105:100 106:100 107:100 108:100 109:100 110:100 111:100 112:100 113:100 114:100 115:100 116:100 117:100 118:100 119:100 120:100'>second truth</span><span class='fig-label' data-i='7' style='left:71.875%;top:78.824%;font-size:2.0312cqw;color:#aab2c4;--a1:1.00;transform:translate(-50%,calc(-100% + .24em))'>the docs it points to</span><span class='fig-label' data-i='8' style='left:71.875%;top:56.765%;font-size:1.8750cqw;color:#aab2c4;--a1:1.00;transform:translate(-50%,calc(-100% + .24em))' data-alpha='0:0 1:0 2:0 3:0 4:0 5:0 6:0 7:0 8:0 9:0 10:0 11:0 12:0 13:0 14:0 15:0 16:0 17:0 18:0 19:0 20:0 21:0 22:0 23:0 24:0 25:0 26:0 27:0 28:0 29:0 30:0 31:0 32:0 33:0 34:0 35:0 36:0 37:0 38:0 39:0 40:0 41:0 42:0 43:0 44:0 45:0 46:0 47:0 48:0 49:0 50:0 51:0 52:0 53:0 54:0 55:0 56:0 57:0 58:0 59:0 60:0 61:0 62:0 63:0 64:0 65:0 66:0 67:0 68:0 69:0 70:0 71:0 72:0 73:0 74:0 75:0 76:4 77:25 78:75 79:96 80:100 81:100 82:100 83:100 84:100 85:100 86:100 87:100 88:100 89:100 90:100 91:100 92:100 93:100 94:100 95:100 96:100 97:100 98:100 99:100 100:100 101:100 102:100 103:100 104:100 105:100 106:100 107:100 108:100 109:100 110:100 111:100 112:100 113:100 114:100 115:100 116:100 117:100 118:100 119:100 120:100'>18 KB</span><span class='fig-label' data-i='9' style='left:3.125%;top:95.882%;font-size:1.8750cqw;color:#aab2c4;--a1:1.00;transform:translate(0,calc(-100% + .24em))'>A pointer that restates becomes a second truth.</span></div></div>
+    <figcaption>One file every tool reads, until it starts restating the docs it points to.</figcaption>
+  </figure>
+<h2>The file that made the repo legible became a second copy of it</h2>
+
+<p>The highest-leverage file in the repo was the root <code>AGENTS.md</code>.
+<code>CLAUDE.md</code>, <code>GEMINI.md</code> and the Copilot instructions were symlinks to it,
+so every tool read one source. For a while that was the whole trick: an agent starts with an
+empty context window, and this was the one document it could not miss.</p>
+
+<p>Then it grew to 18 KB. Somewhere in there it stopped pointing at the design docs and started
+summarising them. Two copies of the same rule, one in the pointer and one in the doc it pointed
+to, with no way to tell which was current. A pointer file stays a pointer, or it becomes a second
+truth. The fix was deletion: keep the index and the non-negotiables, link the rest.</p>
+
+<h2>A doc that's twelve decisions behind is a trust bug, not a typo</h2>
+
+<p>Thirteen ADRs, one per decision that would otherwise live in a review thread. Each answers
+why, which is the question a new agent cannot infer from the code. The failure mode is
+staleness. An index that lists twelve when there are thirteen is not a formatting problem. It
+tells the next reader, human or model, that the missing decision never happened.</p>
+
+<p>Once a doc lies, it gets ignored, and then it may as well not exist. The fix is a freshness
+check in CI: every ADR is indexed, every index entry resolves, and the check fails on a doc that
+no longer matches the code it describes. A reminder is not a check.</p>
+
+
+  <figure class="fig">
+    <div class="fig-lottie" data-src="./lottie/what-a-year-of-ai-native-ios-still-cant-prove-2.json" data-w="640" data-h="320" role="img" aria-label="Three rules routed to their enforcement: two land in pre-commit, the prose one drifts"><svg viewBox='0 0 640 320' width='640' height='320' class='poster' aria-hidden='true' xmlns='http://www.w3.org/2000/svg'><rect x='40.0' y='48.0' width='560.0' height='48.0' rx='8' fill='#161822' stroke='#2c3040' stroke-width='1.2'/><rect x='40.0' y='112.0' width='560.0' height='48.0' rx='8' fill='#161822' stroke='#2c3040' stroke-width='1.2'/><rect x='40.0' y='176.0' width='560.0' height='48.0' rx='8' fill='#161822' stroke='#2c3040' stroke-width='1.2'/><rect x='40.0' y='48.0' width='560.0' height='48.0' rx='8' fill='#12241c' stroke='#86e0a6' stroke-width='1.2'/><line x1='300.0' y1='72.0' x2='485.0' y2='72.0' stroke='#7b8496' stroke-width='1.5'/><polygon points='490.0,72.0 481.0,76.6 481.0,67.4' fill='#7b8496'/><rect x='40.0' y='112.0' width='560.0' height='48.0' rx='8' fill='#12241c' stroke='#86e0a6' stroke-width='1.2'/><line x1='300.0' y1='136.0' x2='485.0' y2='136.0' stroke='#7b8496' stroke-width='1.5'/><polygon points='490.0,136.0 481.0,140.6 481.0,131.4' fill='#7b8496'/><rect x='40.0' y='176.0' width='560.0' height='48.0' rx='8' fill='#2a1a22' stroke='#ff9d9d' stroke-width='1.2'/><line x1='300.0' y1='200.0' x2='485.0' y2='200.0' stroke='#7b8496' stroke-width='1.5'/><polygon points='490.0,200.0 481.0,204.6 481.0,195.4' fill='#7b8496'/></svg><div class='fig-labels' aria-hidden='true'><span class='fig-label' data-i='0' style='left:3.125%;top:7.500%;font-size:1.8750cqw;color:#aab2c4;--a1:1.00;transform:translate(0,calc(-100% + .24em))'>Where each rule lives</span><span class='fig-label' data-i='1' style='left:8.750%;top:24.062%;font-size:2.3438cqw;color:#f4f6fb;--a1:1.00;transform:translate(0,calc(-100% + .24em))'>Secret scan</span><span class='fig-label' data-i='2' style='left:8.750%;top:44.062%;font-size:2.3438cqw;color:#f4f6fb;--a1:1.00;transform:translate(0,calc(-100% + .24em))'>SwiftLint</span><span class='fig-label' data-i='3' style='left:8.750%;top:64.062%;font-size:2.3438cqw;color:#f4f6fb;--a1:1.00;transform:translate(0,calc(-100% + .24em))'>Write the MR body</span><span class='fig-label' data-i='4' style='left:91.250%;top:24.375%;font-size:2.0312cqw;color:#aab2c4;--a1:0.00;transform:translate(-100%,calc(-100% + .24em))' data-alpha='0:100 1:100 2:100 3:100 4:100 5:100 6:100 7:100 8:100 9:100 10:100 11:100 12:100 13:100 14:100 15:100 16:100 17:100 18:100 19:100 20:100 21:100 22:100 23:85 24:15 25:0 26:0 27:0 28:0 29:0 30:0 31:0 32:0 33:0 34:0 35:0 36:0 37:0 38:0 39:0 40:0 41:0 42:0 43:0 44:0 45:0 46:0 47:0 48:0 49:0 50:0 51:0 52:0 53:0 54:0 55:0 56:0 57:0 58:0 59:0 60:0 61:0 62:0 63:0 64:0 65:0 66:0 67:0 68:0 69:0 70:0 71:0 72:0 73:0 74:0 75:0 76:0 77:0 78:0 79:0 80:0 81:0 82:0 83:0 84:0 85:0 86:0 87:0 88:0 89:0 90:0 91:0 92:0 93:0 94:0 95:0 96:0 97:0 98:0 99:0 100:0 101:0 102:0 103:0 104:0 105:0 106:0 107:0 108:0 109:0 110:0 111:0 112:0 113:0 114:0 115:0 116:0 117:0'></span><span class='fig-label' data-i='5' style='left:91.250%;top:24.375%;font-size:2.0312cqw;color:#86e0a6;--a1:1.00;transform:translate(-100%,calc(-100% + .24em))' data-alpha='0:0 1:0 2:0 3:0 4:0 5:0 6:0 7:0 8:0 9:0 10:0 11:0 12:0 13:0 14:0 15:0 16:0 17:0 18:0 19:0 20:0 21:0 22:0 23:15 24:85 25:100 26:100 27:100 28:100 29:100 30:100 31:100 32:100 33:100 34:100 35:100 36:100 37:100 38:100 39:100 40:100 41:100 42:100 43:100 44:100 45:100 46:100 47:100 48:100 49:100 50:100 51:100 52:100 53:100 54:100 55:100 56:100 57:100 58:100 59:100 60:100 61:100 62:100 63:100 64:100 65:100 66:100 67:100 68:100 69:100 70:100 71:100 72:100 73:100 74:100 75:100 76:100 77:100 78:100 79:100 80:100 81:100 82:100 83:100 84:100 85:100 86:100 87:100 88:100 89:100 90:100 91:100 92:100 93:100 94:100 95:100 96:100 97:100 98:100 99:100 100:100 101:100 102:100 103:100 104:100 105:100 106:100 107:100 108:100 109:100 110:100 111:100 112:100 113:100 114:100 115:100 116:100 117:100'>enforced</span><span class='fig-label' data-i='6' style='left:91.250%;top:44.375%;font-size:2.0312cqw;color:#aab2c4;--a1:0.00;transform:translate(-100%,calc(-100% + .24em))' data-alpha='0:100 1:100 2:100 3:100 4:100 5:100 6:100 7:100 8:100 9:100 10:100 11:100 12:100 13:100 14:100 15:100 16:100 17:100 18:100 19:100 20:100 21:100 22:100 23:100 24:100 25:100 26:100 27:100 28:100 29:100 30:100 31:100 32:100 33:100 34:100 35:100 36:100 37:100 38:100 39:100 40:100 41:100 42:100 43:100 44:85 45:15 46:0 47:0 48:0 49:0 50:0 51:0 52:0 53:0 54:0 55:0 56:0 57:0 58:0 59:0 60:0 61:0 62:0 63:0 64:0 65:0 66:0 67:0 68:0 69:0 70:0 71:0 72:0 73:0 74:0 75:0 76:0 77:0 78:0 79:0 80:0 81:0 82:0 83:0 84:0 85:0 86:0 87:0 88:0 89:0 90:0 91:0 92:0 93:0 94:0 95:0 96:0 97:0 98:0 99:0 100:0 101:0 102:0 103:0 104:0 105:0 106:0 107:0 108:0 109:0 110:0 111:0 112:0 113:0 114:0 115:0 116:0 117:0'></span><span class='fig-label' data-i='7' style='left:91.250%;top:44.375%;font-size:2.0312cqw;color:#86e0a6;--a1:1.00;transform:translate(-100%,calc(-100% + .24em))' data-alpha='0:0 1:0 2:0 3:0 4:0 5:0 6:0 7:0 8:0 9:0 10:0 11:0 12:0 13:0 14:0 15:0 16:0 17:0 18:0 19:0 20:0 21:0 22:0 23:0 24:0 25:0 26:0 27:0 28:0 29:0 30:0 31:0 32:0 33:0 34:0 35:0 36:0 37:0 38:0 39:0 40:0 41:0 42:0 43:0 44:15 45:85 46:100 47:100 48:100 49:100 50:100 51:100 52:100 53:100 54:100 55:100 56:100 57:100 58:100 59:100 60:100 61:100 62:100 63:100 64:100 65:100 66:100 67:100 68:100 69:100 70:100 71:100 72:100 73:100 74:100 75:100 76:100 77:100 78:100 79:100 80:100 81:100 82:100 83:100 84:100 85:100 86:100 87:100 88:100 89:100 90:100 91:100 92:100 93:100 94:100 95:100 96:100 97:100 98:100 99:100 100:100 101:100 102:100 103:100 104:100 105:100 106:100 107:100 108:100 109:100 110:100 111:100 112:100 113:100 114:100 115:100 116:100 117:100'>enforced</span><span class='fig-label' data-i='8' style='left:91.250%;top:64.375%;font-size:2.0312cqw;color:#aab2c4;--a1:0.00;transform:translate(-100%,calc(-100% + .24em))' data-alpha='0:100 1:100 2:100 3:100 4:100 5:100 6:100 7:100 8:100 9:100 10:100 11:100 12:100 13:100 14:100 15:100 16:100 17:100 18:100 19:100 20:100 21:100 22:100 23:100 24:100 25:100 26:100 27:100 28:100 29:100 30:100 31:100 32:100 33:100 34:100 35:100 36:100 37:100 38:100 39:100 40:100 41:100 42:100 43:100 44:100 45:100 46:100 47:100 48:100 49:100 50:100 51:100 52:100 53:100 54:100 55:100 56:100 57:100 58:100 59:100 60:100 61:100 62:100 63:100 64:100 65:50 66:0 67:0 68:0 69:0 70:0 71:0 72:0 73:0 74:0 75:0 76:0 77:0 78:0 79:0 80:0 81:0 82:0 83:0 84:0 85:0 86:0 87:0 88:0 89:0 90:0 91:0 92:0 93:0 94:0 95:0 96:0 97:0 98:0 99:0 100:0 101:0 102:0 103:0 104:0 105:0 106:0 107:0 108:0 109:0 110:0 111:0 112:0 113:0 114:0 115:0 116:0 117:0'></span><span class='fig-label' data-i='9' style='left:91.250%;top:64.375%;font-size:2.0312cqw;color:#ff9d9d;--a1:1.00;transform:translate(-100%,calc(-100% + .24em))' data-alpha='0:0 1:0 2:0 3:0 4:0 5:0 6:0 7:0 8:0 9:0 10:0 11:0 12:0 13:0 14:0 15:0 16:0 17:0 18:0 19:0 20:0 21:0 22:0 23:0 24:0 25:0 26:0 27:0 28:0 29:0 30:0 31:0 32:0 33:0 34:0 35:0 36:0 37:0 38:0 39:0 40:0 41:0 42:0 43:0 44:0 45:0 46:0 47:0 48:0 49:0 50:0 51:0 52:0 53:0 54:0 55:0 56:0 57:0 58:0 59:0 60:0 61:0 62:0 63:0 64:0 65:50 66:100 67:100 68:100 69:100 70:100 71:100 72:100 73:100 74:100 75:100 76:100 77:100 78:100 79:100 80:100 81:100 82:100 83:100 84:100 85:100 86:100 87:100 88:100 89:100 90:100 91:100 92:100 93:100 94:100 95:100 96:100 97:100 98:100 99:100 100:100 101:100 102:100 103:100 104:100 105:100 106:100 107:100 108:100 109:100 110:100 111:100 112:100 113:100 114:100 115:100 116:100 117:100'>drift</span><span class='fig-label' data-i='10' style='left:3.125%;top:90.000%;font-size:1.8750cqw;color:#aab2c4;--a1:1.00;transform:translate(0,calc(-100% + .24em))'>Two rules run before the commit. One is still a sentence.</span></div></div>
+    <figcaption>The rule that stayed prose is the one that drifted.</figcaption>
+  </figure>
+<h2>A rule violated twice is a script, not a sentence</h2>
+
+<p>Two things held without argument: the secret scan and SwiftLint, both in pre-commit. One
+thing did not: a paragraph in the conventions file telling agents how to write a merge request
+body. It was violated twice in a week. That is the threshold. The second violation is the signal
+that the rule needs a mechanism, not more emphasis.</p>
+
+<p>So it became a script, and so did two other rules that kept slipping. One checks that every
+new file is registered where the build expects it. One checks that the docs index matches the
+docs on disk. An agent writes either in minutes, so cost is no longer the excuse.</p>
+
+
+  <figure class="fig">
+    <div class="fig-lottie" data-src="./lottie/what-a-year-of-ai-native-ios-still-cant-prove-3.json" data-w="640" data-h="260" role="img" aria-label="Architect, reviewer, qa and fixer in a chain, with qa denied edits and fixer denied push"><svg viewBox='0 0 640 260' width='640' height='260' class='poster' aria-hidden='true' xmlns='http://www.w3.org/2000/svg'><rect x='20.0' y='56.0' width='112.0' height='104.0' rx='10' fill='#161822' stroke='#2c3040' stroke-width='1.2'/><rect x='182.0' y='56.0' width='112.0' height='104.0' rx='10' fill='#161822' stroke='#2c3040' stroke-width='1.2'/><rect x='344.0' y='56.0' width='112.0' height='104.0' rx='10' fill='#161822' stroke='#2c3040' stroke-width='1.2'/><rect x='506.0' y='56.0' width='112.0' height='104.0' rx='10' fill='#161822' stroke='#2c3040' stroke-width='1.2'/><rect x='344.0' y='56.0' width='112.0' height='104.0' rx='10' fill='none' stroke='#ff9d9d' stroke-width='1.2'/><rect x='506.0' y='56.0' width='112.0' height='104.0' rx='10' fill='none' stroke='#ff9d9d' stroke-width='1.2'/><line x1='137.0' y1='108.0' x2='172.0' y2='108.0' stroke='#7b8496' stroke-width='1.5'/><polygon points='177.0,108.0 168.0,112.6 168.0,103.4' fill='#7b8496'/><line x1='299.0' y1='108.0' x2='334.0' y2='108.0' stroke='#7b8496' stroke-width='1.5'/><polygon points='339.0,108.0 330.0,112.6 330.0,103.4' fill='#7b8496'/><line x1='461.0' y1='108.0' x2='496.0' y2='108.0' stroke='#7b8496' stroke-width='1.5'/><polygon points='501.0,108.0 492.0,112.6 492.0,103.4' fill='#7b8496'/></svg><div class='fig-labels' aria-hidden='true'><span class='fig-label' data-i='0' style='left:3.125%;top:9.231%;font-size:1.8750cqw;color:#aab2c4;--a1:1.00;transform:translate(0,calc(-100% + .24em))'>Four roles, four limits</span><span class='fig-label' data-i='1' style='left:11.875%;top:36.923%;font-size:2.1875cqw;color:#f4f6fb;--a1:1.00;transform:translate(-50%,calc(-100% + .24em))'>architect</span><span class='fig-label' data-i='2' style='left:11.875%;top:48.462%;font-size:1.8750cqw;color:#aab2c4;--a1:1.00;transform:translate(-50%,calc(-100% + .24em))'>plans</span><span class='fig-label' data-i='3' style='left:37.188%;top:36.923%;font-size:2.1875cqw;color:#f4f6fb;--a1:1.00;transform:translate(-50%,calc(-100% + .24em))'>reviewer</span><span class='fig-label' data-i='4' style='left:37.188%;top:48.462%;font-size:1.8750cqw;color:#aab2c4;--a1:1.00;transform:translate(-50%,calc(-100% + .24em))'>reads</span><span class='fig-label' data-i='5' style='left:62.500%;top:36.923%;font-size:2.1875cqw;color:#f4f6fb;--a1:1.00;transform:translate(-50%,calc(-100% + .24em))'>qa</span><span class='fig-label' data-i='6' style='left:62.500%;top:48.462%;font-size:1.8750cqw;color:#aab2c4;--a1:0.00;transform:translate(-50%,calc(-100% + .24em))' data-alpha='0:100 1:100 2:100 3:100 4:100 5:100 6:100 7:100 8:100 9:100 10:100 11:100 12:100 13:100 14:100 15:100 16:100 17:100 18:100 19:100 20:100 21:100 22:100 23:100 24:100 25:100 26:100 27:100 28:100 29:100 30:100 31:100 32:100 33:100 34:100 35:100 36:100 37:100 38:100 39:100 40:100 41:100 42:100 43:100 44:100 45:85 46:15 47:0 48:0 49:0 50:0 51:0 52:0 53:0 54:0 55:0 56:0 57:0 58:0 59:0 60:0 61:0 62:0 63:0 64:0 65:0 66:0 67:0 68:0 69:0 70:0 71:0 72:0 73:0 74:0 75:0 76:0 77:0 78:0 79:0 80:0 81:0 82:0 83:0 84:0 85:0 86:0 87:0 88:0 89:0 90:0 91:0 92:0 93:0 94:0 95:0 96:0 97:0 98:0 99:0 100:0 101:0 102:0 103:0 104:0 105:0 106:0 107:0 108:0 109:0 110:0 111:0 112:0 113:0 114:0 115:0 116:0 117:0'>edit: allowed</span><span class='fig-label' data-i='7' style='left:87.812%;top:36.923%;font-size:2.1875cqw;color:#f4f6fb;--a1:1.00;transform:translate(-50%,calc(-100% + .24em))'>fixer</span><span class='fig-label' data-i='8' style='left:87.812%;top:48.462%;font-size:1.8750cqw;color:#aab2c4;--a1:0.00;transform:translate(-50%,calc(-100% + .24em))' data-alpha='0:100 1:100 2:100 3:100 4:100 5:100 6:100 7:100 8:100 9:100 10:100 11:100 12:100 13:100 14:100 15:100 16:100 17:100 18:100 19:100 20:100 21:100 22:100 23:100 24:100 25:100 26:100 27:100 28:100 29:100 30:100 31:100 32:100 33:100 34:100 35:100 36:100 37:100 38:100 39:100 40:100 41:100 42:100 43:100 44:100 45:100 46:100 47:100 48:100 49:100 50:100 51:100 52:100 53:100 54:100 55:100 56:100 57:100 58:100 59:100 60:100 61:100 62:100 63:100 64:100 65:100 66:100 67:85 68:15 69:0 70:0 71:0 72:0 73:0 74:0 75:0 76:0 77:0 78:0 79:0 80:0 81:0 82:0 83:0 84:0 85:0 86:0 87:0 88:0 89:0 90:0 91:0 92:0 93:0 94:0 95:0 96:0 97:0 98:0 99:0 100:0 101:0 102:0 103:0 104:0 105:0 106:0 107:0 108:0 109:0 110:0 111:0 112:0 113:0 114:0 115:0 116:0 117:0'>push: allowed</span><span class='fig-label' data-i='9' style='left:62.500%;top:48.462%;font-size:1.8750cqw;color:#ff9d9d;--a1:1.00;transform:translate(-50%,calc(-100% + .24em))' data-alpha='0:0 1:0 2:0 3:0 4:0 5:0 6:0 7:0 8:0 9:0 10:0 11:0 12:0 13:0 14:0 15:0 16:0 17:0 18:0 19:0 20:0 21:0 22:0 23:0 24:0 25:0 26:0 27:0 28:0 29:0 30:0 31:0 32:0 33:0 34:0 35:0 36:0 37:0 38:0 39:0 40:0 41:0 42:0 43:0 44:0 45:15 46:85 47:100 48:100 49:100 50:100 51:100 52:100 53:100 54:100 55:100 56:100 57:100 58:100 59:100 60:100 61:100 62:100 63:100 64:100 65:100 66:100 67:100 68:100 69:100 70:100 71:100 72:100 73:100 74:100 75:100 76:100 77:100 78:100 79:100 80:100 81:100 82:100 83:100 84:100 85:100 86:100 87:100 88:100 89:100 90:100 91:100 92:100 93:100 94:100 95:100 96:100 97:100 98:100 99:100 100:100 101:100 102:100 103:100 104:100 105:100 106:100 107:100 108:100 109:100 110:100 111:100 112:100 113:100 114:100 115:100 116:100 117:100'>edit: denied</span><span class='fig-label' data-i='10' style='left:87.812%;top:48.462%;font-size:1.8750cqw;color:#ff9d9d;--a1:1.00;transform:translate(-50%,calc(-100% + .24em))' data-alpha='0:0 1:0 2:0 3:0 4:0 5:0 6:0 7:0 8:0 9:0 10:0 11:0 12:0 13:0 14:0 15:0 16:0 17:0 18:0 19:0 20:0 21:0 22:0 23:0 24:0 25:0 26:0 27:0 28:0 29:0 30:0 31:0 32:0 33:0 34:0 35:0 36:0 37:0 38:0 39:0 40:0 41:0 42:0 43:0 44:0 45:0 46:0 47:0 48:0 49:0 50:0 51:0 52:0 53:0 54:0 55:0 56:0 57:0 58:0 59:0 60:0 61:0 62:0 63:0 64:0 65:0 66:0 67:15 68:85 69:100 70:100 71:100 72:100 73:100 74:100 75:100 76:100 77:100 78:100 79:100 80:100 81:100 82:100 83:100 84:100 85:100 86:100 87:100 88:100 89:100 90:100 91:100 92:100 93:100 94:100 95:100 96:100 97:100 98:100 99:100 100:100 101:100 102:100 103:100 104:100 105:100 106:100 107:100 108:100 109:100 110:100 111:100 112:100 113:100 114:100 115:100 116:100 117:100'>push: denied</span><span class='fig-label' data-i='11' style='left:3.125%;top:80.769%;font-size:1.8750cqw;color:#aab2c4;--a1:1.00;transform:translate(0,calc(-100% + .24em))'>A narrow role only holds if the capability limit does.</span></div></div>
+    <figcaption>The roles are real because the limits are.</figcaption>
+  </figure>
+<h2>Four narrow agents beat one clever one</h2>
+
+<p>The setup ran four roles: an architect that plans, a reviewer that reads, a qa agent that
+tests, and a fixer that repairs. The important part was not the division of labour. It was the
+capability limits. qa could not edit a file. The fixer could not push. A reviewer that can
+quietly fix stops reviewing and starts patching, and the review becomes a formality.</p>
+
+<p>Narrow roles without limits are just four prompts with the same permissions. The limits are
+what make the roles real.</p>
+
+<h2>Verification is the whole trick</h2>
+
+<p>Every claim an agent makes has to end in a command. Build through one path, compare against
+snapshot references, run CI on a machine with a simulator per slot. Determinism is what makes
+"it builds" checkable. Without it, the sentence is a paragraph, and a paragraph is not evidence.</p>
+
+<p>The failure mode is not a broken build. It is a green sentence with no command behind it,
+repeated until everyone believes it. I stopped accepting the sentence.</p>
+
+<h2>The most valuable reasoning in the repo was the part I didn't track</h2>
+
+<p>Plans, ledgers, the record of what was tried and abandoned: 42,770 lines, all gitignored. The
+code was tracked. The reasoning that produced it was not. That is backwards. A plan is the
+cheapest artifact to keep and the most expensive to reconstruct, especially for an agent that has
+to re-derive the constraints from scratch.</p>
+
+<p>Commit the plan and the progress log. Ignore only the review packages, which are large,
+generated, and disposable.</p>
+
+<h2>Portability is the unpaid bill</h2>
+
+<p>162 skills lived on my machine. The config lived in one home directory. The app targeted an
+iOS 26 API while the deployment floor was 17.6, which meant the clever parts only worked on the
+newest runtime. None of that travels with a clone. Whoever picks up the repo gets the code and
+none of the setup that made the code cheap to change.</p>
+
+<p>The fix is boring: vendor the six skills actually used, pin them to the supported version, and
+write a setup script a fresh machine can run. The other 156 are a personal library, not a
+dependency.</p>
+
+<h2>You cannot improve what you don't count</h2>
+
+<p>I had no numbers on dispatch, rework or defects. I could tell you the setup felt faster. I
+could not tell you whether a change to the context file reduced rework or just changed its shape.
+Taste is a fine reason to try something. It is a bad reason to keep it.</p>
+
+<p>A handful of golden tasks, re-run whenever the config changes, would turn the argument into
+evidence. Not a benchmark suite. Five tasks with known-good outcomes, a fixed command, and a note
+on what moved.</p>
+
+<h2>The agent-friendly CI and the safe CI are not the same CI</h2>
+
+<p>The pipeline that let agents move quickly was not the pipeline that contained them. Three
+conveniences did the damage: the self-hosted runner was unprotected, deploy jobs were allowed to
+fail, and the coverage gate was piped to true so a red result could not stop a release. Each one
+made the happy path faster and the failure path quieter.</p>
+
+<p>The fix is separation: a fast lane for agent feedback and a protected lane for anything that
+ships, with required gates that a convenience flag cannot skip. Convenience and safety are both
+real requirements. They just don't belong in the same job.</p>
+
+<p>Seven out of ten is not the point. The gap is. The setup is strong exactly where I spent the
+time — context, specs, guardrails, verification — and weak where I assumed the tooling would
+cover me. That is a more useful map for the next year than another list of things that worked.
+The setup was never the product. The evidence was.</p>
+    <div class="sources">
+      <h2>Sources</h2>
+      <ul>
+      <li><a href="https://agents.md" target="_blank" rel="noreferrer">AGENTS.md — an open format for guiding coding agents</a></li>
+      <li><a href="https://developer.apple.com/documentation/xcode-release-notes/xcode-26-release-notes" target="_blank" rel="noreferrer">Xcode 26 Release Notes — coding intelligence and model choice</a></li>
+      <li><a href="https://developer.apple.com/documentation/xcode-release-notes/xcode-27-release-notes" target="_blank" rel="noreferrer">Xcode 27 Release Notes — plans as editable artifacts</a></li>
+      <li><a href="https://realm.github.io/SwiftLint/configuration.html" target="_blank" rel="noreferrer">SwiftLint — configuration</a></li>
+      <li><a href="https://docs.gitlab.com/ci/jobs/job_control/" target="_blank" rel="noreferrer">GitLab CI/CD — control when jobs run: rules and when: never</a></li>
+      </ul>
+    </div>
+  </article>
+  <p class="foot">Written from experience shipping iOS apps. No client names, no internal details, no unpublished numbers — everything citable here is public.</p>
+  <nav class="pager">
+    <a href="./exam-mode-one-screen-earlier.html">← Exam mode, one screen earlier</a>
+    <span></span>
+  </nav>
+
+</div>
+</body>
+</html>

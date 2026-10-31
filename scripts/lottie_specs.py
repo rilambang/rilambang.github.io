@@ -930,6 +930,114 @@ def exam_mode_2():
     return s
 
 
+# ── 15. a year of AI-native iOS ─────────────────────────────────────────────
+def ai_audit_1():
+    """One pointer, three tools, then the pointer starts copying the docs.
+
+    Three arrows carry the tool filenames into AGENTS.md. The fourth leaves
+    the file for the docs it points to, labelled with the size it grew to, and
+    the status flips from pointer to second truth when the head lands.
+    """
+    s = Scene("what-a-year-of-ai-native-ios-still-cant-prove-1", 340, 4.0,
+              "Three tool instruction files pointing at one AGENTS.md, and an "
+              "18 KB copy leaking into the docs it points to")
+    s.text(PAD, 28, "Tool files", 12, MUTED)
+    for lab, y in (("CLAUDE.md", 44), ("GEMINI.md", 104),
+                   ("copilot-instructions.md", 164)):
+        _row(s, 20, y, 220, lab, "", h=44, size=13)
+    s.rect(320, 44, 280, 104, SURFACE, LINE, 12)
+    s.text(460, 82, "AGENTS.md", 18, INK, "middle")
+    pointer = s.text(460, 118, "pointer", 12, MUTED, "middle")
+    second = s.text(460, 118, "second truth", 12, "#ff9d9d", "middle",
+                    opacity=0)
+
+    t1 = _flow(s, 244, 66, 316, 76, 0.20)
+    t2 = _flow(s, 244, 126, 316, 96, t1 + 0.12)
+    t3 = _flow(s, 244, 186, 316, 116, t2 + 0.12)
+
+    s.rect(320, 230, 280, 64, SURFACE, LINE, 12)
+    s.text(460, 268, "the docs it points to", 13, MUTED, "middle")
+    leak = s.rect(320, 230, 280, 64, None, "#ff9d9d", 12, opacity=0)
+    t4 = _flow(s, 460, 152, 460, 226, t3 + 0.18, gap=44, label="18 KB")
+    leak.fade(t4, 100, T_DEFAULT)
+    pointer.fade(t4, 0, T_FLIP, EASE_IN)
+    second.fade(t4, 100, T_FLIP)
+    s.text(PAD, 326, "A pointer that restates becomes a second truth.", 12,
+           MUTED)
+    return s
+
+
+def ai_audit_2():
+    """Two rules become scripts; the third stays prose and drifts.
+
+    Three rows, one arrow each. The head lands on the verdict: two flip green
+    to enforced, the prose one flips red to drift.
+    """
+    s = Scene("what-a-year-of-ai-native-ios-still-cant-prove-2", 320, 3.9,
+              "Three rules routed to their enforcement: two land in "
+              "pre-commit, the prose one drifts")
+    s.text(PAD, 24, "Where each rule lives", 12, MUTED)
+    ys = [48, 112, 176]
+    for lab, y in zip(["Secret scan", "SwiftLint", "Write the MR body"], ys):
+        _row(s, 40, y, 560, lab, "", h=48, size=15)
+    t = 0.20
+    for i, y in enumerate(ys):
+        color = OK if i < 2 else "#ff9d9d"
+        fill = "#12241c" if i < 2 else "#2a1a22"
+        t = _verdict(s, 40, y, 560, t, h=48, start=260, end=110, mark=color,
+                     fill=fill)
+        _st(s, 584, y + 30, "", "enforced" if i < 2 else "drift", t,
+            color=color)
+        t += 0.14
+    s.text(PAD, 288,
+           "Two rules run before the commit. One is still a sentence.", 12,
+           MUTED)
+    return s
+
+
+def ai_audit_3():
+    """Four roles in a line, with the last two limited where it matters.
+
+    Three arrows carry the work down the chain. qa's edit and the fixer's push
+    flip to denied when each head arrives.
+    """
+    s = Scene("what-a-year-of-ai-native-ios-still-cant-prove-3", 260, 3.9,
+              "Architect, reviewer, qa and fixer in a chain, with qa denied "
+              "edits and fixer denied push")
+    s.text(PAD, 24, "Four roles, four limits", 12, MUTED)
+    roles = [("architect", "plans"), ("reviewer", "reads"),
+             ("qa", "edit: allowed"), ("fixer", "push: allowed")]
+    w, gap, y = 112, 50, 56
+    xs = [PAD + i * (w + gap) for i in range(4)]
+    statuses = []
+    for (name, status), x in zip(roles, xs):
+        s.rect(x, y, w, 104, SURFACE, LINE, 10)
+        s.text(x + w / 2, y + 40, name, 14, INK, "middle")
+        statuses.append(s.text(x + w / 2, y + 70, status, 12, MUTED,
+                               "middle"))
+    qa_denied = s.text(xs[2] + w / 2, y + 70, "edit: denied", 12,
+                       "#ff9d9d", "middle", opacity=0)
+    fix_denied = s.text(xs[3] + w / 2, y + 70, "push: denied", 12,
+                        "#ff9d9d", "middle", opacity=0)
+    qa_out = s.rect(xs[2], y, w, 104, None, "#ff9d9d", 10, opacity=0)
+    fix_out = s.rect(xs[3], y, w, 104, None, "#ff9d9d", 10, opacity=0)
+
+    t1 = _flow(s, xs[0] + w + 5, y + 52, xs[1] - 5, y + 52, 0.20)
+    t2 = _flow(s, xs[1] + w + 5, y + 52, xs[2] - 5, y + 52, t1 + 0.18)
+    qa_out.fade(t2, 100, T_DEFAULT)
+    statuses[2].fade(t2, 0, T_FLIP, EASE_IN)
+    qa_denied.fade(t2, 100, T_FLIP)
+
+    t3 = _flow(s, xs[2] + w + 5, y + 52, xs[3] - 5, y + 52, t2 + 0.18)
+    fix_out.fade(t3, 100, T_DEFAULT)
+    statuses[3].fade(t3, 0, T_FLIP, EASE_IN)
+    fix_denied.fade(t3, 100, T_FLIP)
+    s.text(PAD, 210,
+           "A narrow role only holds if the capability limit does.", 12,
+           MUTED)
+    return s
+
+
 SPECS = {
     "kiosk-and-assessment-apps": [
         (kiosk_1,
@@ -1049,10 +1157,25 @@ SPECS = {
          "The screen a student sees when the lock cannot start",
          "The lock is not the hard part. The words are."),
     ],
+    "what-a-year-of-ai-native-ios-still-cant-prove": [
+        (ai_audit_1,
+         "Three tool instruction files pointing at one AGENTS.md, and an "
+         "18 KB copy leaking into the docs it points to",
+         "One file every tool reads, until it starts restating the docs it "
+         "points to."),
+        (ai_audit_2,
+         "Three rules routed to their enforcement: two land in pre-commit, "
+         "the prose one drifts",
+         "The rule that stayed prose is the one that drifted."),
+        (ai_audit_3,
+         "Architect, reviewer, qa and fixer in a chain, with qa denied edits "
+         "and fixer denied push",
+         "The roles are real because the limits are."),
+    ],
 }
 
 
 def build_all():
-    """Return {slug: [(Scene, alt, caption), ...]}, two figures per post."""
+    """Return {slug: [(Scene, alt, caption), ...]}, one or more figures per post."""
     return {slug: [(fn(), alt, cap) for fn, alt, cap in entries]
             for slug, entries in SPECS.items()}

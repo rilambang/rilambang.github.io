@@ -2157,6 +2157,129 @@ and the states around it stopped lying.</p>
             ("com.apple.developer.automatic-assessment-configuration — entitlement and request form", "https://developer.apple.com/documentation/bundleresources/entitlements/com.apple.developer.automatic-assessment-configuration"),
         ],
     },
+    {
+        "slug": "what-a-year-of-ai-native-ios-still-cant-prove",
+        "tag": "Process",
+        "title": "What a year of AI-native iOS development still can't prove",
+        "summary": "I audited the agent setup behind a year of iOS work and scored it seven out of ten. Nine failure modes, each with the number that makes it concrete — and the two gaps that keep it from a ten.",
+        "body": """
+<p class="lede">I gave my AI-native iOS setup a year, then audited it. The score was seven out of
+ten. The strong parts were the ones I had deliberately built: a context file every tool reads,
+specs that survive a handover, guardrails around what an agent may touch, and a verification path
+that ends in a command. The weak parts were the ones I assumed would take care of themselves:
+measurement and portability.</p>
+
+<p>That gap is the useful part. Nine failure modes follow, each with the number that makes it
+concrete rather than a feeling.</p>
+
+<h2>The file that made the repo legible became a second copy of it</h2>
+
+<p>The highest-leverage file in the repo was the root <code>AGENTS.md</code>.
+<code>CLAUDE.md</code>, <code>GEMINI.md</code> and the Copilot instructions were symlinks to it,
+so every tool read one source. For a while that was the whole trick: an agent starts with an
+empty context window, and this was the one document it could not miss.</p>
+
+<p>Then it grew to 18 KB. Somewhere in there it stopped pointing at the design docs and started
+summarising them. Two copies of the same rule, one in the pointer and one in the doc it pointed
+to, with no way to tell which was current. A pointer file stays a pointer, or it becomes a second
+truth. The fix was deletion: keep the index and the non-negotiables, link the rest.</p>
+
+<h2>A doc that's twelve decisions behind is a trust bug, not a typo</h2>
+
+<p>Thirteen ADRs, one per decision that would otherwise live in a review thread. Each answers
+why, which is the question a new agent cannot infer from the code. The failure mode is
+staleness. An index that lists twelve when there are thirteen is not a formatting problem. It
+tells the next reader, human or model, that the missing decision never happened.</p>
+
+<p>Once a doc lies, it gets ignored, and then it may as well not exist. The fix is a freshness
+check in CI: every ADR is indexed, every index entry resolves, and the check fails on a doc that
+no longer matches the code it describes. A reminder is not a check.</p>
+
+<h2>A rule violated twice is a script, not a sentence</h2>
+
+<p>Two things held without argument: the secret scan and SwiftLint, both in pre-commit. One
+thing did not: a paragraph in the conventions file telling agents how to write a merge request
+body. It was violated twice in a week. That is the threshold. The second violation is the signal
+that the rule needs a mechanism, not more emphasis.</p>
+
+<p>So it became a script, and so did two other rules that kept slipping. One checks that every
+new file is registered where the build expects it. One checks that the docs index matches the
+docs on disk. An agent writes either in minutes, so cost is no longer the excuse.</p>
+
+<h2>Four narrow agents beat one clever one</h2>
+
+<p>The setup ran four roles: an architect that plans, a reviewer that reads, a qa agent that
+tests, and a fixer that repairs. The important part was not the division of labour. It was the
+capability limits. qa could not edit a file. The fixer could not push. A reviewer that can
+quietly fix stops reviewing and starts patching, and the review becomes a formality.</p>
+
+<p>Narrow roles without limits are just four prompts with the same permissions. The limits are
+what make the roles real.</p>
+
+<h2>Verification is the whole trick</h2>
+
+<p>Every claim an agent makes has to end in a command. Build through one path, compare against
+snapshot references, run CI on a machine with a simulator per slot. Determinism is what makes
+"it builds" checkable. Without it, the sentence is a paragraph, and a paragraph is not evidence.</p>
+
+<p>The failure mode is not a broken build. It is a green sentence with no command behind it,
+repeated until everyone believes it. I stopped accepting the sentence.</p>
+
+<h2>The most valuable reasoning in the repo was the part I didn't track</h2>
+
+<p>Plans, ledgers, the record of what was tried and abandoned: 42,770 lines, all gitignored. The
+code was tracked. The reasoning that produced it was not. That is backwards. A plan is the
+cheapest artifact to keep and the most expensive to reconstruct, especially for an agent that has
+to re-derive the constraints from scratch.</p>
+
+<p>Commit the plan and the progress log. Ignore only the review packages, which are large,
+generated, and disposable.</p>
+
+<h2>Portability is the unpaid bill</h2>
+
+<p>162 skills lived on my machine. The config lived in one home directory. The app targeted an
+iOS 26 API while the deployment floor was 17.6, which meant the clever parts only worked on the
+newest runtime. None of that travels with a clone. Whoever picks up the repo gets the code and
+none of the setup that made the code cheap to change.</p>
+
+<p>The fix is boring: vendor the six skills actually used, pin them to the supported version, and
+write a setup script a fresh machine can run. The other 156 are a personal library, not a
+dependency.</p>
+
+<h2>You cannot improve what you don't count</h2>
+
+<p>I had no numbers on dispatch, rework or defects. I could tell you the setup felt faster. I
+could not tell you whether a change to the context file reduced rework or just changed its shape.
+Taste is a fine reason to try something. It is a bad reason to keep it.</p>
+
+<p>A handful of golden tasks, re-run whenever the config changes, would turn the argument into
+evidence. Not a benchmark suite. Five tasks with known-good outcomes, a fixed command, and a note
+on what moved.</p>
+
+<h2>The agent-friendly CI and the safe CI are not the same CI</h2>
+
+<p>The pipeline that let agents move quickly was not the pipeline that contained them. Three
+conveniences did the damage: the self-hosted runner was unprotected, deploy jobs were allowed to
+fail, and the coverage gate was piped to true so a red result could not stop a release. Each one
+made the happy path faster and the failure path quieter.</p>
+
+<p>The fix is separation: a fast lane for agent feedback and a protected lane for anything that
+ships, with required gates that a convenience flag cannot skip. Convenience and safety are both
+real requirements. They just don't belong in the same job.</p>
+
+<p>Seven out of ten is not the point. The gap is. The setup is strong exactly where I spent the
+time — context, specs, guardrails, verification — and weak where I assumed the tooling would
+cover me. That is a more useful map for the next year than another list of things that worked.
+The setup was never the product. The evidence was.</p>
+""",
+        "sources": [
+            ("AGENTS.md — an open format for guiding coding agents", "https://agents.md"),
+            ("Xcode 26 Release Notes — coding intelligence and model choice", "https://developer.apple.com/documentation/xcode-release-notes/xcode-26-release-notes"),
+            ("Xcode 27 Release Notes — plans as editable artifacts", "https://developer.apple.com/documentation/xcode-release-notes/xcode-27-release-notes"),
+            ("SwiftLint — configuration", "https://realm.github.io/SwiftLint/configuration.html"),
+            ("GitLab CI/CD — control when jobs run: rules and when: never", "https://docs.gitlab.com/ci/jobs/job_control/"),
+        ],
+    },
 ]
 
 
@@ -2262,6 +2385,23 @@ def _figure_html(slug, n, scene, alt, cap):
 
 LEDE_RE = re.compile(r'(<p class="lede">.*?</p>)', re.S)
 
+# Which H2 a figure introduces, 1-based. The default is the figure's own
+# number: figure 1 follows the lede, figure 2 sits before the second H2, and
+# so on. That default is what every two-figure post already renders; a post
+# with more figures can point one at a later section instead.
+FIG_AT = {
+    "what-a-year-of-ai-native-ios-still-cant-prove": {1: 1, 2: 3, 3: 4},
+}
+
+
+def _h2_at(body, n):
+    pos = -1
+    for _ in range(n):
+        pos = body.find("<h2", pos + 1)
+        if pos == -1:
+            return -1
+    return pos
+
 
 def minutes(body_html):
     words = len(re.sub(r"<[^>]+>", " ", body_html).split())
@@ -2274,13 +2414,18 @@ def render_post(p, i):
     extra = ""
     if slug in SCENES:
         figs = SCENES[slug]
-        first = _figure_html(slug, 1, figs[0][0], figs[0][1], figs[0][2])
-        body = (LEDE_RE.sub(lambda m: m.group(1) + "\n" + first, body_src, count=1)
-                if LEDE_RE.search(body_src) else first + body_src)
-        if len(figs) > 1:
-            second = _figure_html(slug, 2, figs[1][0], figs[1][1], figs[1][2])
-            at = body.find("<h2", body.find("<h2") + 1)
-            body = body[:at] + second + body[at:] if at != -1 else body + second
+        anchors = FIG_AT.get(slug, {})
+        body = body_src
+        for n, (scene, alt, cap) in enumerate(figs, 1):
+            figure = _figure_html(slug, n, scene, alt, cap)
+            if n == 1 and 1 not in anchors:
+                body = (LEDE_RE.sub(lambda m: m.group(1) + "\n" + figure,
+                                    body, count=1)
+                        if LEDE_RE.search(body) else figure + body)
+            else:
+                at = _h2_at(body, anchors.get(n, n))
+                body = (body[:at] + figure + body[at:] if at != -1
+                        else body + figure)
         extra = ('<script defer src="../vendor/lottie.min.js"></script>\n'
                  f'<script>{LOTTIE_JS}</script>\n')
     else:
