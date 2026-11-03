@@ -16,8 +16,7 @@ export const ME = {
     { label: 'GitHub', url: 'https://github.com/rilambang' },
     { label: 'X', url: 'https://x.com/rilambang' },
   ],
-  keywords:
-    'Ilham Rilambang, Muhammad Ilham Rilambang, iOS Developer Indonesia, SwiftUI Engineer, Telkom Indonesia, Clean Architecture Swift, MVVM Swift, iOS Engineer Jakarta',
+  now: 'Auditing what agent-driven iOS delivery can and cannot prove.',
 }
 
 // four numbers, each one a claim with a receipt in WORK below
@@ -92,6 +91,15 @@ export const ROLES = [
   { role: 'Mobile Engineer — React Native', span: '2017 — 2021', where: 'Telkom Indonesia' },
 ]
 
+// three posts that show how I think; the rest live at /blog
+export const WRITING = [
+  { slug: 'uikit-to-swiftui-without-a-rewrite', tag: 'Migration', title: 'UIKit to SwiftUI without a rewrite', line: 'The migration succeeds or fails on one decision: who owns navigation.' },
+  { slug: 'mvvm-to-viper-part-one', tag: 'Architecture', title: 'MVVM to VIPER, part one: when the view model is the app', line: 'Why a pattern that works at five screens stops being local at fifty.' },
+  { slug: 'what-a-year-of-ai-native-ios-still-cant-prove', tag: 'Process', title: "What a year of AI-native iOS still can't prove", line: 'I scored my own agent setup seven out of ten. Nine failure modes, with numbers.' },
+]
+
+export const STACK = ['SwiftUI', 'UIKit', 'Combine', 'Swift Concurrency', 'Clean Architecture', 'MVVM', 'VIPER', 'Coordinator', 'SPM modularisation', 'CI gates', 'AI agents', 'React Native']
+
 export const ALSO = [
   { name: 'Agree', url: 'https://play.google.com/store/apps/details?id=com.telkom.agreefarmer' },
   { name: 'Agree Modal', url: 'https://play.google.com/store/apps/details?id=com.agree.modal' },
@@ -104,8 +112,6 @@ export const ALSO = [
 
 export const REPOS = [
   { name: 'Modularization-Profile-Package', lang: 'Swift', url: 'https://github.com/rilambang/Modularization-Profile-Package' },
-  { name: 'react-native-svg-uri', lang: 'JavaScript', url: 'https://github.com/rilambang/react-native-svg-uri' },
-  { name: 'react-native-photo-view', lang: 'Objective-C', url: 'https://github.com/rilambang/react-native-photo-view' },
 ]
 
 export const CERTS = [
@@ -115,6 +121,6 @@ export const CERTS = [
 
 // LinkedIn lists this era as CTO of Agree; the CV calls it Technical Lead.
 export const CONTACT = {
-  heading: 'Open to iOS and mobile engineering roles.',
-  body: 'Especially teams that treat architecture and shipping as the same job.',
+  heading: 'Open to lead and staff iOS roles.',
+  body: 'Jakarta or remote. I want to own architecture, delivery and the people who ship it — on teams that treat those as the same job.',
 }

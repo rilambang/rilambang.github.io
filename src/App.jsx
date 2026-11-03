@@ -1,5 +1,5 @@
-import { useLayoutEffect } from 'react'
-import { ME, FACTS, WORK, TENURE, ROLES, ALSO, REPOS, CERTS, CONTACT } from './data.js'
+import { useLayoutEffect, useEffect, useRef, useState } from 'react'
+import { ME, FACTS, WORK, TENURE, ROLES, ALSO, REPOS, CERTS, CONTACT, WRITING, STACK } from './data.js'
 
 const asset = (f) => `${import.meta.env.BASE_URL}shots/${f}`.replace(/\/+/g, '/')
 
@@ -30,6 +30,86 @@ function useReveal() {
       io.disconnect()
     }
   }, [])
+}
+
+/* Motion extras. All of it is decoration: reduced motion, or no JS, shows the final page. */
+const calm = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
+function useMotion() {
+  useEffect(() => {
+    if (calm()) return
+    const root = document.documentElement
+    let raf = 0
+    const onScroll = () => {
+      cancelAnimationFrame(raf)
+      raf = requestAnimationFrame(() => {
+        const h = root.scrollHeight - innerHeight
+        root.style.setProperty('--scroll', h > 0 ? String(scrollY / h) : '0')
+        root.style.setProperty('--drift', String(scrollY))
+      })
+    }
+    // cards and tiles get a light that follows the pointer
+    const onMove = (e) => {
+      const el = e.target.closest?.('.card, .fact, .writing__item, .contact')
+      if (!el) return
+      const r = el.getBoundingClientRect()
+      el.style.setProperty('--mx', `${e.clientX - r.left}px`)
+      el.style.setProperty('--my', `${e.clientY - r.top}px`)
+    }
+    onScroll()
+    addEventListener('scroll', onScroll, { passive: true })
+    addEventListener('pointermove', onMove, { passive: true })
+    return () => {
+      removeEventListener('scroll', onScroll)
+      removeEventListener('pointermove', onMove)
+    }
+  }, [])
+}
+
+/* "1M+", "99.5%", "25%", "2017": count the digits up once the tile is seen. */
+const Count = ({ text }) => {
+  const ref = useRef(null)
+  const [out, setOut] = useState(text)
+  useEffect(() => {
+    const m = text.match(/^(\D*)([\d.]+)(.*)$/)
+    if (!m || calm() || !('IntersectionObserver' in window)) return
+    const [, pre, num, post] = m
+    const end = parseFloat(num)
+    const dec = (num.split('.')[1] || '').length
+    const from = num.length === 4 && !dec ? end - 40 : 0 // years roll, they don't start at 0
+    const io = new IntersectionObserver(([e]) => {
+      if (!e.isIntersecting) return
+      io.disconnect()
+      const t0 = performance.now()
+      const tick = (t) => {
+        const k = Math.max(0, Math.min(1, (t - t0) / 1100))
+        const v = from + (end - from) * (1 - Math.pow(1 - k, 3))
+        setOut(`${pre}${v.toFixed(dec)}${post}`)
+        if (k < 1) requestAnimationFrame(tick)
+        else setOut(text)
+      }
+      requestAnimationFrame(tick)
+    })
+    io.observe(ref.current)
+    return () => io.disconnect()
+  }, [text])
+  return <strong ref={ref}>{out}</strong>
+}
+
+/* The "now" line types itself once, then the caret keeps blinking. */
+const Typed = ({ text }) => {
+  const [n, setN] = useState(calm() ? text.length : 0)
+  useEffect(() => {
+    if (calm()) return
+    const id = setInterval(() => setN((v) => (v >= text.length ? (clearInterval(id), v) : v + 1)), 28)
+    return () => clearInterval(id)
+  }, [text])
+  return (
+    <p className="hero__now" aria-label={`Now: ${text}`}>
+      <span className="hero__pulse" aria-hidden="true" />
+      <span aria-hidden="true">Now · {text.slice(0, n)}<i className="caret" /></span>
+    </p>
+  )
 }
 
 const now = () => {
@@ -88,18 +168,21 @@ const Arrow = () => (
 
 export default function App() {
   useReveal()
+  useMotion()
   return (
     <>
       <a className="skip" href="#main">Skip to content</a>
+      <div className="progress" aria-hidden="true" />
+      <div className="orbs" aria-hidden="true"><i /><i /><i /></div>
 
       <header className="top">
         <div className="top__inner">
           <a className="top__name" href="#top">{ME.name}</a>
           <nav className="top__nav" aria-label="Sections">
             <a href="#work">Work</a>
-            <a href="#path">Shipping</a>
-            <a href="#roles">Path</a>
-            <a href="blog/">Blog</a>
+            <a href="#writing">Writing</a>
+            <a href="#path">Timeline</a>
+            <a href="#roles">Experience</a>
             <a href="#contact">Contact</a>
           </nav>
         </div>
@@ -112,6 +195,7 @@ export default function App() {
             I ship iOS for products that<br />{' '}people <em>depend</em> on.
           </h1>
           <p className="hero__blurb">{ME.blurb}</p>
+          <Typed text={ME.now} />
           <p className="hero__links">
             <a href={`mailto:${ME.email}`}>{ME.email}</a>
             {ME.links.map((l) => (
@@ -125,11 +209,17 @@ export default function App() {
         <section className="facts" aria-label="At a glance" data-reveal>
           {FACTS.map((f) => (
             <div className="fact" key={f.figure}>
-              <strong>{f.figure}</strong>
+              <Count text={f.figure} />
               <span>{f.label}</span>
             </div>
           ))}
         </section>
+
+        <div className="marquee" aria-hidden="true">
+          <div className="marquee__track">
+            {[...STACK, ...STACK].map((t, i) => <span key={i}>{t}</span>)}
+          </div>
+        </div>
 
         <section id="work" className="section">
           <h2 className="section__title" data-reveal>Selected work</h2>
@@ -153,6 +243,21 @@ export default function App() {
               </article>
             ))}
           </div>
+        </section>
+
+        <section id="writing" className="section">
+          <h2 className="section__title" data-reveal>Writing</h2>
+          <div className="writing">
+            {WRITING.map((w) => (
+              <a className="writing__item" key={w.slug} href={`blog/${w.slug}.html`} data-reveal>
+                <span className="writing__tag">{w.tag}</span>
+                <h3>{w.title}</h3>
+                <p>{w.line}</p>
+                <span className="writing__go">Read <Arrow /></span>
+              </a>
+            ))}
+          </div>
+          <p className="writing__all" data-reveal><a href="blog/">All 15 pieces <Arrow /></a></p>
         </section>
 
         <section id="path" className="section">
@@ -196,15 +301,6 @@ export default function App() {
             </div>
           </div>
 
-          <h3 className="mini">Certificates</h3>
-          <ul className="links links--row">
-            {CERTS.map((c) => (
-              <li key={c.name}>
-                <a href={c.url} target="_blank" rel="noreferrer">{c.name} <Arrow /></a>
-                <em>{c.issuer}</em>
-              </li>
-            ))}
-          </ul>
         </section>
 
         <section id="contact" className="contact" data-reveal>
@@ -215,7 +311,9 @@ export default function App() {
       </main>
 
       <footer className="foot">
-        <span>{ME.name} — {ME.where}</span>
+        <span>{ME.name} — {ME.where} · {CERTS.map((c, i) => (
+          <span key={c.name}>{i > 0 && ', '}<a href={c.url} target="_blank" rel="noreferrer">{c.name}</a></span>
+        ))}</span>
         <span>{ME.links.map((l, i) => (
           <span key={l.label}>
             {i > 0 && ' · '}
