@@ -40,10 +40,10 @@ export const WORK = [
   },
   {
     slug: 'indihome',
-    name: 'Indihome Eazy',
+    name: 'Indihome Eazy and Antares Eazy',
     year: '2022 — 2025',
     role: 'iOS engineer',
-    line: 'Took a Telkom flagship from UIKit to SwiftUI and MVC to modular Clean Architecture — without breaking it.',
+    line: 'Two closely related Telkom apps that I developed. Moved the flagship from UIKit to SwiftUI and from MVC to modular Clean Architecture — without breaking it.',
     tags: ['UIKit → SwiftUI', 'Clean Architecture'],
     store: 'https://apps.apple.com/us/app/indihome-eazy/id1486126278',
     shots: ['indihome-1.webp', 'indihome-2.webp'],
