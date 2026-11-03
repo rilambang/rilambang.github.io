@@ -22,7 +22,7 @@
   }
 }
 * { box-sizing: border-box; }
-html { scroll-behavior: smooth; }
+html { scroll-behavior: smooth; background: #1f0914; }
 body { margin: 0; background: var(--field-bot); color: var(--pencil); font: 400 18.5px/1.65 var(--text); -webkit-font-smoothing: antialiased; overflow-x: clip; }
 a { color: inherit; text-decoration-color: var(--ink); text-decoration-thickness: 1.5px; text-underline-offset: 3px; }
 a:hover { color: var(--ink); }
@@ -210,7 +210,7 @@ text.mut { fill: var(--lead); } text.ink { fill: var(--ink); }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .progress { display: none; } }
 
 /* ── liquid glass ── */
-body::before { content: ""; position: fixed; inset: 0; z-index: -2; pointer-events: none;
+body::before { content: ""; position: fixed; inset: -240px 0; z-index: -2; pointer-events: none;
   background:
     radial-gradient(900px 700px at 6% -8%, var(--field-a), transparent 62%),
     radial-gradient(800px 640px at 100% 8%, var(--field-b), transparent 58%),
@@ -303,3 +303,5 @@ body::after, html::before, html::after { opacity: 0.35; }
   .top, .fig__frame, .facts dl, .work, .posts, .list, .contact, .pager a { -webkit-backdrop-filter: blur(20px) saturate(200%) brightness(1.08); backdrop-filter: blur(20px) saturate(200%) brightness(1.08); }
   body::after, html::before, html::after { opacity: 0.8; }
 }
+
+@media (prefers-color-scheme: light) { html { background: #f9eff2; } }

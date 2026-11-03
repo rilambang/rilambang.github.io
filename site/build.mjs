@@ -84,13 +84,13 @@ const page = ({ title, desc, url, depth, body, type = 'website', ld = '' }) => {
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>${esc(title)}</title>
 <meta name="description" content="${esc(desc)}">
 <meta name="author" content="${esc(ME.name)}">
 <link rel="canonical" href="${url}">
 <meta name="theme-color" content="#f9eff2" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#260b15" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#1f0914" media="(prefers-color-scheme: dark)">
 <meta property="og:type" content="${type}">
 <meta property="og:title" content="${esc(title)}">
 <meta property="og:description" content="${esc(desc)}">
