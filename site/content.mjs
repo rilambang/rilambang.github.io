@@ -46,7 +46,8 @@ export const WORK = [
     line: 'Two closely related Telkom apps that I developed. Moved the flagship from UIKit to SwiftUI and from MVC to modular Clean Architecture — without breaking it.',
     tags: ['UIKit → SwiftUI', 'Clean Architecture'],
     store: 'https://apps.apple.com/us/app/indihome-eazy/id1486126278',
-    shots: ['indihome-1.webp', 'indihome-2.webp'],
+    shots: ['indihome-1.webp', 'indihome-2.webp', 'antares-1.webp', 'antares-2.webp'],
+    also: { name: 'Antares Eazy', store: 'https://apps.apple.com/id/app/antares-eazy/id6446350716' },
   },
   {
     slug: 'agreemart',

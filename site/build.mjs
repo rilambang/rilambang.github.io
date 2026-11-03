@@ -136,8 +136,8 @@ function nameSheet(name) {
 
 const work = (w) => `<article class="work"><div class="work__text"><h3>${esc(w.name)}</h3>
 <p class="work__meta">${esc(w.year)}, ${esc(w.role)}</p><p>${esc(w.line)}</p>
-<p class="work__tags">${w.tags.map(esc).join(', ')}</p><a href="${esc(w.store)}" target="_blank" rel="noreferrer">See it on the App Store</a></div>
-<div class="work__shots">${w.shots.map((s, i) => `<img src="assets/shots/${s}" alt="${esc(w.name)} screenshot ${i + 1}" width="360" height="640" loading="lazy" decoding="async">`).join('')}</div></article>`
+<p class="work__tags">${w.tags.map(esc).join(', ')}</p><a href="${esc(w.store)}" target="_blank" rel="noreferrer">See ${w.also ? esc(w.name.split(" and ")[0]) + " " : "it "}on the App Store</a>${w.also ? ` <a href="${esc(w.also.store)}" target="_blank" rel="noreferrer">See ${esc(w.also.name)} on the App Store</a>` : ""}</div>
+<div class="work__shots">${w.shots.map((s, i) => `<img src="assets/shots/${s}" alt="${esc(w.also && i >= 2 ? w.also.name : w.name.split(" and ")[0])} screenshot ${(i % 2) + 1}" width="360" height="640" loading="lazy" decoding="async">`).join('')}</div></article>`
 
 const home = page({
   title: `${ME.name}, iOS engineer`,
