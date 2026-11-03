@@ -3,190 +3,60 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>The iOS stack I actually reach for</title>
-<meta name="description" content="The stack I reach for on someone else&#x27;s codebase, where every choice is priced by whether the next engineer can debug it at 3am.">
+<title>The iOS stack I actually reach for, Muhammad Ilham Rilambang</title>
+<meta name="description" content="The stack I reach for on someone else's codebase, where every choice is priced by whether the next engineer can debug it at 3am.">
+<meta name="author" content="Muhammad Ilham Rilambang">
 <link rel="canonical" href="https://rilambang.github.io/blog/the-ios-stack-i-actually-reach-for.html">
+<meta name="theme-color" content="#f4f5f7" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#16171a" media="(prefers-color-scheme: dark)">
 <meta property="og:type" content="article">
-<meta property="og:title" content="The iOS stack I actually reach for">
-<meta property="og:description" content="The stack I reach for on someone else&#x27;s codebase, where every choice is priced by whether the next engineer can debug it at 3am.">
+<meta property="og:title" content="The iOS stack I actually reach for, Muhammad Ilham Rilambang">
+<meta property="og:description" content="The stack I reach for on someone else's codebase, where every choice is priced by whether the next engineer can debug it at 3am.">
 <meta property="og:url" content="https://rilambang.github.io/blog/the-ios-stack-i-actually-reach-for.html">
 <meta property="og:image" content="https://rilambang.github.io/og.png">
 <meta name="twitter:card" content="summary_large_image">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='0' fill='%232563eb'/><text x='16' y='23' font-family='Georgia,serif' font-size='20' fill='%23ffffff' text-anchor='middle'>R</text></svg>">
-<link rel="stylesheet" href="./blog.css">
-<script defer src="../vendor/lottie.min.js"></script>
-<script>
-document.addEventListener('DOMContentLoaded', function(){
-  var figs = document.querySelectorAll('.fig-lottie');
-  if (!figs.length || !window.lottie) return;
-  var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  figs.forEach(function(el){
-    var W = +el.getAttribute('data-w'), H = +el.getAttribute('data-h');
-    var labels = [].slice.call(el.querySelectorAll('.fig-label')).map(function(n){
-      var a = n.getAttribute('data-alpha'), p = n.getAttribute('data-path');
-      return {
-        el: n,
-        a: a ? a.split(' ').map(function(s){
-          var q = s.split(':'); return [+q[0], +q[1]];
-        }) : null,
-        p: p ? p.split(' ').map(Number) : null
-      };
-    });
-    function alphaAt(list, f){
-      var i = 0;
-      while (i + 1 < list.length && list[i + 1][0] <= f) i += 1;
-      if (i + 1 >= list.length) return list[i][1];
-      var t0 = list[i][0], t1 = list[i + 1][0];
-      var u = t1 > t0 ? (f - t0) / (t1 - t0) : 1;
-      return list[i][1] + (list[i + 1][1] - list[i][1]) * u;
-    }
-    function paint(f){
-      labels.forEach(function(l){
-        if (l.a) l.el.style.opacity = (alphaAt(l.a, f) / 100).toFixed(3);
-        if (l.p) {
-          var i = Math.min(Math.round(f), l.p.length / 2 - 1) * 2;
-          // cqw is 1% of the container width, both axes: y divides by W too
-          l.el.style.translate = (l.p[i] / W * 100).toFixed(3) + 'cqw ' +
-                                 (l.p[i + 1] / W * 100).toFixed(3) + 'cqw';
-        }
-      });
-    }
-    var anim = lottie.loadAnimation({
-      container: el, renderer: 'svg', loop: true, autoplay: false,
-      path: el.getAttribute('data-src')
-    });
-    anim.addEventListener('enterFrame', function(){ paint(anim.currentFrame); });
-    anim.addEventListener('DOMLoaded', function(){
-      el.classList.add('is-live');
-      var live = el.querySelector('svg:not(.poster)');
-      if (live) live.setAttribute('aria-hidden', 'true');
-      if (reduced) { anim.goToAndStop(anim.totalFrames - 1, true); paint(anim.totalFrames); return; }
-      anim.goToAndStop(0, true); paint(0);
-      // Loop while it is on screen; off screen it costs nothing.
-      new IntersectionObserver(function(entries){
-        entries.forEach(function(e){
-          if (e.isIntersecting) anim.play(); else anim.pause();
-        });
-      }, {threshold: 0.25}).observe(el);
-    });
-  });
-});
-</script>
+<link rel="me" href="https://github.com/rilambang"><link rel="me" href="https://x.com/rilambang">
+<link rel="alternate" type="application/rss+xml" title="Writing" href="https://rilambang.github.io/feed.xml">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%231e2024'/><circle cx='16' cy='16' r='7' fill='%23f4f5f7'/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=JetBrains+Mono:wght@400&family=Source+Serif+4:ital,opsz,wght@0,8..60,400..650;1,8..60,400&display=swap">
+<link rel="stylesheet" href="../assets/style.css">
 </head>
 <body>
-<div class="wrap">
-  <div class="top">
-    <a class="who" href="/">Muhammad Ilham Rilambang</a>
-    <a href="./index.html">Blog</a>
-  </div>
-  <header class="post-head">
-    <p class="chip">Tooling</p>
-    <h1>The iOS stack I actually reach for</h1>
-    <p class="meta">3 min read · Muhammad Ilham Rilambang</p>
-  </header>
-  <article>
-<p class="lede">Nobody hands you a blank project. You get a five-year-old codebase, a team, and one
-question that decides everything else: who's on call when this breaks at 3am? This is the
-stack I reach for then.</p>
-
-  <figure class="fig">
-    <div class="fig-lottie" data-src="./lottie/the-ios-stack-i-actually-reach-for-1.json" data-w="640" data-h="320" role="img" aria-label="A stack list where the choice is priced by whether the next engineer can debug it"><svg viewBox='0 0 640 320' width='640' height='320' class='poster' aria-hidden='true' xmlns='http://www.w3.org/2000/svg'><rect x='40.0' y='44.0' width='440.0' height='44.0' rx='8' fill='#161822' stroke='#2c3040' stroke-width='1.2'/><rect x='40.0' y='96.0' width='440.0' height='44.0' rx='8' fill='#161822' stroke='#2c3040' stroke-width='1.2'/><rect x='40.0' y='148.0' width='440.0' height='44.0' rx='8' fill='#161822' stroke='#2c3040' stroke-width='1.2'/><rect x='40.0' y='200.0' width='440.0' height='44.0' rx='8' fill='#161822' stroke='#2c3040' stroke-width='1.2'/><rect x='40.0' y='256.0' width='440.0' height='44.0' rx='8' fill='#1b2440' stroke='#8ab4ff' stroke-width='1.2'/><line x1='520.0' y1='74.0' x2='520.0' y2='123.5' stroke='#7b8496' stroke-width='1.5'/><line x1='520.0' y1='200.5' x2='520.0' y2='245.0' stroke='#7b8496' stroke-width='1.5'/><polygon points='520.0,250.0 515.4,241.0 524.6,241.0' fill='#7b8496'/><rect x='40.0' y='256.0' width='440.0' height='44.0' rx='8' fill='#2a1a22' stroke='#ff9d9d' stroke-width='1.2'/><line x1='340.0' y1='278.0' x2='395.0' y2='278.0' stroke='#7b8496' stroke-width='1.5'/><polygon points='400.0,278.0 391.0,282.6 391.0,273.4' fill='#7b8496'/></svg><div class='fig-labels' aria-hidden='true'><span class='fig-label' data-i='0' style='left:3.125%;top:6.250%;font-size:1.8750cqw;color:#aab2c4;--a1:1.00;transform:translate(0,calc(-100% + .24em))'>The stack</span><span class='fig-label' data-i='1' style='left:8.750%;top:22.188%;font-size:2.3438cqw;color:#f4f6fb;--a1:1.00;transform:translate(0,calc(-100% + .24em))'>SwiftUI</span><span class='fig-label' data-i='2' style='left:72.500%;top:22.188%;font-size:2.0312cqw;color:#86e0a6;--a1:1.00;transform:translate(-100%,calc(-100% + .24em))'>keep</span><span class='fig-label' data-i='3' style='left:8.750%;top:38.438%;font-size:2.3438cqw;color:#f4f6fb;--a1:1.00;transform:translate(0,calc(-100% + .24em))'>SwiftData</span><span class='fig-label' data-i='4' style='left:72.500%;top:38.438%;font-size:2.0312cqw;color:#86e0a6;--a1:1.00;transform:translate(-100%,calc(-100% + .24em))'>keep</span><span class='fig-label' data-i='5' style='left:8.750%;top:54.688%;font-size:2.3438cqw;color:#f4f6fb;--a1:1.00;transform:translate(0,calc(-100% + .24em))'>URLSession</span><span class='fig-label' data-i='6' style='left:72.500%;top:54.688%;font-size:2.0312cqw;color:#86e0a6;--a1:1.00;transform:translate(-100%,calc(-100% + .24em))'>keep</span><span class='fig-label' data-i='7' style='left:8.750%;top:70.938%;font-size:2.3438cqw;color:#f4f6fb;--a1:1.00;transform:translate(0,calc(-100% + .24em))'>Swift Testing</span><span class='fig-label' data-i='8' style='left:72.500%;top:70.938%;font-size:2.0312cqw;color:#86e0a6;--a1:1.00;transform:translate(-100%,calc(-100% + .24em))'>keep</span><span class='fig-label' data-i='9' style='left:8.750%;top:88.438%;font-size:2.3438cqw;color:#f4f6fb;--a1:1.00;transform:translate(0,calc(-100% + .24em))'>A dependency nobody can debug</span><span class='fig-label' data-i='10' style='left:81.250%;top:51.875%;font-size:1.8750cqw;color:#aab2c4;--a1:1.00;transform:translate(-50%,calc(-100% + .24em))' data-alpha='0:0 1:0 2:0 3:0 4:0 5:0 6:0 7:0 8:0 9:0 10:0 11:0 12:0 13:0 14:7 15:50 16:93 17:100 18:100 19:100 20:100 21:100 22:100 23:100 24:100 25:100 26:100 27:100 28:100 29:100 30:100 31:100 32:100 33:100 34:100 35:100 36:100 37:100 38:100 39:100 40:100 41:100 42:100 43:100 44:100 45:100 46:100 47:100 48:100 49:100 50:100 51:100 52:100 53:100 54:100 55:100 56:100 57:100 58:100 59:100 60:100 61:100 62:100 63:100 64:100 65:100 66:100 67:100 68:100 69:100 70:100 71:100 72:100 73:100 74:100 75:100 76:100 77:100 78:100 79:100 80:100 81:100 82:100 83:100 84:100 85:100 86:100 87:100 88:100 89:100 90:100 91:100 92:100 93:100 94:100 95:100 96:100 97:100 98:100 99:100 100:100 101:100 102:100 103:100 104:100 105:100 106:100 107:100 108:100 109:100 110:100 111:100 112:100 113:100 114:100 115:100 116:100 117:100 118:100 119:100 120:100'>debuggable?</span><span class='fig-label' data-i='11' style='left:72.500%;top:88.438%;font-size:2.0312cqw;color:#aab2c4;--a1:0.00;transform:translate(-100%,calc(-100% + .24em))' data-alpha='0:100 1:100 2:100 3:100 4:100 5:100 6:100 7:100 8:100 9:100 10:100 11:100 12:100 13:100 14:100 15:100 16:100 17:100 18:100 19:100 20:100 21:100 22:100 23:100 24:100 25:100 26:100 27:100 28:100 29:100 30:100 31:100 32:100 33:100 34:100 35:100 36:100 37:100 38:100 39:100 40:100 41:100 42:100 43:100 44:100 45:100 46:100 47:100 48:100 49:100 50:100 51:100 52:100 53:100 54:100 55:100 56:100 57:50 58:0 59:0 60:0 61:0 62:0 63:0 64:0 65:0 66:0 67:0 68:0 69:0 70:0 71:0 72:0 73:0 74:0 75:0 76:0 77:0 78:0 79:0 80:0 81:0 82:0 83:0 84:0 85:0 86:0 87:0 88:0 89:0 90:0 91:0 92:0 93:0 94:0 95:0 96:0 97:0 98:0 99:0 100:0 101:0 102:0 103:0 104:0 105:0 106:0 107:0 108:0 109:0 110:0 111:0 112:0 113:0 114:0 115:0 116:0 117:0 118:0 119:0 120:0'>drop</span><span class='fig-label' data-i='12' style='left:72.500%;top:88.438%;font-size:2.0312cqw;color:#ff9d9d;--a1:1.00;transform:translate(-100%,calc(-100% + .24em))' data-alpha='0:0 1:0 2:0 3:0 4:0 5:0 6:0 7:0 8:0 9:0 10:0 11:0 12:0 13:0 14:0 15:0 16:0 17:0 18:0 19:0 20:0 21:0 22:0 23:0 24:0 25:0 26:0 27:0 28:0 29:0 30:0 31:0 32:0 33:0 34:0 35:0 36:0 37:0 38:0 39:0 40:0 41:0 42:0 43:0 44:0 45:0 46:0 47:0 48:0 49:0 50:0 51:0 52:0 53:0 54:0 55:0 56:0 57:50 58:100 59:100 60:100 61:100 62:100 63:100 64:100 65:100 66:100 67:100 68:100 69:100 70:100 71:100 72:100 73:100 74:100 75:100 76:100 77:100 78:100 79:100 80:100 81:100 82:100 83:100 84:100 85:100 86:100 87:100 88:100 89:100 90:100 91:100 92:100 93:100 94:100 95:100 96:100 97:100 98:100 99:100 100:100 101:100 102:100 103:100 104:100 105:100 106:100 107:100 108:100 109:100 110:100 111:100 112:100 113:100 114:100 115:100 116:100 117:100 118:100 119:100 120:100'>removed</span></div></div>
-    <figcaption>A stack chosen for who debugs it at 3am.</figcaption>
-  </figure>
-
-
+<a class="skip" href="#main">Skip to content</a>
+<header class="top"><a class="top__name" href="../">Muhammad Ilham Rilambang</a>
+<nav aria-label="Main"><a href="../#work">Work</a><a href="../blog/">Writing</a><a href="../#path">Path</a><a href="../#contact">Contact</a></nav></header>
+<div class="progress" aria-hidden="true"></div><main id="main"><article class="post">
+<header class="post__head"><p class="post__tag">Tooling</p><h1>The iOS stack I actually reach for</h1><p class="post__sum">The stack I reach for on someone else's codebase, where every choice is priced by whether the next engineer can debug it at 3am.</p><p class="post__meta">3 min read</p></header>
+<p>Nobody hands you a blank project. You get a five-year-old codebase, a team, and one question that decides everything else: who is on call when this breaks at 3am? This is the stack I reach for then.</p>
+<figure class="fig"><div class="fig__frame"><svg viewBox="0 0 720 340" role="img" aria-label="The stack, one decision per row, each chosen by whether the next engineer can debug it at 3am."><circle cx="40" cy="30" r="9" class="bb fade" style="--t:0.04999999999999999s"/><circle cx="40" cy="30" r="6.5" class="fillin" style="--t:0.3s"/><text x="66" y="35" text-anchor="start" class="fade tx" style="--t:0.3s">Language</text><text x="190" y="35" text-anchor="start" class="fade tx mut sm" style="--t:0.4s">Swift, strict concurrency on</text><circle cx="40" cy="74" r="9" class="bb fade" style="--t:0.5s"/><circle cx="40" cy="74" r="6.5" class="fillin" style="--t:0.75s"/><text x="66" y="79" text-anchor="start" class="fade tx" style="--t:0.75s">UI</text><text x="190" y="79" text-anchor="start" class="fade tx mut sm" style="--t:0.85s">SwiftUI, UIKit where the platform needs it</text><circle cx="40" cy="118" r="9" class="bb fade" style="--t:0.95s"/><circle cx="40" cy="118" r="6.5" class="fillin" style="--t:1.2s"/><text x="66" y="123" text-anchor="start" class="fade tx" style="--t:1.2s">Structure</text><text x="190" y="123" text-anchor="start" class="fade tx mut sm" style="--t:1.3s">local packages, a thin app target</text><circle cx="40" cy="162" r="9" class="bb fade" style="--t:1.4000000000000001s"/><circle cx="40" cy="162" r="6.5" class="fillin" style="--t:1.6500000000000001s"/><text x="66" y="167" text-anchor="start" class="fade tx" style="--t:1.6500000000000001s">Networking</text><text x="190" y="167" text-anchor="start" class="fade tx mut sm" style="--t:1.7500000000000002s">what the codebase already has</text><circle cx="40" cy="206" r="9" class="bb fade" style="--t:1.85s"/><circle cx="40" cy="206" r="6.5" class="fillin" style="--t:2.1s"/><text x="66" y="211" text-anchor="start" class="fade tx" style="--t:2.1s">Persistence</text><text x="190" y="211" text-anchor="start" class="fade tx mut sm" style="--t:2.2s">the platform first, constraints in the schema</text><circle cx="40" cy="250" r="9" class="bb fade" style="--t:2.3s"/><circle cx="40" cy="250" r="6.5" class="fillin" style="--t:2.55s"/><text x="66" y="255" text-anchor="start" class="fade tx" style="--t:2.55s">Strings</text><text x="190" y="255" text-anchor="start" class="fade tx mut sm" style="--t:2.65s">one catalogue, referenced by key</text><circle cx="40" cy="294" r="9" class="bb fade" style="--t:2.75s"/><circle cx="40" cy="294" r="6.5" class="fillin" style="--t:3s"/><text x="66" y="299" text-anchor="start" class="fade tx" style="--t:3s">Tests</text><text x="190" y="299" text-anchor="start" class="fade tx mut sm" style="--t:3.1s">logic first, UI tests sparingly</text></svg></div><figcaption><span>A stack chosen for who debugs it at 3am.</span><button type="button" class="fig__replay" hidden>Replay</button></figcaption></figure>
 <h2>Language and concurrency</h2>
-
-<p>Swift, on the newest language mode the team can hold, with strict concurrency on rather than
-aspirational. Adopting it late costs more than adopting it early, because the cost is
-proportional to how much code you already have. Everything is main-actor by default and
-explicitly off it only where work is genuinely expensive — the opposite default produces code
-that's concurrent by accident.</p>
-
-
-  <figure class="fig">
-    <div class="fig-lottie" data-src="./lottie/the-ios-stack-i-actually-reach-for-2.json" data-w="640" data-h="300" role="img" aria-label="Adding one dependency and the number of things that can wake you at 3am going up"><svg viewBox='0 0 640 300' width='640' height='300' class='poster' aria-hidden='true' xmlns='http://www.w3.org/2000/svg'><rect x='40.0' y='48.0' width='440.0' height='44.0' rx='8' fill='#161822' stroke='#2c3040' stroke-width='1.2'/><rect x='40.0' y='100.0' width='440.0' height='44.0' rx='8' fill='#1b2440' stroke='#8ab4ff' stroke-width='1.2'/><line x1='470.0' y1='70.0' x2='498.9' y2='203.1' stroke='#7b8496' stroke-width='1.5'/><polygon points='500.0,208.0 493.6,200.2 502.6,198.2' fill='#7b8496'/><line x1='470.0' y1='122.0' x2='513.6' y2='203.6' stroke='#7b8496' stroke-width='1.5'/><polygon points='516.0,208.0 507.7,202.2 515.8,197.9' fill='#7b8496'/><rect x='40.0' y='100.0' width='440.0' height='44.0' rx='8' fill='#2a1a22' stroke='#ff9d9d' stroke-width='1.2'/></svg><div class='fig-labels' aria-hidden='true'><span class='fig-label' data-i='0' style='left:3.125%;top:6.667%;font-size:1.8750cqw;color:#aab2c4;--a1:1.00;transform:translate(0,calc(-100% + .24em))'>Dependencies</span><span class='fig-label' data-i='1' style='left:8.750%;top:25.000%;font-size:2.3438cqw;color:#f4f6fb;--a1:1.00;transform:translate(0,calc(-100% + .24em))'>SwiftUI, SwiftData, URLSession</span><span class='fig-label' data-i='2' style='left:72.500%;top:25.000%;font-size:2.0312cqw;color:#aab2c4;--a1:1.00;transform:translate(-100%,calc(-100% + .24em))'>3</span><span class='fig-label' data-i='3' style='left:8.750%;top:42.333%;font-size:2.3438cqw;color:#f4f6fb;--a1:1.00;transform:translate(0,calc(-100% + .24em))'>Add a networking wrapper</span><span class='fig-label' data-i='4' style='left:72.500%;top:42.333%;font-size:2.0312cqw;color:#8ab4ff;--a1:1.00;transform:translate(-100%,calc(-100% + .24em))'>4</span><span class='fig-label' data-i='5' style='left:77.500%;top:94.000%;font-size:1.8750cqw;color:#aab2c4;--a1:1.00;transform:translate(0,calc(-100% + .24em))'>3am pages</span><span class='fig-label' data-i='6' style='left:77.500%;top:80.000%;font-size:6.2500cqw;color:#f4f6fb;--a1:0.00;transform:translate(0,calc(-100% + .24em))' data-alpha='0:100 1:100 2:100 3:100 4:100 5:100 6:100 7:100 8:100 9:100 10:100 11:100 12:100 13:100 14:100 15:100 16:100 17:100 18:100 19:100 20:100 21:100 22:100 23:100 24:100 25:100 26:100 27:100 28:100 29:100 30:100 31:100 32:100 33:100 34:100 35:100 36:100 37:100 38:100 39:100 40:100 41:100 42:100 43:100 44:100 45:100 46:100 47:100 48:100 49:100 50:100 51:100 52:100 53:100 54:100 55:100 56:100 57:50 58:0 59:0 60:0 61:0 62:0 63:0 64:0 65:0 66:0 67:0 68:0 69:0 70:0 71:0 72:0 73:0 74:0 75:0 76:0 77:0 78:0 79:0 80:0 81:0 82:0 83:0 84:0 85:0 86:0 87:0 88:0 89:0 90:0 91:0 92:0 93:0 94:0 95:0 96:0 97:0 98:0 99:0 100:0 101:0 102:0 103:0 104:0 105:0 106:0 107:0 108:0 109:0 110:0 111:0 112:0 113:0 114:0 115:0 116:0 117:0'>3</span><span class='fig-label' data-i='7' style='left:77.500%;top:80.000%;font-size:6.2500cqw;color:#ff9d9d;--a1:1.00;transform:translate(0,calc(-100% + .24em))' data-alpha='0:0 1:0 2:0 3:0 4:0 5:0 6:0 7:0 8:0 9:0 10:0 11:0 12:0 13:0 14:0 15:0 16:0 17:0 18:0 19:0 20:0 21:0 22:0 23:0 24:0 25:0 26:0 27:0 28:0 29:0 30:0 31:0 32:0 33:0 34:0 35:0 36:0 37:0 38:0 39:0 40:0 41:0 42:0 43:0 44:0 45:0 46:0 47:0 48:0 49:0 50:0 51:0 52:0 53:0 54:0 55:0 56:0 57:50 58:100 59:100 60:100 61:100 62:100 63:100 64:100 65:100 66:100 67:100 68:100 69:100 70:100 71:100 72:100 73:100 74:100 75:100 76:100 77:100 78:100 79:100 80:100 81:100 82:100 83:100 84:100 85:100 86:100 87:100 88:100 89:100 90:100 91:100 92:100 93:100 94:100 95:100 96:100 97:100 98:100 99:100 100:100 101:100 102:100 103:100 104:100 105:100 106:100 107:100 108:100 109:100 110:100 111:100 112:100 113:100 114:100 115:100 116:100 117:100'>4</span></div></div>
-    <figcaption>Every dependency is a 3am page.</figcaption>
-  </figure>
+<p>Swift, on the newest language mode the team can hold, with strict concurrency switched on rather than aspirational. Adopting it late costs more than adopting it early, because the cost grows with the code you already have. Everything is main-actor by default and explicitly off it only where work is genuinely expensive. The opposite default produces code that is concurrent by accident.</p>
 <h2>UI</h2>
-
-<p>SwiftUI for new screens, UIKit where the platform still requires it or where a table or
-collection needs control the declarative layer doesn't yet give. That is an honest position
-rather than a religious one: a rewrite that ships is better than a purity that doesn't.</p>
-
-<p>Navigation has one owner. Always. Two systems that both think they own the stack produce the
-worst bugs to diagnose.</p>
-
+<p>SwiftUI for new screens. UIKit where the platform still requires it, or where a table or collection needs control the declarative layer does not give yet. That is an honest position, not a religious one: a rewrite that ships beats a purity that does not.</p>
+<p>Navigation has one owner. Always. Two systems that both think they own the stack produce the worst bugs to diagnose.</p>
 <h2>Structure</h2>
-
-<p>Local Swift packages per seam, the app target as a thin shell. The reason isn't elegance —
-it's that an unchanged module doesn't get rebuilt, and a circular dependency becomes a
-compile error rather than a convention nobody follows.</p>
-
+<p>Local Swift packages per seam, with the app target as a thin shell. The reason is not elegance. An unchanged module does not get rebuilt, and a circular dependency becomes a compile error instead of a convention nobody follows.</p>
 <h2>Networking</h2>
-
-<p>Whatever the codebase already has, unless it's actively harmful. A second networking layer
-is a worse outcome than an imperfect first one. On a greenfield app I would reach for the
-platform's own concurrency tools over a reactive framework; on an existing app I leave the
-existing one alone until there is a reason to move it.</p>
-
+<p>Whatever the codebase already has, unless it is actively harmful. A second networking layer is a worse outcome than an imperfect first one. On a greenfield app I would use the platform's own concurrency tools over a reactive framework. On an existing app I leave the existing one alone until there is a reason to move it.</p>
 <h2>Persistence</h2>
-
-<p>The platform's own persistence before a hand-rolled SQL layer, and a real constraint in the
-schema before validation in the app. Constraints are enforced under concurrency and app bugs
-aren't. Where the data matters, the second copy of the truth is the one that goes stale.</p>
-
+<p>The platform's own persistence before a hand-rolled SQL layer, and a real constraint in the schema before validation in the app. Constraints are enforced under concurrency and app bugs are not. Where the data matters, the second copy of the truth is the one that goes stale.</p>
 <h2>Strings</h2>
-
-<p>A single string catalogue, referenced by key. Never a literal in a view — not because of
-localisation, though that too, but because a literal in a view is unsearchable and permanent.
-This is the cheapest discipline on the list and the one most often skipped.</p>
-
+<p>One string catalogue, referenced by key. Never a literal in a view. Not because of localisation, though that too, but because a literal in a view is unsearchable and permanent. It is the cheapest discipline on this list and the one most often skipped.</p>
 <h2>Testing</h2>
-
-<p>Tests for logic, first and always: parsers, state machines, anything with a branch. They run
-in seconds and they catch the regressions that matter. UI tests sparingly, on the flows that
-carry money or data, because they're slow and inherently flaky and a flaky suite gets ignored
-— which is worse than not having one.</p>
-
-<p>A test that can't fail isn't a test. If I can't describe the change that would turn it
-red, it's decoration.</p>
-
+<p>Tests for logic, first and always: parsers, state machines, anything with a branch. They run in seconds and catch the regressions that matter. UI tests sparingly, on the flows that carry money or data, because they are slow and inherently flaky, and a flaky suite gets ignored, which is worse than having none.</p>
+<p>A test that cannot fail is not a test. If I cannot describe the change that would turn it red, it is decoration.</p>
 <h2>Third-party dependencies</h2>
-
-<p>Only for a problem the platform doesn't solve. The bar isn't popularity. Can I read
-this library when it misbehaves, and is anyone still maintaining it in two years? A small
-dependency I understand beats a large one I don't, and "we might need it later" has never once
-been true.</p>
-
+<p>Only for a problem the platform does not solve. The bar is not popularity. It is: can I read this library when it misbehaves, and will anyone still maintain it in two years? A small dependency I understand beats a large one I do not, and &quot;we might need it later&quot; has never once been true.</p>
+<figure class="fig"><div class="fig__frame"><svg viewBox="0 0 720 260" role="img" aria-label="Each dependency added to an app is one more thing that can wake someone at 3am."><g class="pop" style="--t:0s"><rect x="30" y="100" width="150" height="60" rx="9" class="bx"/><text x="105" y="135" text-anchor="middle" class="tx">Your app</text></g><line x1="180" y1="130" x2="300" y2="48" pathLength="1" class="dr ln mut" style="--t:0.6s;--d:0.4s"/><g class="pop" style="--t:0.8999999999999999s"><rect x="300" y="26" width="190" height="44" rx="9" class="bx"/><text x="395" y="53" text-anchor="middle" class="tx">Dependency A</text></g><circle cx="530" cy="48" r="9" class="bb fade ink" style="--t:1.15s"/><circle cx="530" cy="48" r="6.5" class="fillin ink" style="--t:1.4s"/><text x="552" y="53" text-anchor="start" class="fade tx mut sm" style="--t:1.4s">can page you</text><line x1="180" y1="130" x2="300" y2="110" pathLength="1" class="dr ln mut" style="--t:1.2999999999999998s;--d:0.4s"/><g class="pop" style="--t:1.5999999999999999s"><rect x="300" y="88" width="190" height="44" rx="9" class="bx"/><text x="395" y="115" text-anchor="middle" class="tx">Dependency B</text></g><circle cx="530" cy="110" r="9" class="bb fade ink" style="--t:1.8499999999999996s"/><circle cx="530" cy="110" r="6.5" class="fillin ink" style="--t:2.0999999999999996s"/><text x="552" y="115" text-anchor="start" class="fade tx mut sm" style="--t:2.0999999999999996s">can page you</text><line x1="180" y1="130" x2="300" y2="172" pathLength="1" class="dr ln mut" style="--t:2s;--d:0.4s"/><g class="pop" style="--t:2.3s"><rect x="300" y="150" width="190" height="44" rx="9" class="bx"/><text x="395" y="177" text-anchor="middle" class="tx">Dependency C</text></g><circle cx="530" cy="172" r="9" class="bb fade ink" style="--t:2.55s"/><circle cx="530" cy="172" r="6.5" class="fillin ink" style="--t:2.8s"/><text x="552" y="177" text-anchor="start" class="fade tx mut sm" style="--t:2.8s">can page you</text><line x1="180" y1="130" x2="300" y2="234" pathLength="1" class="dr ln mut" style="--t:2.6999999999999997s;--d:0.4s"/><g class="pop" style="--t:2.9999999999999996s"><rect x="300" y="212" width="190" height="44" rx="9" class="bx"/><text x="395" y="239" text-anchor="middle" class="tx">Dependency D</text></g><circle cx="530" cy="234" r="9" class="bb fade ink" style="--t:3.25s"/><circle cx="530" cy="234" r="6.5" class="fillin ink" style="--t:3.5s"/><text x="552" y="239" text-anchor="start" class="fade tx mut sm" style="--t:3.5s">can page you</text></svg></div><figcaption><span>Every dependency is a 3am page.</span><button type="button" class="fig__replay" hidden>Replay</button></figcaption></figure>
 <h2>Build health</h2>
-
-<p>Build warnings treated as a budget rather than as weather. A codebase with three hundred
-warnings can't notice the fourth hundred, and one of those was going to tell you that a main
-thread write had just become an act of faith.</p>
-
+<p>Treat build warnings as a budget, not as weather. A codebase with three hundred warnings cannot notice the three hundred and first, and one of those was going to tell you that a main-thread write had just become an act of faith.</p>
 <h2>The meta-decision</h2>
-
-<p>I've changed stacks more than once, and each time the framework-specific knowledge expired
-faster than I expected. What survived is the habit underneath it: prefer the boring choice,
-prefer the platform's own tool, prefer the option a new hire can debug on their first weekend
-on call, and leave the codebase so that the next person's hard problem is the interesting one
-— not the one you set up for them by being clever.</p>
-    <div class="sources">
-      <h2>Sources</h2>
-      <ul>
-      <li><a href="https://www.swift.org/documentation/api-design-guidelines/" target="_blank" rel="noreferrer">Swift API Design Guidelines</a></li>
-      <li><a href="https://developer.apple.com/documentation/xcode/improving-the-speed-of-incremental-builds" target="_blank" rel="noreferrer">Improving the speed of incremental builds — Apple Developer Documentation</a></li>
-      <li><a href="https://developer.apple.com/design/human-interface-guidelines" target="_blank" rel="noreferrer">Human Interface Guidelines — Apple Developer</a></li>
-      </ul>
-    </div>
-  </article>
-  <p class="foot">Written from experience shipping iOS apps. No client names, no internal details, no unpublished numbers — everything citable here is public.</p>
-  <nav class="pager">
-    <a href="./how-i-review-ios-pull-requests.html">← How I review iOS pull requests</a>
-    <a href="./ai-native-development-process.html">AI-native development is a process, not a feature →</a>
-  </nav>
-
-</div>
+<p>I have changed stacks more than once, and each time the framework-specific knowledge expired faster than I expected. What survived is the habit underneath: prefer the boring choice, prefer the platform's own tool, prefer the option a new hire can debug on their first weekend on call, and leave the codebase so that the next person's hard problem is the interesting one, not the one you set up for them by being clever.</p>
+<aside class="sources"><h2>Sources</h2><ul><li><a href="https://www.swift.org/documentation/api-design-guidelines/" target="_blank" rel="noreferrer">Swift API Design Guidelines</a></li><li><a href="https://developer.apple.com/documentation/xcode/improving-the-speed-of-incremental-builds" target="_blank" rel="noreferrer">Improving the speed of incremental builds — Apple Developer Documentation</a></li><li><a href="https://developer.apple.com/design/human-interface-guidelines" target="_blank" rel="noreferrer">Human Interface Guidelines — Apple Developer</a></li></ul></aside>
+<p class="post__foot">Written from experience shipping iOS apps. No client names, no internal details, no unpublished numbers.</p>
+<nav class="pager" aria-label="More writing"><a href="how-i-review-ios-pull-requests.html"><span>Earlier</span>How I review iOS pull requests</a><a href="ai-native-development-process.html"><span>Later</span>AI-native development is a process, not a feature</a></nav>
+</article></main>
+<script src="../assets/site.js" defer></script>
 </body>
 </html>

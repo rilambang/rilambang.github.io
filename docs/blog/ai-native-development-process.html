@@ -3,211 +3,63 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>AI-native development is a process, not a feature</title>
-<meta name="description" content="What I write down so an agent is useful inside a real codebase: the conventions file, the brief, the one piece of evidence I accept — and the parts I refuse to hand over.">
+<title>AI-native development is a process, not a feature, Muhammad Ilham Rilambang</title>
+<meta name="description" content="What I write down so an agent is useful inside a real codebase: the conventions file, the brief, the one piece of evidence I accept, and the parts I refuse to hand over.">
+<meta name="author" content="Muhammad Ilham Rilambang">
 <link rel="canonical" href="https://rilambang.github.io/blog/ai-native-development-process.html">
+<meta name="theme-color" content="#f4f5f7" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#16171a" media="(prefers-color-scheme: dark)">
 <meta property="og:type" content="article">
-<meta property="og:title" content="AI-native development is a process, not a feature">
-<meta property="og:description" content="What I write down so an agent is useful inside a real codebase: the conventions file, the brief, the one piece of evidence I accept — and the parts I refuse to hand over.">
+<meta property="og:title" content="AI-native development is a process, not a feature, Muhammad Ilham Rilambang">
+<meta property="og:description" content="What I write down so an agent is useful inside a real codebase: the conventions file, the brief, the one piece of evidence I accept, and the parts I refuse to hand over.">
 <meta property="og:url" content="https://rilambang.github.io/blog/ai-native-development-process.html">
 <meta property="og:image" content="https://rilambang.github.io/og.png">
 <meta name="twitter:card" content="summary_large_image">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='0' fill='%232563eb'/><text x='16' y='23' font-family='Georgia,serif' font-size='20' fill='%23ffffff' text-anchor='middle'>R</text></svg>">
-<link rel="stylesheet" href="./blog.css">
-<script defer src="../vendor/lottie.min.js"></script>
-<script>
-document.addEventListener('DOMContentLoaded', function(){
-  var figs = document.querySelectorAll('.fig-lottie');
-  if (!figs.length || !window.lottie) return;
-  var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  figs.forEach(function(el){
-    var W = +el.getAttribute('data-w'), H = +el.getAttribute('data-h');
-    var labels = [].slice.call(el.querySelectorAll('.fig-label')).map(function(n){
-      var a = n.getAttribute('data-alpha'), p = n.getAttribute('data-path');
-      return {
-        el: n,
-        a: a ? a.split(' ').map(function(s){
-          var q = s.split(':'); return [+q[0], +q[1]];
-        }) : null,
-        p: p ? p.split(' ').map(Number) : null
-      };
-    });
-    function alphaAt(list, f){
-      var i = 0;
-      while (i + 1 < list.length && list[i + 1][0] <= f) i += 1;
-      if (i + 1 >= list.length) return list[i][1];
-      var t0 = list[i][0], t1 = list[i + 1][0];
-      var u = t1 > t0 ? (f - t0) / (t1 - t0) : 1;
-      return list[i][1] + (list[i + 1][1] - list[i][1]) * u;
-    }
-    function paint(f){
-      labels.forEach(function(l){
-        if (l.a) l.el.style.opacity = (alphaAt(l.a, f) / 100).toFixed(3);
-        if (l.p) {
-          var i = Math.min(Math.round(f), l.p.length / 2 - 1) * 2;
-          // cqw is 1% of the container width, both axes: y divides by W too
-          l.el.style.translate = (l.p[i] / W * 100).toFixed(3) + 'cqw ' +
-                                 (l.p[i + 1] / W * 100).toFixed(3) + 'cqw';
-        }
-      });
-    }
-    var anim = lottie.loadAnimation({
-      container: el, renderer: 'svg', loop: true, autoplay: false,
-      path: el.getAttribute('data-src')
-    });
-    anim.addEventListener('enterFrame', function(){ paint(anim.currentFrame); });
-    anim.addEventListener('DOMLoaded', function(){
-      el.classList.add('is-live');
-      var live = el.querySelector('svg:not(.poster)');
-      if (live) live.setAttribute('aria-hidden', 'true');
-      if (reduced) { anim.goToAndStop(anim.totalFrames - 1, true); paint(anim.totalFrames); return; }
-      anim.goToAndStop(0, true); paint(0);
-      // Loop while it is on screen; off screen it costs nothing.
-      new IntersectionObserver(function(entries){
-        entries.forEach(function(e){
-          if (e.isIntersecting) anim.play(); else anim.pause();
-        });
-      }, {threshold: 0.25}).observe(el);
-    });
-  });
-});
-</script>
+<link rel="me" href="https://github.com/rilambang"><link rel="me" href="https://x.com/rilambang">
+<link rel="alternate" type="application/rss+xml" title="Writing" href="https://rilambang.github.io/feed.xml">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%231e2024'/><circle cx='16' cy='16' r='7' fill='%23f4f5f7'/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=JetBrains+Mono:wght@400&family=Source+Serif+4:ital,opsz,wght@0,8..60,400..650;1,8..60,400&display=swap">
+<link rel="stylesheet" href="../assets/style.css">
 </head>
 <body>
-<div class="wrap">
-  <div class="top">
-    <a class="who" href="/">Muhammad Ilham Rilambang</a>
-    <a href="./index.html">Blog</a>
-  </div>
-  <header class="post-head">
-    <p class="chip">Process</p>
-    <h1>AI-native development is a process, not a feature</h1>
-    <p class="meta">4 min read · Muhammad Ilham Rilambang</p>
-  </header>
-  <article>
-<p class="lede">"AI-native" describes how an app gets built. Nothing about it ships inside the app. The
-engineering that matters isn't the model either — it's the document you write so a tool
-with an empty context window can work inside a codebase that took years to shape.</p>
-
-  <figure class="fig">
-    <div class="fig-lottie" data-src="./lottie/ai-native-development-process-1.json" data-w="640" data-h="240" role="img" aria-label="Conventions, brief and evidence: what the agent is allowed to work from"><svg viewBox='0 0 640 240' width='640' height='240' class='poster' aria-hidden='true' xmlns='http://www.w3.org/2000/svg'><rect x='20.0' y='66.0' width='150.0' height='108.0' rx='10' fill='#161822' stroke='#2c3040' stroke-width='1.2'/><rect x='245.0' y='66.0' width='150.0' height='108.0' rx='10' fill='#161822' stroke='#2c3040' stroke-width='1.2'/><rect x='245.0' y='66.0' width='150.0' height='108.0' rx='10' fill='#1b2440' stroke='#8ab4ff' stroke-width='1.2'/><rect x='470.0' y='66.0' width='150.0' height='108.0' rx='10' fill='#161822' stroke='#2c3040' stroke-width='1.2'/><rect x='470.0' y='66.0' width='150.0' height='108.0' rx='10' fill='#1b2440' stroke='#8ab4ff' stroke-width='1.2'/><line x1='175.0' y1='120.0' x2='235.0' y2='120.0' stroke='#7b8496' stroke-width='1.5'/><polygon points='240.0,120.0 231.0,124.6 231.0,115.4' fill='#7b8496'/><line x1='400.0' y1='120.0' x2='460.0' y2='120.0' stroke='#7b8496' stroke-width='1.5'/><polygon points='465.0,120.0 456.0,124.6 456.0,115.4' fill='#7b8496'/></svg><div class='fig-labels' aria-hidden='true'><span class='fig-label' data-i='0' style='left:14.844%;top:52.500%;font-size:2.5000cqw;color:#f4f6fb;--a1:1.00;transform:translate(-50%,calc(-100% + .24em))'>Conventions</span><span class='fig-label' data-i='1' style='left:50.000%;top:52.500%;font-size:2.5000cqw;color:#f4f6fb;--a1:1.00;transform:translate(-50%,calc(-100% + .24em))'>Brief</span><span class='fig-label' data-i='2' style='left:85.156%;top:52.500%;font-size:2.5000cqw;color:#f4f6fb;--a1:1.00;transform:translate(-50%,calc(-100% + .24em))'>Evidence</span></div></div>
-    <figcaption>The agent works from the brief, not from the whole repo.</figcaption>
-  </figure>
-
-
-<p>I've spent the last weeks setting this up on my own projects — an agent harness in the
-editor, skills, plugins — and the installation is the easy half. These are the rules that
-survived contact.</p>
-
-<h2>An agent starts every task with nothing, so the document is the memory</h2>
-
-<p>The first surprise is how much of a good brief turns out to be a restatement of rules that
-were never written down. Which language mode. Which deployment floor. Which layer may call
-which. What "done" means. When to stop and ask rather than try harder.</p>
-
-<p>Those conventions used to live in a senior engineer's head and in the review comments of a
-dozen pull requests. A tool with an empty context window can read neither. Written down once,
-they become the thing every task is briefed from — which is why that file matters more than
-the prompt, and why "I run an agent in my editor" describes almost none of the work.</p>
-
-
-  <figure class="fig">
-    <div class="fig-lottie" data-src="./lottie/ai-native-development-process-2.json" data-w="640" data-h="300" role="img" aria-label="An agent proposing a change and a human merging it"><svg viewBox='0 0 640 300' width='640' height='300' class='poster' aria-hidden='true' xmlns='http://www.w3.org/2000/svg'><rect x='40.0' y='44.0' width='440.0' height='44.0' rx='8' fill='#161822' stroke='#2c3040' stroke-width='1.2'/><rect x='40.0' y='96.0' width='440.0' height='44.0' rx='8' fill='#161822' stroke='#2c3040' stroke-width='1.2'/><rect x='40.0' y='172.0' width='440.0' height='44.0' rx='8' fill='#1b2440' stroke='#8ab4ff' stroke-width='1.2'/><line x1='500.0' y1='66.0' x2='483.6' y2='113.3' stroke='#7b8496' stroke-width='1.5'/><polygon points='482.0,118.0 480.6,108.0 489.3,111.0' fill='#7b8496'/><line x1='500.0' y1='118.0' x2='483.2' y2='185.2' stroke='#7b8496' stroke-width='1.5'/><polygon points='482.0,190.0 479.7,180.2 488.6,182.4' fill='#7b8496'/><rect x='40.0' y='172.0' width='440.0' height='44.0' rx='8' fill='#1b2440' stroke='#8ab4ff' stroke-width='1.2'/></svg><div class='fig-labels' aria-hidden='true'><span class='fig-label' data-i='0' style='left:3.125%;top:6.667%;font-size:1.8750cqw;color:#aab2c4;--a1:1.00;transform:translate(0,calc(-100% + .24em))'>Proposed change</span><span class='fig-label' data-i='1' style='left:8.750%;top:23.667%;font-size:2.3438cqw;color:#f4f6fb;--a1:1.00;transform:translate(0,calc(-100% + .24em))'>Edit 3 files</span><span class='fig-label' data-i='2' style='left:72.500%;top:23.667%;font-size:2.0312cqw;color:#aab2c4;--a1:1.00;transform:translate(-100%,calc(-100% + .24em))'>agent</span><span class='fig-label' data-i='3' style='left:8.750%;top:41.000%;font-size:2.3438cqw;color:#f4f6fb;--a1:1.00;transform:translate(0,calc(-100% + .24em))'>Run the tests</span><span class='fig-label' data-i='4' style='left:8.750%;top:66.333%;font-size:2.3438cqw;color:#f4f6fb;--a1:1.00;transform:translate(0,calc(-100% + .24em))'>Merge</span><span class='fig-label' data-i='5' style='left:72.500%;top:41.000%;font-size:2.0312cqw;color:#aab2c4;--a1:0.00;transform:translate(-100%,calc(-100% + .24em))' data-alpha='0:100 1:100 2:100 3:100 4:100 5:100 6:100 7:100 8:100 9:100 10:100 11:100 12:100 13:100 14:100 15:100 16:100 17:100 18:100 19:100 20:100 21:100 22:100 23:85 24:15 25:0 26:0 27:0 28:0 29:0 30:0 31:0 32:0 33:0 34:0 35:0 36:0 37:0 38:0 39:0 40:0 41:0 42:0 43:0 44:0 45:0 46:0 47:0 48:0 49:0 50:0 51:0 52:0 53:0 54:0 55:0 56:0 57:0 58:0 59:0 60:0 61:0 62:0 63:0 64:0 65:0 66:0 67:0 68:0 69:0 70:0 71:0 72:0 73:0 74:0 75:0 76:0 77:0 78:0 79:0 80:0 81:0 82:0 83:0 84:0 85:0 86:0 87:0 88:0 89:0 90:0 91:0 92:0 93:0 94:0 95:0 96:0 97:0 98:0 99:0 100:0 101:0 102:0 103:0 104:0 105:0 106:0 107:0 108:0 109:0 110:0 111:0 112:0 113:0 114:0 115:0 116:0 117:0'></span><span class='fig-label' data-i='6' style='left:72.500%;top:41.000%;font-size:2.0312cqw;color:#86e0a6;--a1:1.00;transform:translate(-100%,calc(-100% + .24em))' data-alpha='0:0 1:0 2:0 3:0 4:0 5:0 6:0 7:0 8:0 9:0 10:0 11:0 12:0 13:0 14:0 15:0 16:0 17:0 18:0 19:0 20:0 21:0 22:0 23:15 24:85 25:100 26:100 27:100 28:100 29:100 30:100 31:100 32:100 33:100 34:100 35:100 36:100 37:100 38:100 39:100 40:100 41:100 42:100 43:100 44:100 45:100 46:100 47:100 48:100 49:100 50:100 51:100 52:100 53:100 54:100 55:100 56:100 57:100 58:100 59:100 60:100 61:100 62:100 63:100 64:100 65:100 66:100 67:100 68:100 69:100 70:100 71:100 72:100 73:100 74:100 75:100 76:100 77:100 78:100 79:100 80:100 81:100 82:100 83:100 84:100 85:100 86:100 87:100 88:100 89:100 90:100 91:100 92:100 93:100 94:100 95:100 96:100 97:100 98:100 99:100 100:100 101:100 102:100 103:100 104:100 105:100 106:100 107:100 108:100 109:100 110:100 111:100 112:100 113:100 114:100 115:100 116:100 117:100'>green</span><span class='fig-label' data-i='7' style='left:72.500%;top:66.333%;font-size:2.0312cqw;color:#aab2c4;--a1:0.00;transform:translate(-100%,calc(-100% + .24em))' data-alpha='0:100 1:100 2:100 3:100 4:100 5:100 6:100 7:100 8:100 9:100 10:100 11:100 12:100 13:100 14:100 15:100 16:100 17:100 18:100 19:100 20:100 21:100 22:100 23:100 24:100 25:100 26:100 27:100 28:100 29:100 30:100 31:100 32:100 33:100 34:100 35:100 36:100 37:100 38:100 39:100 40:100 41:100 42:100 43:100 44:100 45:100 46:100 47:100 48:100 49:100 50:100 51:100 52:100 53:100 54:100 55:100 56:100 57:50 58:0 59:0 60:0 61:0 62:0 63:0 64:0 65:0 66:0 67:0 68:0 69:0 70:0 71:0 72:0 73:0 74:0 75:0 76:0 77:0 78:0 79:0 80:0 81:0 82:0 83:0 84:0 85:0 86:0 87:0 88:0 89:0 90:0 91:0 92:0 93:0 94:0 95:0 96:0 97:0 98:0 99:0 100:0 101:0 102:0 103:0 104:0 105:0 106:0 107:0 108:0 109:0 110:0 111:0 112:0 113:0 114:0 115:0 116:0 117:0'>waiting</span><span class='fig-label' data-i='8' style='left:72.500%;top:66.333%;font-size:2.0312cqw;color:#86e0a6;--a1:1.00;transform:translate(-100%,calc(-100% + .24em))' data-alpha='0:0 1:0 2:0 3:0 4:0 5:0 6:0 7:0 8:0 9:0 10:0 11:0 12:0 13:0 14:0 15:0 16:0 17:0 18:0 19:0 20:0 21:0 22:0 23:0 24:0 25:0 26:0 27:0 28:0 29:0 30:0 31:0 32:0 33:0 34:0 35:0 36:0 37:0 38:0 39:0 40:0 41:0 42:0 43:0 44:0 45:0 46:0 47:0 48:0 49:0 50:0 51:0 52:0 53:0 54:0 55:0 56:0 57:50 58:100 59:100 60:100 61:100 62:100 63:100 64:100 65:100 66:100 67:100 68:100 69:100 70:100 71:100 72:100 73:100 74:100 75:100 76:100 77:100 78:100 79:100 80:100 81:100 82:100 83:100 84:100 85:100 86:100 87:100 88:100 89:100 90:100 91:100 92:100 93:100 94:100 95:100 96:100 97:100 98:100 99:100 100:100 101:100 102:100 103:100 104:100 105:100 106:100 107:100 108:100 109:100 110:100 111:100 112:100 113:100 114:100 115:100 116:100 117:100'>human</span></div></div>
-    <figcaption>The agent proposes; the human merges.</figcaption>
-  </figure>
-<h2>What the IDE now gives you, and what it doesn't</h2>
-
-<p>This stopped being a bolt-on. The Xcode 26 release notes describe "coding intelligence
-features that help you write code, generate tests and documentation, fix errors, refactor
-existing implementations, and navigate codebases" — with a model of your choosing, including
-one that runs locally on Apple silicon.</p>
-
-<p>Xcode 27 pushes further in exactly the direction this post is about: "Planning with agents
-is now first class in Xcode. Plans appear as editable Markdown artifacts next to the
-conversation" — review, annotate, discuss, and approve, before the agent proceeds. And the
-Xcode MCP server's tools now reach real platform state: manipulating the active run state,
-reading the debugger console, listing and switching schemes and run destinations, and
-inspecting or modifying build settings, compiler flags, entitlements and Info.plist keys.</p>
-
-<p>That list deserves reading twice, because two of its items are the whole discipline in
-miniature. A plan you must approve before work starts is a review gate placed at the cheapest
-possible moment. Entitlements and Info.plist behind a tool call means the blast radius of a
-careless instruction now includes your signing configuration.</p>
-
-<p>What the platform still doesn't ship is the part specific to your codebase. The harness is
-general; the conventions aren't. That asymmetry is where a person's leverage sits.</p>
-
+<a class="skip" href="#main">Skip to content</a>
+<header class="top"><a class="top__name" href="../">Muhammad Ilham Rilambang</a>
+<nav aria-label="Main"><a href="../#work">Work</a><a href="../blog/">Writing</a><a href="../#path">Path</a><a href="../#contact">Contact</a></nav></header>
+<div class="progress" aria-hidden="true"></div><main id="main"><article class="post">
+<header class="post__head"><p class="post__tag">Process</p><h1>AI-native development is a process, not a feature</h1><p class="post__sum">What I write down so an agent is useful inside a real codebase: the conventions file, the brief, the one piece of evidence I accept, and the parts I refuse to hand over.</p><p class="post__meta">4 min read</p></header>
+<p>&quot;AI-native&quot; describes how an app gets built. Nothing about it ships inside the app. The engineering that matters is not the model either. It is the document you write so a tool with an empty context window can work inside a codebase that took years to shape.</p>
+<p>I have spent recent weeks setting this up on my own projects: an agent harness in the editor, skills, plugins. The installation is the easy half. These are the rules that survived contact.</p>
+<h2>The agent starts every task with nothing, so the document is the memory</h2>
+<p>The first surprise is how much of a good brief turns out to be a restatement of rules nobody had written down. Which language mode. Which deployment floor. Which layer may call which. What &quot;done&quot; means. When to stop and ask instead of trying harder.</p>
+<p>Those conventions used to live in a senior engineer's head and in the review comments of a dozen pull requests. A tool with an empty context window can read neither. Written down once, they become what every task is briefed from. That is why the file matters more than the prompt, and why &quot;I run an agent in my editor&quot; describes almost none of the work.</p>
+<h2>What the IDE now gives you, and what it does not</h2>
+<p>This stopped being a bolt-on. The Xcode 26 release notes describe &quot;coding intelligence features that help you write code, generate tests and documentation, fix errors, refactor existing implementations, and navigate codebases&quot;, with a model of your choosing, including one that runs locally on Apple silicon.</p>
+<p>Xcode 27 pushes in exactly the direction of this post: &quot;Planning with agents is now first class in Xcode. Plans appear as editable Markdown artifacts next to the conversation&quot;, to review, annotate, discuss and approve before the agent proceeds. And the Xcode MCP server's tools now reach real platform state: the active run state, the debugger console, schemes and run destinations, build settings, compiler flags, entitlements and Info.plist keys.</p>
+<p>That list deserves two readings, because two of its items are the whole discipline in miniature. A plan you must approve before work starts is a review gate placed at the cheapest possible moment. Entitlements and Info.plist behind a tool call means the blast radius of a careless instruction now includes your signing configuration.</p>
+<p>What the platform still does not ship is the part specific to your codebase. The harness is general. The conventions are not. That asymmetry is where a person's leverage sits.</p>
 <h2>Four things I write down before the first task</h2>
-
-<ul>
-  <li><strong>Conventions</strong> — what the compiler and the linter enforce and, more
-  usefully, what they can't: which layer may depend on which, where a string comes from, what
-  an error is allowed to say.</li>
-  <li><strong>Boundaries</strong> — the files an agent may touch, and the ones it must stop at
-  and ask about. Credentials, permissions, payments, privacy surfaces and anything that leaves
-  the machine are on the second list, always.</li>
-  <li><strong>Definition of done</strong> — the exact command that proves the change. Not
-  "looks right": a build, or a test that was red and is now green.</li>
-  <li><strong>Stop conditions</strong> — after a few failed attempts, re-plan rather than try
-  harder; never delete or skip a test to reach green; never widen the scope of a change
-  without saying so.</li>
-</ul>
-
-<p>The shape, as a pattern rather than anyone's real file:</p>
-
-<pre><code>Conventions        language mode · deployment floor · layer rules · where strings live
-Boundaries         may touch: &lt;paths&gt; · must ask: credentials, permissions, payments
+<figure class="fig"><div class="fig__frame"><svg viewBox="0 0 720 290" role="img" aria-label="Conventions, boundaries, a definition of done and stop conditions form the brief an agent starts from."><g class="pop" style="--t:0s"><rect x="30" y="24" width="210" height="46" rx="9" class="bx"/><text x="135" y="52" text-anchor="middle" class="tx">Conventions</text></g><line x1="240" y1="47" x2="318" y2="143" pathLength="1" class="dr ln mut" style="--t:1.6s;--d:0.4s"/><g class="pop" style="--t:0.35s"><rect x="30" y="86" width="210" height="46" rx="9" class="bx"/><text x="135" y="114" text-anchor="middle" class="tx">Boundaries</text></g><line x1="240" y1="109" x2="318" y2="143" pathLength="1" class="dr ln mut" style="--t:1.7200000000000002s;--d:0.4s"/><g class="pop" style="--t:0.7s"><rect x="30" y="148" width="210" height="46" rx="9" class="bx"/><text x="135" y="176" text-anchor="middle" class="tx">Definition of done</text></g><line x1="240" y1="171" x2="318" y2="143" pathLength="1" class="dr ln mut" style="--t:1.84s;--d:0.4s"/><g class="pop" style="--t:1.0499999999999998s"><rect x="30" y="210" width="210" height="46" rx="9" class="bx"/><text x="135" y="238" text-anchor="middle" class="tx">Stop conditions</text></g><line x1="240" y1="233" x2="318" y2="143" pathLength="1" class="dr ln mut" style="--t:1.96s;--d:0.4s"/><g class="pop" style="--t:2.1s"><rect x="318" y="108" width="110" height="70" rx="9" class="bx ink"/><text x="373" y="148" text-anchor="middle" class="tx">The brief</text></g><line x1="428" y1="143" x2="500" y2="143" pathLength="1" class="dr ln mut" style="--t:2.6s;--d:0.4s"/><polygon points="500,143 492.8,139.5 492.8,146.5" class="hd mut" style="--t:2.94s"/><g class="pop" style="--t:3s"><rect x="500" y="108" width="190" height="70" rx="9" class="bx"/><text x="595" y="138" text-anchor="middle" class="tx">Agent</text><text x="595" y="158" text-anchor="middle" class="tx mut sm">empty context</text></g><text x="595" y="210" text-anchor="middle" class="pop tx mut sm" style="--t:3.5s">starts every task with nothing</text></svg></div><figcaption><span>The agent works from the brief, not from the whole repo.</span><button type="button" class="fig__replay" hidden>Replay</button></figcaption></figure>
+<ul><li><strong>Conventions.</strong> What the compiler and linter enforce and, more usefully, what they cannot: which layer may depend on which, where a string comes from, what an error is allowed to say.</li><li><strong>Boundaries.</strong> The files an agent may touch and the ones it must stop at and ask about. Credentials, permissions, payments, privacy surfaces and anything that leaves the machine are always on the second list.</li><li><strong>Definition of done.</strong> The exact command that proves the change. Not &quot;looks right&quot;: a build, or a test that was red and is now green.</li><li><strong>Stop conditions.</strong> After a few failed attempts, re-plan instead of trying harder. Never delete or skip a test to reach green. Never widen the scope of a change without saying so.</li></ul>
+<p>The shape, as a pattern and not anyone's real file:</p>
+<pre><code>Conventions        language mode, deployment floor, layer rules, where strings live
+Boundaries         may touch: &lt;paths&gt;. must ask: credentials, permissions, payments
 Definition of done the one command that proves it
-Stop conditions    three failed attempts → re-plan · never skip a test · never widen scope
+Stop conditions    three failed attempts, then re-plan. never skip a test. never widen scope
 Roles              who plans, who writes, who verifies, who is allowed to fix</code></pre>
-
+<figure class="fig"><div class="fig__frame"><svg viewBox="0 0 720 260" role="img" aria-label="The agent proposes a plan, a person approves it, and credentials, payments and privacy changes stay behind a stop-and-ask line."><g class="pop" style="--t:0s"><rect x="20" y="40" width="150" height="70" rx="9" class="bx"/><text x="95" y="70" text-anchor="middle" class="tx">Agent</text><text x="95" y="90" text-anchor="middle" class="tx mut sm">writes a plan</text></g><line x1="170" y1="75" x2="198" y2="75" pathLength="1" class="dr ln mut" style="--t:0.5s;--d:0.25s"/><polygon points="198,75 190.8,71.5 190.8,78.5" class="hd mut" style="--t:0.7125s"/><g class="pop" style="--t:0.7s"><rect x="198" y="40" width="150" height="70" rx="9" class="bx"/><text x="273" y="70" text-anchor="middle" class="tx">The plan</text><text x="273" y="90" text-anchor="middle" class="tx mut sm">editable, reviewed</text></g><line x1="348" y1="75" x2="376" y2="75" pathLength="1" class="dr ln mut" style="--t:1.2s;--d:0.25s"/><polygon points="376,75 368.8,71.5 368.8,78.5" class="hd mut" style="--t:1.4124999999999999s"/><g class="pop" style="--t:1.4s"><rect x="376" y="40" width="150" height="70" rx="9" class="bx ink"/><text x="451" y="70" text-anchor="middle" class="tx">A person</text><text x="451" y="90" text-anchor="middle" class="tx mut sm">approves</text></g><line x1="526" y1="75" x2="554" y2="75" pathLength="1" class="dr ln mut" style="--t:1.9s;--d:0.25s"/><polygon points="554,75 546.8,71.5 546.8,78.5" class="hd mut" style="--t:2.1125s"/><g class="pop" style="--t:2.0999999999999996s"><rect x="554" y="40" width="150" height="70" rx="9" class="bx"/><text x="629" y="80" text-anchor="middle" class="tx">Merge</text></g><rect x="194" y="34" width="162" height="82" rx="9" pathLength="1" class="dr rg" style="--t:2.6s;--d:0.7s"/><g class="pop" style="--t:3s"><rect x="20" y="160" width="330" height="56" rx="9" class="bx ink" stroke-dasharray="5 4"/><text x="185" y="183" text-anchor="middle" class="tx">Credentials, payments, privacy:</text><text x="185" y="203" text-anchor="middle" class="tx">stop and ask</text></g><g class="x" style="--t:3.5s"><line x1="368" y1="176" x2="392" y2="200" pathLength="1" class="dr rg" style="--t:3.5s;--d:0.25s"/><line x1="392" y1="176" x2="368" y2="200" pathLength="1" class="dr rg" style="--t:3.7s;--d:0.25s"/></g></svg></div><figcaption><span>The agent proposes. The human decides.</span><button type="button" class="fig__replay" hidden>Replay</button></figcaption></figure>
 <h2>Two rules about what never goes into a prompt</h2>
-
-<p><strong>Secrets and paths.</strong> A key prefix or a home-directory path isn't prose, so a
-word-by-word blocklist can never anticipate it — the check has to be shaped, not spelled. This
-site's own content check now fails the build on a key-shaped string or a
-<code>/Users/&lt;name&gt;/</code> path in the published output. Not because a blog post would
-contain one, but because that class is guessable, and a script can hold a guessable class.</p>
-
-<p><strong>Transcripts.</strong> A real transcript is a document about your job; a pattern is a
-document about your craft. So I show the structure of a brief — the invariant, the constraint,
-the evidence — and never the text. The text carries whatever the session happened to contain,
-and nobody can write the blocklist for a conversation in advance. This is the rule I broke most
-often before I wrote it down.</p>
-
+<p><strong>Secrets and paths.</strong> A key prefix or a home-directory path is not prose, so a word-by-word blocklist can never anticipate it. The check has to be shaped, not spelled. This site's own content check fails the build on a key-shaped string or a <code>/Users/&lt;name&gt;/</code> path in the published output. Not because a blog post would contain one, but because that class is guessable, and a script can hold a guessable class.</p>
+<p><strong>Transcripts.</strong> A real transcript is a document about your job. A pattern is a document about your craft. So I show the structure of a brief, the invariant, the constraint and the evidence, and never the text. The text carries whatever the session happened to contain, and nobody can write the blocklist for a conversation in advance. This is the rule I broke most often before I wrote it down.</p>
 <h2>What stays a person's job</h2>
-
-<p><strong>Specificity.</strong> App Review is blunt about it: guideline 2.3.1(a) requires new
-features to be "described with specificity in the Notes for Review section of App Store Connect
-(generic descriptions will be rejected)". A generic description is exactly what a templated
-draft produces well — plausible, complete-looking, and about nothing. The model can draft; the
-specificity has to be mine.</p>
-
-<p><strong>The irreversible.</strong> Deployments, credentials, purchases, anything a revert
-can't undo.</p>
-
-<p><strong>The shape of the whole.</strong> Whether the feature should exist, where the seam
-belongs, which of two working designs will still be right in a year. An empty context window
-doesn't make any of that easier to delegate.</p>
-
-<p>The pattern that keeps repeating: agents are good at the parts of engineering that are
-typing, and bad at the parts that are deciding. Most of the value of setting this up is the
-writing down — being forced to say, in plain language, which is which.</p>
-    <div class="sources">
-      <h2>Sources</h2>
-      <ul>
-      <li><a href="https://developer.apple.com/documentation/xcode-release-notes/xcode-26-release-notes" target="_blank" rel="noreferrer">Xcode 26 Release Notes — coding intelligence, model choice, local models</a></li>
-      <li><a href="https://developer.apple.com/documentation/xcode-release-notes/xcode-27-release-notes" target="_blank" rel="noreferrer">Xcode 27 Release Notes — plans as artifacts, Gemini, Xcode MCP server</a></li>
-      <li><a href="https://developer.apple.com/app-store/review/guidelines/" target="_blank" rel="noreferrer">App Review Guidelines — 2.3.1(a)</a></li>
-      </ul>
-    </div>
-  </article>
-  <p class="foot">Written from experience shipping iOS apps. No client names, no internal details, no unpublished numbers — everything citable here is public.</p>
-  <nav class="pager">
-    <a href="./the-ios-stack-i-actually-reach-for.html">← The iOS stack I actually reach for</a>
-    <a href="./what-a-green-build-does-not-prove.html">What a green build does not prove →</a>
-  </nav>
-
-</div>
+<p><strong>Specificity.</strong> App Review is blunt about it: guideline 2.3.1(a) requires new features to be &quot;described with specificity in the Notes for Review section of App Store Connect (generic descriptions will be rejected)&quot;. A generic description is exactly what a templated draft does well: plausible, complete-looking and about nothing. The model can draft. The specificity has to be mine.</p>
+<p><strong>The irreversible.</strong> Deployments, credentials, purchases, anything a revert cannot undo.</p>
+<p><strong>The shape of the whole.</strong> Whether the feature should exist, where the seam belongs, which of two working designs will still be right in a year. An empty context window does not make any of that easier to delegate.</p>
+<p>The pattern keeps repeating: agents are good at the parts of engineering that are typing and bad at the parts that are deciding. Most of the value of setting this up is the writing down, being forced to say in plain language which is which.</p>
+<aside class="sources"><h2>Sources</h2><ul><li><a href="https://developer.apple.com/documentation/xcode-release-notes/xcode-26-release-notes" target="_blank" rel="noreferrer">Xcode 26 Release Notes — coding intelligence, model choice, local models</a></li><li><a href="https://developer.apple.com/documentation/xcode-release-notes/xcode-27-release-notes" target="_blank" rel="noreferrer">Xcode 27 Release Notes — plans as artifacts, Gemini, Xcode MCP server</a></li><li><a href="https://developer.apple.com/app-store/review/guidelines/" target="_blank" rel="noreferrer">App Review Guidelines — 2.3.1(a)</a></li></ul></aside>
+<p class="post__foot">Written from experience shipping iOS apps. No client names, no internal details, no unpublished numbers.</p>
+<nav class="pager" aria-label="More writing"><a href="the-ios-stack-i-actually-reach-for.html"><span>Earlier</span>The iOS stack I actually reach for</a><a href="what-a-green-build-does-not-prove.html"><span>Later</span>What a green build does not prove</a></nav>
+</article></main>
+<script src="../assets/site.js" defer></script>
 </body>
 </html>

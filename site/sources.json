@@ -1,0 +1,238 @@
+{
+ "mvvm-to-viper-part-two": [
+  [
+   "The Clean Architecture — Robert C. Martin",
+   "https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html"
+  ],
+  [
+   "Creating Swift Packages — WWDC19 session 410",
+   "https://developer.apple.com/videos/play/wwdc2019/410/"
+  ],
+  [
+   "Improving the speed of incremental builds — Apple Developer Documentation",
+   "https://developer.apple.com/documentation/xcode/improving-the-speed-of-incremental-builds"
+  ]
+ ],
+ "a-design-system-is-a-review-policy": [
+  [
+   "Human Interface Guidelines — Apple Developer",
+   "https://developer.apple.com/design/human-interface-guidelines"
+  ],
+  [
+   "Swift API Design Guidelines",
+   "https://www.swift.org/documentation/api-design-guidelines/"
+  ]
+ ],
+ "the-ios-stack-i-actually-reach-for": [
+  [
+   "Swift API Design Guidelines",
+   "https://www.swift.org/documentation/api-design-guidelines/"
+  ],
+  [
+   "Improving the speed of incremental builds — Apple Developer Documentation",
+   "https://developer.apple.com/documentation/xcode/improving-the-speed-of-incremental-builds"
+  ],
+  [
+   "Human Interface Guidelines — Apple Developer",
+   "https://developer.apple.com/design/human-interface-guidelines"
+  ]
+ ],
+ "ai-native-development-process": [
+  [
+   "Xcode 26 Release Notes — coding intelligence, model choice, local models",
+   "https://developer.apple.com/documentation/xcode-release-notes/xcode-26-release-notes"
+  ],
+  [
+   "Xcode 27 Release Notes — plans as artifacts, Gemini, Xcode MCP server",
+   "https://developer.apple.com/documentation/xcode-release-notes/xcode-27-release-notes"
+  ],
+  [
+   "App Review Guidelines — 2.3.1(a)",
+   "https://developer.apple.com/app-store/review/guidelines/"
+  ]
+ ],
+ "splitting-an-app-into-local-packages": [
+  [
+   "Creating Swift Packages — WWDC19 session 410",
+   "https://developer.apple.com/videos/play/wwdc2019/410/"
+  ],
+  [
+   "Binary Frameworks in Swift — WWDC19 session 416",
+   "https://developer.apple.com/videos/play/wwdc2019/416/"
+  ],
+  [
+   "Swift API Design Guidelines",
+   "https://www.swift.org/documentation/api-design-guidelines/"
+  ]
+ ],
+ "build-time-is-a-dependency-graph-problem": [
+  [
+   "Improving the speed of incremental builds — Apple Developer Documentation",
+   "https://developer.apple.com/documentation/xcode/improving-the-speed-of-incremental-builds"
+  ],
+  [
+   "Creating Swift Packages — WWDC19 session 410",
+   "https://developer.apple.com/videos/play/wwdc2019/410/"
+  ]
+ ],
+ "what-a-green-build-does-not-prove": [
+  [
+   "GitLab CI/CD — control when jobs run: rules and when: never",
+   "https://docs.gitlab.com/ci/jobs/job_control/"
+  ],
+  [
+   "Writing custom build scripts — Xcode Cloud",
+   "https://developer.apple.com/documentation/xcode/writing-custom-build-scripts"
+  ],
+  [
+   "Automatically collected events — Analytics Help",
+   "https://support.google.com/analytics/answer/9234069"
+  ]
+ ],
+ "exam-mode-one-screen-earlier": [
+  [
+   "Automatic Assessment Configuration — Apple Developer Documentation",
+   "https://developer.apple.com/documentation/automaticassessmentconfiguration"
+  ],
+  [
+   "AEAssessmentSession — Apple Developer Documentation",
+   "https://developer.apple.com/documentation/automaticassessmentconfiguration/aeassessmentsession"
+  ],
+  [
+   "AEAssessmentError — Apple Developer Documentation",
+   "https://developer.apple.com/documentation/automaticassessmentconfiguration/aeassessmenterror"
+  ],
+  [
+   "com.apple.developer.automatic-assessment-configuration — entitlement and request form",
+   "https://developer.apple.com/documentation/bundleresources/entitlements/com.apple.developer.automatic-assessment-configuration"
+  ]
+ ],
+ "four-gates-that-certified-nothing": [
+  [
+   "SwiftLint — configuration, baselines and included paths",
+   "https://realm.github.io/SwiftLint/configuration.html"
+  ],
+  [
+   "GitLab CI/CD — control when jobs run: rules and when: never",
+   "https://docs.gitlab.com/ci/jobs/job_control/"
+  ],
+  [
+   "Build settings reference — CURRENT_PROJECT_VERSION",
+   "https://developer.apple.com/documentation/xcode/build-settings-reference"
+  ],
+  [
+   "swift-snapshot-testing — recording and asserting references",
+   "https://github.com/pointfreeco/swift-snapshot-testing"
+  ]
+ ],
+ "kiosk-and-assessment-apps": [
+  [
+   "Set up iPad and Mac to give tests and assessments — Apple Support",
+   "https://support.apple.com/101976"
+  ],
+  [
+   "Automatic Assessment Configuration — Apple Developer Documentation",
+   "https://developer.apple.com/documentation/automaticassessmentconfiguration"
+  ],
+  [
+   "com.apple.developer.automatic-assessment-configuration — entitlement and request form",
+   "https://developer.apple.com/documentation/bundleresources/entitlements/com.apple.developer.automatic-assessment-configuration"
+  ],
+  [
+   "iOS Configuration and APIs for Kiosk and Assessment Apps — WWDC17 session 716",
+   "https://developer.apple.com/videos/play/wwdc2017/716/"
+  ]
+ ],
+ "what-a-year-of-ai-native-ios-still-cant-prove": [
+  [
+   "AGENTS.md — an open format for guiding coding agents",
+   "https://agents.md"
+  ],
+  [
+   "Xcode 26 Release Notes — coding intelligence and model choice",
+   "https://developer.apple.com/documentation/xcode-release-notes/xcode-26-release-notes"
+  ],
+  [
+   "Xcode 27 Release Notes — plans as editable artifacts",
+   "https://developer.apple.com/documentation/xcode-release-notes/xcode-27-release-notes"
+  ],
+  [
+   "SwiftLint — configuration",
+   "https://realm.github.io/SwiftLint/configuration.html"
+  ],
+  [
+   "GitLab CI/CD — control when jobs run: rules and when: never",
+   "https://docs.gitlab.com/ci/jobs/job_control/"
+  ]
+ ],
+ "uikit-to-swiftui-without-a-rewrite": [
+  [
+   "Introducing SwiftUI: Building Your First App — WWDC19 session 204",
+   "https://developer.apple.com/videos/play/wwdc2019/204/"
+  ],
+  [
+   "SwiftUI Essentials — WWDC19 session 216",
+   "https://developer.apple.com/videos/play/wwdc2019/216/"
+  ],
+  [
+   "Human Interface Guidelines — Apple Developer",
+   "https://developer.apple.com/design/human-interface-guidelines"
+  ]
+ ],
+ "mvvm-to-viper-part-one": [
+  [
+   "The Clean Architecture — Robert C. Martin",
+   "https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html"
+  ],
+  [
+   "Swift API Design Guidelines",
+   "https://www.swift.org/documentation/api-design-guidelines/"
+  ]
+ ],
+ "how-i-review-ios-pull-requests": [
+  [
+   "Swift API Design Guidelines",
+   "https://www.swift.org/documentation/api-design-guidelines/"
+  ],
+  [
+   "Human Interface Guidelines — Apple Developer",
+   "https://developer.apple.com/design/human-interface-guidelines"
+  ]
+ ],
+ "mvvm-to-viper-part-three": [
+  [
+   "The Clean Architecture — Robert C. Martin",
+   "https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html"
+  ],
+  [
+   "Creating Swift Packages — WWDC19 session 410",
+   "https://developer.apple.com/videos/play/wwdc2019/410/"
+  ],
+  [
+   "Improving the speed of incremental builds — Apple Developer Documentation",
+   "https://developer.apple.com/documentation/xcode/improving-the-speed-of-incremental-builds"
+  ]
+ ],
+ "an-audit-week-on-a-shipping-ios-app": [
+  [
+   "Observation — Apple Developer Documentation",
+   "https://developer.apple.com/documentation/observation"
+  ],
+  [
+   "kSecAttrAccessibleAfterFirstUnlock — Apple Developer Documentation",
+   "https://developer.apple.com/documentation/security/ksecattraccessibleafterfirstunlock"
+  ],
+  [
+   "NSAppTransportSecurity — Apple Developer Documentation",
+   "https://developer.apple.com/documentation/bundleresources/information-property-list/nsapptransportsecurity"
+  ],
+  [
+   "GitLab CI/CD — job scripts and after_script",
+   "https://docs.gitlab.com/ci/yaml/#after_script"
+  ],
+  [
+   "Improving the speed of incremental builds — Apple Developer Documentation",
+   "https://developer.apple.com/documentation/xcode/improving-the-speed-of-incremental-builds"
+  ]
+ ]
+}

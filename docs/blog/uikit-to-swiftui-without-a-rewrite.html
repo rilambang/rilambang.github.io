@@ -3,193 +3,58 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>UIKit to SwiftUI without a rewrite</title>
+<title>UIKit to SwiftUI without a rewrite, Muhammad Ilham Rilambang</title>
 <meta name="description" content="The migration succeeds or fails on one decision: who owns navigation. Everything else is a sequence of small, reversible steps.">
+<meta name="author" content="Muhammad Ilham Rilambang">
 <link rel="canonical" href="https://rilambang.github.io/blog/uikit-to-swiftui-without-a-rewrite.html">
+<meta name="theme-color" content="#f4f5f7" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#16171a" media="(prefers-color-scheme: dark)">
 <meta property="og:type" content="article">
-<meta property="og:title" content="UIKit to SwiftUI without a rewrite">
+<meta property="og:title" content="UIKit to SwiftUI without a rewrite, Muhammad Ilham Rilambang">
 <meta property="og:description" content="The migration succeeds or fails on one decision: who owns navigation. Everything else is a sequence of small, reversible steps.">
 <meta property="og:url" content="https://rilambang.github.io/blog/uikit-to-swiftui-without-a-rewrite.html">
 <meta property="og:image" content="https://rilambang.github.io/og.png">
 <meta name="twitter:card" content="summary_large_image">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='0' fill='%232563eb'/><text x='16' y='23' font-family='Georgia,serif' font-size='20' fill='%23ffffff' text-anchor='middle'>R</text></svg>">
-<link rel="stylesheet" href="./blog.css">
-<script defer src="../vendor/lottie.min.js"></script>
-<script>
-document.addEventListener('DOMContentLoaded', function(){
-  var figs = document.querySelectorAll('.fig-lottie');
-  if (!figs.length || !window.lottie) return;
-  var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  figs.forEach(function(el){
-    var W = +el.getAttribute('data-w'), H = +el.getAttribute('data-h');
-    var labels = [].slice.call(el.querySelectorAll('.fig-label')).map(function(n){
-      var a = n.getAttribute('data-alpha'), p = n.getAttribute('data-path');
-      return {
-        el: n,
-        a: a ? a.split(' ').map(function(s){
-          var q = s.split(':'); return [+q[0], +q[1]];
-        }) : null,
-        p: p ? p.split(' ').map(Number) : null
-      };
-    });
-    function alphaAt(list, f){
-      var i = 0;
-      while (i + 1 < list.length && list[i + 1][0] <= f) i += 1;
-      if (i + 1 >= list.length) return list[i][1];
-      var t0 = list[i][0], t1 = list[i + 1][0];
-      var u = t1 > t0 ? (f - t0) / (t1 - t0) : 1;
-      return list[i][1] + (list[i + 1][1] - list[i][1]) * u;
-    }
-    function paint(f){
-      labels.forEach(function(l){
-        if (l.a) l.el.style.opacity = (alphaAt(l.a, f) / 100).toFixed(3);
-        if (l.p) {
-          var i = Math.min(Math.round(f), l.p.length / 2 - 1) * 2;
-          // cqw is 1% of the container width, both axes: y divides by W too
-          l.el.style.translate = (l.p[i] / W * 100).toFixed(3) + 'cqw ' +
-                                 (l.p[i + 1] / W * 100).toFixed(3) + 'cqw';
-        }
-      });
-    }
-    var anim = lottie.loadAnimation({
-      container: el, renderer: 'svg', loop: true, autoplay: false,
-      path: el.getAttribute('data-src')
-    });
-    anim.addEventListener('enterFrame', function(){ paint(anim.currentFrame); });
-    anim.addEventListener('DOMLoaded', function(){
-      el.classList.add('is-live');
-      var live = el.querySelector('svg:not(.poster)');
-      if (live) live.setAttribute('aria-hidden', 'true');
-      if (reduced) { anim.goToAndStop(anim.totalFrames - 1, true); paint(anim.totalFrames); return; }
-      anim.goToAndStop(0, true); paint(0);
-      // Loop while it is on screen; off screen it costs nothing.
-      new IntersectionObserver(function(entries){
-        entries.forEach(function(e){
-          if (e.isIntersecting) anim.play(); else anim.pause();
-        });
-      }, {threshold: 0.25}).observe(el);
-    });
-  });
-});
-</script>
+<link rel="me" href="https://github.com/rilambang"><link rel="me" href="https://x.com/rilambang">
+<link rel="alternate" type="application/rss+xml" title="Writing" href="https://rilambang.github.io/feed.xml">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%231e2024'/><circle cx='16' cy='16' r='7' fill='%23f4f5f7'/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=JetBrains+Mono:wght@400&family=Source+Serif+4:ital,opsz,wght@0,8..60,400..650;1,8..60,400&display=swap">
+<link rel="stylesheet" href="../assets/style.css">
 </head>
 <body>
-<div class="wrap">
-  <div class="top">
-    <a class="who" href="/">Muhammad Ilham Rilambang</a>
-    <a href="./index.html">Blog</a>
-  </div>
-  <header class="post-head">
-    <p class="chip">Migration</p>
-    <h1>UIKit to SwiftUI without a rewrite</h1>
-    <p class="meta">3 min read · Muhammad Ilham Rilambang</p>
-  </header>
-  <article>
-<p class="lede">The migration succeeds or fails on one decision: who owns navigation. Get that
-right and the rest is a sequence of small, reversible steps. Get it wrong and you end up with
-two systems that each half-know where you are.</p>
-
-  <figure class="fig">
-    <div class="fig-lottie" data-src="./lottie/uikit-to-swiftui-without-a-rewrite-1.json" data-w="640" data-h="340" role="img" aria-label="One screen converted: the navigation chrome changes owner and the same four rows stay put"><svg viewBox='0 0 640 340' width='640' height='340' class='poster' aria-hidden='true' xmlns='http://www.w3.org/2000/svg'><rect x='24.0' y='36.0' width='216.0' height='248.0' rx='18' fill='#161822' stroke='#2c3040' stroke-width='1.2'/><rect x='24.0' y='36.0' width='216.0' height='52.0' rx='18' fill='#1b2440' stroke='#2c3040' stroke-width='1.2'/><line x1='36.0' y1='140.0' x2='228.0' y2='140.0' stroke='#2c3040' stroke-width='1'/><line x1='36.0' y1='184.0' x2='228.0' y2='184.0' stroke='#2c3040' stroke-width='1'/><line x1='36.0' y1='228.0' x2='228.0' y2='228.0' stroke='#2c3040' stroke-width='1'/><rect x='400.0' y='36.0' width='216.0' height='248.0' rx='18' fill='#161822' stroke='#2c3040' stroke-width='1.2'/><rect x='400.0' y='36.0' width='216.0' height='52.0' rx='18' fill='#1b2440' stroke='#2c3040' stroke-width='1.2'/><line x1='412.0' y1='140.0' x2='604.0' y2='140.0' stroke='#2c3040' stroke-width='1'/><line x1='412.0' y1='184.0' x2='604.0' y2='184.0' stroke='#2c3040' stroke-width='1'/><line x1='412.0' y1='228.0' x2='604.0' y2='228.0' stroke='#2c3040' stroke-width='1'/><rect x='400.0' y='36.0' width='216.0' height='52.0' rx='18' fill='none' stroke='#8ab4ff' stroke-width='1.2'/><line x1='244.0' y1='62.0' x2='283.0' y2='62.0' stroke='#7b8496' stroke-width='1.5'/><line x1='357.0' y1='62.0' x2='391.0' y2='62.0' stroke='#7b8496' stroke-width='1.5'/><polygon points='396.0,62.0 387.0,66.6 387.0,57.4' fill='#7b8496'/><line x1='244.0' y1='212.0' x2='391.0' y2='212.0' stroke='#7b8496' stroke-width='1.5'/><polygon points='396.0,212.0 387.0,216.6 387.0,207.4' fill='#7b8496'/><polyline points='24.0,308.0 24.0,300.0 616.0,300.0 616.0,308.0' fill='none' stroke='#86e0a6' stroke-width='1.5' stroke-linejoin='round'/></svg><div class='fig-labels' aria-hidden='true'><span class='fig-label' data-i='0' style='left:3.750%;top:7.647%;font-size:1.8750cqw;color:#aab2c4;--a1:1.00;transform:translate(0,calc(-100% + .24em))'>Before</span><span class='fig-label' data-i='1' style='left:63.125%;top:7.647%;font-size:1.8750cqw;color:#aab2c4;--a1:1.00;transform:translate(0,calc(-100% + .24em))'>After</span><span class='fig-label' data-i='2' style='left:6.250%;top:20.000%;font-size:2.3438cqw;color:#f4f6fb;--a1:1.00;transform:translate(0,calc(-100% + .24em))'>Exam</span><span class='fig-label' data-i='3' style='left:6.250%;top:36.471%;font-size:2.1875cqw;color:#f4f6fb;--a1:1.00;transform:translate(0,calc(-100% + .24em))'>Welcome</span><span class='fig-label' data-i='4' style='left:6.250%;top:49.412%;font-size:2.1875cqw;color:#f4f6fb;--a1:1.00;transform:translate(0,calc(-100% + .24em))'>Location</span><span class='fig-label' data-i='5' style='left:6.250%;top:62.353%;font-size:2.1875cqw;color:#f4f6fb;--a1:1.00;transform:translate(0,calc(-100% + .24em))'>Ready</span><span class='fig-label' data-i='6' style='left:6.250%;top:75.294%;font-size:2.1875cqw;color:#f4f6fb;--a1:1.00;transform:translate(0,calc(-100% + .24em))'>Paper</span><span class='fig-label' data-i='7' style='left:65.000%;top:20.000%;font-size:2.3438cqw;color:#f4f6fb;--a1:1.00;transform:translate(0,calc(-100% + .24em))'>Exam</span><span class='fig-label' data-i='8' style='left:65.000%;top:36.471%;font-size:2.1875cqw;color:#f4f6fb;--a1:1.00;transform:translate(0,calc(-100% + .24em))'>Welcome</span><span class='fig-label' data-i='9' style='left:65.000%;top:49.412%;font-size:2.1875cqw;color:#f4f6fb;--a1:1.00;transform:translate(0,calc(-100% + .24em))'>Location</span><span class='fig-label' data-i='10' style='left:65.000%;top:62.353%;font-size:2.1875cqw;color:#f4f6fb;--a1:1.00;transform:translate(0,calc(-100% + .24em))'>Ready</span><span class='fig-label' data-i='11' style='left:65.000%;top:75.294%;font-size:2.1875cqw;color:#f4f6fb;--a1:1.00;transform:translate(0,calc(-100% + .24em))'>Paper</span><span class='fig-label' data-i='12' style='left:35.000%;top:20.000%;font-size:1.7188cqw;color:#aab2c4;--a1:1.00;transform:translate(-100%,calc(-100% + .24em))'>UIKit</span><span class='fig-label' data-i='13' style='left:50.000%;top:19.412%;font-size:1.8750cqw;color:#aab2c4;--a1:1.00;transform:translate(-50%,calc(-100% + .24em))' data-alpha='0:0 1:0 2:0 3:0 4:0 5:0 6:0 7:0 8:0 9:0 10:0 11:0 12:0 13:0 14:0 15:4 16:25 17:75 18:96 19:100 20:100 21:100 22:100 23:100 24:100 25:100 26:100 27:100 28:100 29:100 30:100 31:100 32:100 33:100 34:100 35:100 36:100 37:100 38:100 39:100 40:100 41:100 42:100 43:100 44:100 45:100 46:100 47:100 48:100 49:100 50:100 51:100 52:100 53:100 54:100 55:100 56:100 57:100 58:100 59:100 60:100 61:100 62:100 63:100 64:100 65:100 66:100 67:100 68:100 69:100 70:100 71:100 72:100 73:100 74:100 75:100 76:100 77:100 78:100 79:100 80:100 81:100 82:100 83:100 84:100 85:100 86:100 87:100 88:100 89:100 90:100 91:100 92:100 93:100 94:100 95:100 96:100 97:100 98:100 99:100 100:100 101:100 102:100 103:100 104:100 105:100 106:100 107:100 108:100 109:100 110:100 111:100 112:100 113:100 114:100'>new owner</span><span class='fig-label' data-i='14' style='left:93.750%;top:20.000%;font-size:1.7188cqw;color:#aab2c4;--a1:0.00;transform:translate(-100%,calc(-100% + .24em))' data-alpha='0:100 1:100 2:100 3:100 4:100 5:100 6:100 7:100 8:100 9:100 10:100 11:100 12:100 13:100 14:100 15:100 16:100 17:100 18:100 19:100 20:100 21:100 22:100 23:100 24:100 25:50 26:0 27:0 28:0 29:0 30:0 31:0 32:0 33:0 34:0 35:0 36:0 37:0 38:0 39:0 40:0 41:0 42:0 43:0 44:0 45:0 46:0 47:0 48:0 49:0 50:0 51:0 52:0 53:0 54:0 55:0 56:0 57:0 58:0 59:0 60:0 61:0 62:0 63:0 64:0 65:0 66:0 67:0 68:0 69:0 70:0 71:0 72:0 73:0 74:0 75:0 76:0 77:0 78:0 79:0 80:0 81:0 82:0 83:0 84:0 85:0 86:0 87:0 88:0 89:0 90:0 91:0 92:0 93:0 94:0 95:0 96:0 97:0 98:0 99:0 100:0 101:0 102:0 103:0 104:0 105:0 106:0 107:0 108:0 109:0 110:0 111:0 112:0 113:0 114:0'>UIKit</span><span class='fig-label' data-i='15' style='left:93.750%;top:20.000%;font-size:1.7188cqw;color:#8ab4ff;--a1:1.00;transform:translate(-100%,calc(-100% + .24em))' data-alpha='0:0 1:0 2:0 3:0 4:0 5:0 6:0 7:0 8:0 9:0 10:0 11:0 12:0 13:0 14:0 15:0 16:0 17:0 18:0 19:0 20:0 21:0 22:0 23:0 24:0 25:50 26:100 27:100 28:100 29:100 30:100 31:100 32:100 33:100 34:100 35:100 36:100 37:100 38:100 39:100 40:100 41:100 42:100 43:100 44:100 45:100 46:100 47:100 48:100 49:100 50:100 51:100 52:100 53:100 54:100 55:100 56:100 57:100 58:100 59:100 60:100 61:100 62:100 63:100 64:100 65:100 66:100 67:100 68:100 69:100 70:100 71:100 72:100 73:100 74:100 75:100 76:100 77:100 78:100 79:100 80:100 81:100 82:100 83:100 84:100 85:100 86:100 87:100 88:100 89:100 90:100 91:100 92:100 93:100 94:100 95:100 96:100 97:100 98:100 99:100 100:100 101:100 102:100 103:100 104:100 105:100 106:100 107:100 108:100 109:100 110:100 111:100 112:100 113:100 114:100'>SwiftUI</span><span class='fig-label' data-i='16' style='left:50.000%;top:95.882%;font-size:1.8750cqw;color:#86e0a6;--a1:1.00;transform:translate(-50%,calc(-100% + .24em))' data-alpha='0:0 1:0 2:0 3:0 4:0 5:0 6:0 7:0 8:0 9:0 10:0 11:0 12:0 13:0 14:0 15:0 16:0 17:0 18:0 19:0 20:0 21:0 22:0 23:0 24:0 25:0 26:0 27:0 28:0 29:0 30:0 31:0 32:0 33:0 34:0 35:0 36:0 37:0 38:0 39:0 40:0 41:0 42:0 43:0 44:0 45:0 46:2 47:10 48:31 49:69 50:90 51:98 52:100 53:100 54:100 55:100 56:100 57:100 58:100 59:100 60:100 61:100 62:100 63:100 64:100 65:100 66:100 67:100 68:100 69:100 70:100 71:100 72:100 73:100 74:100 75:100 76:100 77:100 78:100 79:100 80:100 81:100 82:100 83:100 84:100 85:100 86:100 87:100 88:100 89:100 90:100 91:100 92:100 93:100 94:100 95:100 96:100 97:100 98:100 99:100 100:100 101:100 102:100 103:100 104:100 105:100 106:100 107:100 108:100 109:100 110:100 111:100 112:100 113:100 114:100'>same rows</span></div></div>
-    <figcaption>Navigation changes owner; the content does not move.</figcaption>
-  </figure>
-
-
-<p>I've taken more than one shipped app across this boundary. Nobody regrets the destination.
-People regret the order.</p>
-
-<h2>Don't start with the app shell</h2>
-
-<p>The instinct is to rewrite the root and let the screens follow. That inverts the risk: the
-shell is the part every screen depends on, and it's the part you can't ship incrementally.</p>
-
-<p>Start with leaf screens — a detail view, a settings page, a form. Screens that don't own
-navigation are the safe unit of migration, because failure costs you one screen rather than
-the app.</p>
-
-
-  <figure class="fig">
-    <div class="fig-lottie" data-src="./lottie/uikit-to-swiftui-without-a-rewrite-2.json" data-w="640" data-h="320" role="img" aria-label="One file moving from the UIKit views folder into a SwiftUI folder"><svg viewBox='0 0 640 320' width='640' height='320' class='poster' aria-hidden='true' xmlns='http://www.w3.org/2000/svg'><rect x='40.0' y='36.0' width='200.0' height='250.0' rx='14' fill='#161822' stroke='#2c3040' stroke-width='1.2'/><rect x='400.0' y='36.0' width='200.0' height='250.0' rx='14' fill='#161822' stroke='#2c3040' stroke-width='1.2'/><rect x='400.0' y='36.0' width='200.0' height='250.0' rx='14' fill='none' stroke='#8ab4ff' stroke-width='1.2'/><rect x='416.0' y='96.0' width='168.0' height='64.0' rx='10' fill='#1b2440' stroke='#8ab4ff' stroke-width='1.2'/><line x1='240.0' y1='64.0' x2='279.0' y2='64.0' stroke='#7b8496' stroke-width='1.5'/><line x1='357.0' y1='64.0' x2='391.0' y2='64.0' stroke='#7b8496' stroke-width='1.5'/><polygon points='396.0,64.0 387.0,68.6 387.0,59.4' fill='#7b8496'/><line x1='224.0' y1='128.0' x2='275.0' y2='128.0' stroke='#7b8496' stroke-width='1.5'/><line x1='345.0' y1='128.0' x2='391.0' y2='128.0' stroke='#7b8496' stroke-width='1.5'/><polygon points='396.0,128.0 387.0,132.6 387.0,123.4' fill='#7b8496'/></svg><div class='fig-labels' aria-hidden='true'><span class='fig-label' data-i='0' style='left:8.750%;top:20.625%;font-size:1.8750cqw;color:#aab2c4;--a1:1.00;transform:translate(0,calc(-100% + .24em))'>Views/</span><span class='fig-label' data-i='1' style='left:65.000%;top:20.625%;font-size:1.8750cqw;color:#aab2c4;--a1:1.00;transform:translate(0,calc(-100% + .24em))'>SwiftUI/</span><span class='fig-label' data-i='2' style='left:78.125%;top:42.500%;font-size:2.1875cqw;color:#8ab4ff;--a1:1.00;transform:translate(-50%,calc(-100% + .24em))' data-path='-360.0 0.0 -360.0 0.0 -360.0 0.0 -360.0 0.0 -360.0 0.0 -360.0 0.0 -360.0 0.0 -360.0 0.0 -360.0 0.0 -360.0 0.0 -360.0 0.0 -360.0 0.0 -360.0 0.0 -360.0 0.0 -360.0 0.0 -360.0 0.0 -360.0 0.0 -360.0 0.0 -360.0 0.0 -360.0 0.0 -360.0 0.0 -360.0 0.0 -360.0 0.0 -360.0 0.0 -360.0 0.0 -360.0 0.0 -360.0 0.0 -360.0 0.0 -360.0 0.0 -360.0 0.0 -360.0 0.0 -360.0 0.0 -360.0 0.0 -360.0 0.0 -360.0 0.0 -360.0 0.0 -360.0 0.0 -360.0 0.0 -360.0 0.0 -360.0 0.0 -360.0 0.0 -360.0 0.0 -360.0 0.0 -360.0 0.0 -360.0 0.0 -360.0 0.0 -360.0 0.0 -360.0 0.0 -360.0 0.0 -360.0 0.0 -360.0 0.0 -360.0 0.0 -360.0 0.0 -360.0 0.0 -360.0 0.0 -360.0 0.0 -360.0 0.0 -359.1 0.0 -356.0 0.0 -350.2 0.0 -340.8 0.0 -326.8 0.0 -306.3 0.0 -276.6 0.0 -234.3 0.0 -180.0 0.0 -125.7 0.0 -83.4 0.0 -53.7 0.0 -33.2 0.0 -19.2 0.0 -9.8 0.0 -4.0 0.0 -0.9 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0'>ExamScreen.swift</span><span class='fig-label' data-i='3' style='left:49.688%;top:21.250%;font-size:1.8750cqw;color:#aab2c4;--a1:1.00;transform:translate(-50%,calc(-100% + .24em))' data-alpha='0:0 1:0 2:0 3:0 4:0 5:0 6:0 7:0 8:0 9:0 10:0 11:0 12:0 13:0 14:7 15:50 16:93 17:100 18:100 19:100 20:100 21:100 22:100 23:100 24:100 25:100 26:100 27:100 28:100 29:100 30:100 31:100 32:100 33:100 34:100 35:100 36:100 37:100 38:100 39:100 40:100 41:100 42:100 43:100 44:100 45:100 46:100 47:100 48:100 49:100 50:100 51:100 52:100 53:100 54:100 55:100 56:100 57:100 58:100 59:100 60:100 61:100 62:100 63:100 64:100 65:100 66:100 67:100 68:100 69:100 70:100 71:100 72:100 73:100 74:100 75:100 76:100 77:100 78:100 79:100 80:100 81:100 82:100 83:100 84:100 85:100 86:100 87:100 88:100 89:100 90:100 91:100 92:100 93:100 94:100 95:100 96:100 97:100 98:100 99:100 100:100 101:100 102:100 103:100 104:100 105:100 106:100 107:100 108:100 109:100 110:100 111:100 112:100 113:100 114:100'>the boundary</span><span class='fig-label' data-i='4' style='left:48.438%;top:41.250%;font-size:1.8750cqw;color:#aab2c4;--a1:1.00;transform:translate(-50%,calc(-100% + .24em))' data-alpha='0:0 1:0 2:0 3:0 4:0 5:0 6:0 7:0 8:0 9:0 10:0 11:0 12:0 13:0 14:0 15:0 16:0 17:0 18:0 19:0 20:0 21:0 22:0 23:0 24:0 25:0 26:0 27:0 28:0 29:0 30:0 31:0 32:0 33:0 34:0 35:0 36:0 37:0 38:0 39:0 40:0 41:0 42:0 43:0 44:0 45:0 46:0 47:7 48:50 49:93 50:100 51:100 52:100 53:100 54:100 55:100 56:100 57:100 58:100 59:100 60:100 61:100 62:100 63:100 64:100 65:100 66:100 67:100 68:100 69:100 70:100 71:100 72:100 73:100 74:100 75:100 76:100 77:100 78:100 79:100 80:100 81:100 82:100 83:100 84:100 85:100 86:100 87:100 88:100 89:100 90:100 91:100 92:100 93:100 94:100 95:100 96:100 97:100 98:100 99:100 100:100 101:100 102:100 103:100 104:100 105:100 106:100 107:100 108:100 109:100 110:100 111:100 112:100 113:100 114:100'>moves once</span><span class='fig-label' data-i='5' style='left:3.125%;top:95.625%;font-size:1.8750cqw;color:#aab2c4;--a1:1.00;transform:translate(0,calc(-100% + .24em))'>One file, one boundary, one instance.</span></div></div>
-    <figcaption>The file moves once, and lands once.</figcaption>
-  </figure>
+<a class="skip" href="#main">Skip to content</a>
+<header class="top"><a class="top__name" href="../">Muhammad Ilham Rilambang</a>
+<nav aria-label="Main"><a href="../#work">Work</a><a href="../blog/">Writing</a><a href="../#path">Path</a><a href="../#contact">Contact</a></nav></header>
+<div class="progress" aria-hidden="true"></div><main id="main"><article class="post">
+<header class="post__head"><p class="post__tag">Migration</p><h1>UIKit to SwiftUI without a rewrite</h1><p class="post__sum">The migration succeeds or fails on one decision: who owns navigation. Everything else is a sequence of small, reversible steps.</p><p class="post__meta">3 min read</p></header>
+<p>The migration succeeds or fails on one decision: who owns navigation. Get that right and the rest is a sequence of small, reversible steps. Get it wrong and you have two systems that each half-know where you are.</p>
+<p>I have taken more than one shipped app across this boundary. Nobody regrets the destination. People regret the order.</p>
+<figure class="fig"><div class="fig__frame"><svg viewBox="0 0 720 320" role="img" aria-label="One screen converted: the navigation bar changes owner while the same four rows stay where they are."><g class="pop" style="--t:0s"><rect x="40" y="34" width="250" height="56" rx="9" class="bx"/><text x="165" y="67" text-anchor="middle" class="tx">UIKit navigation controller</text></g><line x1="54" y1="126" x2="276" y2="126" class="ln mut"/><text x="56" y="116" text-anchor="start" class="fade tx" style="--t:0.2s">Welcome</text><line x1="54" y1="172" x2="276" y2="172" class="ln mut"/><text x="56" y="162" text-anchor="start" class="fade tx" style="--t:0.2s">Location</text><line x1="54" y1="218" x2="276" y2="218" class="ln mut"/><text x="56" y="208" text-anchor="start" class="fade tx" style="--t:0.2s">Ready</text><line x1="54" y1="264" x2="276" y2="264" class="ln mut"/><text x="56" y="254" text-anchor="start" class="fade tx" style="--t:0.2s">Paper</text><g class="pop" style="--t:0s"><rect x="430" y="34" width="250" height="56" rx="9" class="bx ink"/><text x="555" y="67" text-anchor="middle" class="tx">SwiftUI navigation stack</text></g><line x1="444" y1="126" x2="666" y2="126" class="ln mut"/><text x="446" y="116" text-anchor="start" class="fade tx" style="--t:0.2s">Welcome</text><line x1="444" y1="172" x2="666" y2="172" class="ln mut"/><text x="446" y="162" text-anchor="start" class="fade tx" style="--t:0.2s">Location</text><line x1="444" y1="218" x2="666" y2="218" class="ln mut"/><text x="446" y="208" text-anchor="start" class="fade tx" style="--t:0.2s">Ready</text><line x1="444" y1="264" x2="666" y2="264" class="ln mut"/><text x="446" y="254" text-anchor="start" class="fade tx" style="--t:0.2s">Paper</text><text x="165" y="22" text-anchor="middle" class="pop tx mut sm" style="--t:0s">Before</text><text x="555" y="22" text-anchor="middle" class="pop tx mut sm" style="--t:0.8s">After</text><line x1="300" y1="62" x2="420" y2="62" pathLength="1" class="dr ln ink" style="--t:0.9s;--d:0.7s"/><polygon points="420,62 412.8,58.5 412.8,65.5" class="hd ink" style="--t:1.495s"/><rect x="424" y="28" width="262" height="68" rx="9" pathLength="1" class="dr rg" style="--t:1.7s;--d:0.7s"/><text x="360" y="306" text-anchor="middle" class="pop tx mut sm" style="--t:2.3s">Same four rows. Only the owner of navigation changed.</text></svg></div><figcaption><span>Navigation changes owner. The content does not move.</span><button type="button" class="fig__replay" hidden>Replay</button></figcaption></figure>
+<h2>Do not start with the app shell</h2>
+<p>The instinct is to rewrite the root and let the screens follow. That inverts the risk. The shell is what every screen depends on, and it is the one part you cannot ship incrementally.</p>
+<p>Start with leaf screens: a detail view, a settings page, a form. Screens that do not own navigation are the safe unit of migration, because a failure costs you one screen, not the app.</p>
 <h2>Pick one direction of interop at a time</h2>
-
-<p>The two directions aren't symmetric and should not be started together:</p>
-
-<ul>
-  <li><strong>UIKit shell, SwiftUI leaves</strong> — a UIKit view controller hosts a SwiftUI
-  view. This is the low-risk direction, and it's where a migration should begin.</li>
-  <li><strong>SwiftUI shell, UIKit leaves</strong> — a SwiftUI view wraps a UIKit component.
-  Necessary for the handful of things SwiftUI still doesn't do well, and the direction that
-  tends to accumulate if you're careless.</li>
-</ul>
-
-<p>Whichever you're in, know which one it is. A codebase that's doing both, everywhere, with
-no rule, has no migration at all.</p>
-
+<p>The two directions are not symmetric and should not be started together.</p>
+<ul><li><strong>UIKit shell, SwiftUI leaves.</strong> A view controller hosts a SwiftUI view. This is the low-risk direction and where a migration should begin.</li><li><strong>SwiftUI shell, UIKit leaves.</strong> A SwiftUI view wraps a UIKit component. It is necessary for the handful of things SwiftUI still does badly, and it is the direction that piles up if you are careless.</li></ul>
+<p>Whichever you are in, know which it is. A codebase doing both everywhere, with no rule, has no migration at all.</p>
 <h2>Navigation is the seam, so give it exactly one owner</h2>
-
-<p>This is the decision that determines whether the migration is a project or a permanent tax.
-Two systems that both believe they own the stack produce bugs that are extremely hard to
-diagnose: a screen that appears twice, a back button that does nothing, state that resets on
-pop.</p>
-
-<p>Keep navigation in one place for the whole migration — whether that's the UIKit navigation
-controller or a SwiftUI stack driven by a coordinator. The other side renders content and
-reports events. It doesn't push.</p>
-
-<h2>State ownership: pass data in, events out</h2>
-
-<p>Don't let the two worlds observe each other's state. A view controller watching a SwiftUI
-observable object, or a SwiftUI view holding a reference to a view controller and polling it,
-is a future bug in both directions.</p>
-
-<p>The contract that survives: the parent passes a value in and receives callbacks out. That is
-enough for almost every screen, and it keeps either side replaceable.</p>
-
+<p>This decision decides whether the migration is a project or a permanent tax. Two systems that both believe they own the stack produce bugs that are very hard to diagnose: a screen that appears twice, a back button that does nothing, state that resets on pop.</p>
+<p>Keep navigation in one place for the whole migration, whether that is the UIKit navigation controller or a SwiftUI stack driven by a coordinator. The other side renders content and reports events. It does not push.</p>
+<h2>State: pass data in, events out</h2>
+<p>Do not let the two worlds observe each other's state. A view controller watching a SwiftUI observable object, or a SwiftUI view holding a reference to a view controller and polling it, is a future bug in both directions.</p>
+<p>The contract that survives is simple: the parent passes a value in and receives callbacks out. That is enough for almost every screen, and it keeps either side replaceable.</p>
+<figure class="fig"><div class="fig__frame"><svg viewBox="0 0 720 290" role="img" aria-label="A UIKit shell that owns navigation hosts a SwiftUI screen: the parent passes a value in and receives events out."><g class="pop" style="--t:0s"><rect x="40" y="30" width="640" height="230" rx="9" class="bx"/><text x="360" y="150" text-anchor="middle" class="tx">UIKit shell: owns the navigation stack</text></g><rect x="40" y="30" width="640" height="230" rx="9" class="bx" fill="none"/><g class="pop" style="--t:0.7s"><rect x="235" y="120" width="250" height="90" rx="9" class="bx ink"/><text x="360" y="160" text-anchor="middle" class="tx">SwiftUI screen</text><text x="360" y="180" text-anchor="middle" class="tx mut sm">renders content</text></g><line x1="130" y1="100" x2="130" y2="165" pathLength="1" class="dr ln mut" style="--t:1.4s;--d:0.5s"/><line x1="130" y1="165" x2="235" y2="165" pathLength="1" class="dr ln mut" style="--t:1.8s;--d:0.4s"/><polygon points="235,165 227.8,161.5 227.8,168.5" class="hd mut" style="--t:2.14s"/><text x="130" y="90" text-anchor="middle" class="pop tx mut sm" style="--t:1.3s">a value goes in</text><line x1="485" y1="165" x2="590" y2="165" pathLength="1" class="dr ln mut" style="--t:2.5s;--d:0.4s"/><line x1="590" y1="165" x2="590" y2="100" pathLength="1" class="dr ln mut" style="--t:2.9s;--d:0.5s"/><polygon points="590,100 586.5,107.2 593.5,107.2" class="hd mut" style="--t:3.3249999999999997s"/><text x="590" y="90" text-anchor="middle" class="pop tx mut sm" style="--t:2.5s">events come out</text></svg></div><figcaption><span>The parent passes a value in and gets events out. The leaf never pushes.</span><button type="button" class="fig__replay" hidden>Replay</button></figcaption></figure>
 <h2>What actually bites</h2>
-
-<ul>
-  <li><strong>Keyboard avoidance.</strong> Two systems, two opinions, one screen. This is the
-  most common source of visual regressions during the swap and it's worth a dedicated pass.</li>
-  <li><strong>List identity.</strong> A list that reuses cells and a list that keys on identity
-  behave differently on update. Missing or unstable identity produces animations and state loss
-  that look like a rendering bug and aren't.</li>
-  <li><strong>Lifecycle timing.</strong> "Appeared" doesn't mean the same instant in both
-  systems. Code that kicks off work on appear and cancels on disappear will behave differently,
-  and the difference shows up under a slow network, not on your desk.</li>
-  <li><strong>Measurement.</strong> Geometry readers used for layout maths are a smell in a
-  declarative system. Most of the time the layout you were computing by hand is a two-line
-  native layout, and the manual version is the expensive one.</li>
-</ul>
-
-<h2>Availability is part of the plan, not an afterthought</h2>
-
-<p>Everything you adopt has to exist on your deployment target, and anything newer needs a
-working fallback — not an <code>#available</code> that silently renders nothing. Write down the
-minimum supported version and treat every adoption above it as a decision with a cost.</p>
-
-<h2>How you know it's finished</h2>
-
-<p>The app target compiles without importing the old UI framework outside the places the
-platform genuinely requires it. Until then, you have a mixed app, which is a perfectly good
-state to ship from — but it's a state, not an outcome. Name the finish line, or the migration
-becomes the architecture.</p>
-    <div class="sources">
-      <h2>Sources</h2>
-      <ul>
-      <li><a href="https://developer.apple.com/videos/play/wwdc2019/204/" target="_blank" rel="noreferrer">Introducing SwiftUI: Building Your First App — WWDC19 session 204</a></li>
-      <li><a href="https://developer.apple.com/videos/play/wwdc2019/216/" target="_blank" rel="noreferrer">SwiftUI Essentials — WWDC19 session 216</a></li>
-      <li><a href="https://developer.apple.com/design/human-interface-guidelines" target="_blank" rel="noreferrer">Human Interface Guidelines — Apple Developer</a></li>
-      </ul>
-    </div>
-  </article>
-  <p class="foot">Written from experience shipping iOS apps. No client names, no internal details, no unpublished numbers — everything citable here is public.</p>
-  <nav class="pager">
-    <a href="./build-time-is-a-dependency-graph-problem.html">← Build time is a dependency-graph problem, not a machine problem</a>
-    <a href="./a-design-system-is-a-review-policy.html">A design system is a review policy, not a library →</a>
-  </nav>
-
-</div>
+<ul><li><strong>Keyboard avoidance.</strong> Two systems, two opinions, one screen. It is the most common source of visual regressions during the swap and deserves its own pass.</li><li><strong>List identity.</strong> A list that reuses cells and a list that keys on identity behave differently on update. Missing or unstable identity produces animations and state loss that look like a rendering bug and are not.</li><li><strong>Lifecycle timing.</strong> &quot;Appeared&quot; does not mean the same instant in both systems. Code that starts work on appear and cancels on disappear will behave differently, and the difference shows up on a slow network, not at your desk.</li><li><strong>Measurement.</strong> Geometry readers used for layout maths are a smell in a declarative system. Most of the time the layout you were computing by hand is a two-line native layout, and the manual version is the expensive one.</li></ul>
+<h2>Availability is part of the plan</h2>
+<p>Everything you adopt has to exist on your deployment target, and anything newer needs a working fallback, not an <code>#available</code> that silently renders nothing. Write down the minimum supported version and treat every adoption above it as a decision with a cost.</p>
+<h2>How you know it is finished</h2>
+<p>The app target compiles without importing the old UI framework outside the places the platform genuinely requires it. Until then you have a mixed app. That is a perfectly good state to ship from, but it is a state, not an outcome. Name the finish line, or the migration becomes the architecture.</p>
+<aside class="sources"><h2>Sources</h2><ul><li><a href="https://developer.apple.com/videos/play/wwdc2019/204/" target="_blank" rel="noreferrer">Introducing SwiftUI: Building Your First App — WWDC19 session 204</a></li><li><a href="https://developer.apple.com/videos/play/wwdc2019/216/" target="_blank" rel="noreferrer">SwiftUI Essentials — WWDC19 session 216</a></li><li><a href="https://developer.apple.com/design/human-interface-guidelines" target="_blank" rel="noreferrer">Human Interface Guidelines — Apple Developer</a></li></ul></aside>
+<p class="post__foot">Written from experience shipping iOS apps. No client names, no internal details, no unpublished numbers.</p>
+<nav class="pager" aria-label="More writing"><a href="build-time-is-a-dependency-graph-problem.html"><span>Earlier</span>Build time is a dependency-graph problem, not a machine problem</a><a href="a-design-system-is-a-review-policy.html"><span>Later</span>A design system is a review policy, not a library</a></nav>
+</article></main>
+<script src="../assets/site.js" defer></script>
 </body>
 </html>

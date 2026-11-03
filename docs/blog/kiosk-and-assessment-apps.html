@@ -3,207 +3,59 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Kiosk and assessment apps: what Apple will and won&#x27;t let you lock</title>
-<meta name="description" content="You don&#x27;t own the device — iOS does. What an exam app can actually lock, what Apple already enforces, and the entitlement to ask for in week one.">
+<title>Kiosk and assessment apps: what Apple will and won't let you lock, Muhammad Ilham Rilambang</title>
+<meta name="description" content="You don't own the device, iOS does. What an exam app can actually lock, what Apple already enforces, and the entitlement to ask for in week one.">
+<meta name="author" content="Muhammad Ilham Rilambang">
 <link rel="canonical" href="https://rilambang.github.io/blog/kiosk-and-assessment-apps.html">
+<meta name="theme-color" content="#f4f5f7" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#16171a" media="(prefers-color-scheme: dark)">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Kiosk and assessment apps: what Apple will and won&#x27;t let you lock">
-<meta property="og:description" content="You don&#x27;t own the device — iOS does. What an exam app can actually lock, what Apple already enforces, and the entitlement to ask for in week one.">
+<meta property="og:title" content="Kiosk and assessment apps: what Apple will and won't let you lock, Muhammad Ilham Rilambang">
+<meta property="og:description" content="You don't own the device, iOS does. What an exam app can actually lock, what Apple already enforces, and the entitlement to ask for in week one.">
 <meta property="og:url" content="https://rilambang.github.io/blog/kiosk-and-assessment-apps.html">
 <meta property="og:image" content="https://rilambang.github.io/og.png">
 <meta name="twitter:card" content="summary_large_image">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='0' fill='%232563eb'/><text x='16' y='23' font-family='Georgia,serif' font-size='20' fill='%23ffffff' text-anchor='middle'>R</text></svg>">
-<link rel="stylesheet" href="./blog.css">
-<script defer src="../vendor/lottie.min.js"></script>
-<script>
-document.addEventListener('DOMContentLoaded', function(){
-  var figs = document.querySelectorAll('.fig-lottie');
-  if (!figs.length || !window.lottie) return;
-  var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  figs.forEach(function(el){
-    var W = +el.getAttribute('data-w'), H = +el.getAttribute('data-h');
-    var labels = [].slice.call(el.querySelectorAll('.fig-label')).map(function(n){
-      var a = n.getAttribute('data-alpha'), p = n.getAttribute('data-path');
-      return {
-        el: n,
-        a: a ? a.split(' ').map(function(s){
-          var q = s.split(':'); return [+q[0], +q[1]];
-        }) : null,
-        p: p ? p.split(' ').map(Number) : null
-      };
-    });
-    function alphaAt(list, f){
-      var i = 0;
-      while (i + 1 < list.length && list[i + 1][0] <= f) i += 1;
-      if (i + 1 >= list.length) return list[i][1];
-      var t0 = list[i][0], t1 = list[i + 1][0];
-      var u = t1 > t0 ? (f - t0) / (t1 - t0) : 1;
-      return list[i][1] + (list[i + 1][1] - list[i][1]) * u;
-    }
-    function paint(f){
-      labels.forEach(function(l){
-        if (l.a) l.el.style.opacity = (alphaAt(l.a, f) / 100).toFixed(3);
-        if (l.p) {
-          var i = Math.min(Math.round(f), l.p.length / 2 - 1) * 2;
-          // cqw is 1% of the container width, both axes: y divides by W too
-          l.el.style.translate = (l.p[i] / W * 100).toFixed(3) + 'cqw ' +
-                                 (l.p[i + 1] / W * 100).toFixed(3) + 'cqw';
-        }
-      });
-    }
-    var anim = lottie.loadAnimation({
-      container: el, renderer: 'svg', loop: true, autoplay: false,
-      path: el.getAttribute('data-src')
-    });
-    anim.addEventListener('enterFrame', function(){ paint(anim.currentFrame); });
-    anim.addEventListener('DOMLoaded', function(){
-      el.classList.add('is-live');
-      var live = el.querySelector('svg:not(.poster)');
-      if (live) live.setAttribute('aria-hidden', 'true');
-      if (reduced) { anim.goToAndStop(anim.totalFrames - 1, true); paint(anim.totalFrames); return; }
-      anim.goToAndStop(0, true); paint(0);
-      // Loop while it is on screen; off screen it costs nothing.
-      new IntersectionObserver(function(entries){
-        entries.forEach(function(e){
-          if (e.isIntersecting) anim.play(); else anim.pause();
-        });
-      }, {threshold: 0.25}).observe(el);
-    });
-  });
-});
-</script>
+<link rel="me" href="https://github.com/rilambang"><link rel="me" href="https://x.com/rilambang">
+<link rel="alternate" type="application/rss+xml" title="Writing" href="https://rilambang.github.io/feed.xml">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%231e2024'/><circle cx='16' cy='16' r='7' fill='%23f4f5f7'/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=JetBrains+Mono:wght@400&family=Source+Serif+4:ital,opsz,wght@0,8..60,400..650;1,8..60,400&display=swap">
+<link rel="stylesheet" href="../assets/style.css">
 </head>
 <body>
-<div class="wrap">
-  <div class="top">
-    <a class="who" href="/">Muhammad Ilham Rilambang</a>
-    <a href="./index.html">Blog</a>
-  </div>
-  <header class="post-head">
-    <p class="chip">Platform rules</p>
-    <h1>Kiosk and assessment apps: what Apple will and won&#x27;t let you lock</h1>
-    <p class="meta">4 min read · Muhammad Ilham Rilambang</p>
-  </header>
-  <article>
-<p class="lede">In a proctored exam app, the exam is the easy part. The hard part is that you don't own
-the device — iOS does — and every restriction you want has to be one Apple already agreed
-to enforce.</p>
-
-  <figure class="fig">
-    <div class="fig-lottie" data-src="./lottie/kiosk-and-assessment-apps-1.json" data-w="640" data-h="320" role="img" aria-label="Starting an assessment session: the app switcher, Home, notifications and other apps all going locked"><svg viewBox='0 0 640 320' width='640' height='320' class='poster' aria-hidden='true' xmlns='http://www.w3.org/2000/svg'><rect x='320.0' y='44.0' width='280.0' height='40.0' rx='8' fill='#161822' stroke='#2c3040' stroke-width='1.2'/><rect x='320.0' y='92.0' width='280.0' height='40.0' rx='8' fill='#161822' stroke='#2c3040' stroke-width='1.2'/><rect x='320.0' y='140.0' width='280.0' height='40.0' rx='8' fill='#161822' stroke='#2c3040' stroke-width='1.2'/><rect x='320.0' y='188.0' width='280.0' height='40.0' rx='8' fill='#161822' stroke='#2c3040' stroke-width='1.2'/><rect x='40.0' y='118.0' width='216.0' height='56.0' rx='8' fill='#1b2440' stroke='#8ab4ff' stroke-width='1.2'/><line x1='260.0' y1='146.0' x2='311.2' y2='68.2' stroke='#7b8496' stroke-width='1.5'/><polygon points='314.0,64.0 312.9,74.0 305.2,69.0' fill='#7b8496'/><rect x='320.0' y='44.0' width='280.0' height='40.0' rx='8' fill='#12241c' stroke='#86e0a6' stroke-width='1.2'/><line x1='260.0' y1='146.0' x2='309.8' y2='114.7' stroke='#7b8496' stroke-width='1.5'/><polygon points='314.0,112.0 308.8,120.7 303.9,112.9' fill='#7b8496'/><rect x='320.0' y='92.0' width='280.0' height='40.0' rx='8' fill='#12241c' stroke='#86e0a6' stroke-width='1.2'/><line x1='260.0' y1='146.0' x2='309.2' y2='158.8' stroke='#7b8496' stroke-width='1.5'/><polygon points='314.0,160.0 304.1,162.2 306.4,153.3' fill='#7b8496'/><rect x='320.0' y='140.0' width='280.0' height='40.0' rx='8' fill='#12241c' stroke='#86e0a6' stroke-width='1.2'/><line x1='260.0' y1='146.0' x2='310.7' y2='204.2' stroke='#7b8496' stroke-width='1.5'/><polygon points='314.0,208.0 304.6,204.2 311.6,198.2' fill='#7b8496'/><rect x='320.0' y='188.0' width='280.0' height='40.0' rx='8' fill='#12241c' stroke='#86e0a6' stroke-width='1.2'/></svg><div class='fig-labels' aria-hidden='true'><span class='fig-label' data-i='0' style='left:3.125%;top:6.250%;font-size:1.8750cqw;color:#aab2c4;--a1:1.00;transform:translate(0,calc(-100% + .24em))'>Assessment session</span><span class='fig-label' data-i='1' style='left:52.500%;top:21.562%;font-size:2.1875cqw;color:#f4f6fb;--a1:1.00;transform:translate(0,calc(-100% + .24em))'>App switcher</span><span class='fig-label' data-i='2' style='left:52.500%;top:36.562%;font-size:2.1875cqw;color:#f4f6fb;--a1:1.00;transform:translate(0,calc(-100% + .24em))'>Home button</span><span class='fig-label' data-i='3' style='left:52.500%;top:51.562%;font-size:2.1875cqw;color:#f4f6fb;--a1:1.00;transform:translate(0,calc(-100% + .24em))'>Notifications</span><span class='fig-label' data-i='4' style='left:52.500%;top:66.562%;font-size:2.1875cqw;color:#f4f6fb;--a1:1.00;transform:translate(0,calc(-100% + .24em))'>Other apps</span><span class='fig-label' data-i='5' style='left:8.750%;top:47.500%;font-size:2.3438cqw;color:#8ab4ff;--a1:0.00;transform:translate(0,calc(-100% + .24em))' data-alpha='0:100 1:100 2:100 3:100 4:100 5:100 6:100 7:100 8:100 9:100 10:100 11:100 12:100 13:100 14:100 15:100 16:100 17:100 18:100 19:100 20:100 21:100 22:100 23:100 24:100 25:100 26:100 27:100 28:100 29:100 30:100 31:100 32:100 33:100 34:100 35:100 36:100 37:100 38:100 39:100 40:100 41:100 42:100 43:100 44:100 45:100 46:100 47:100 48:100 49:100 50:100 51:100 52:100 53:100 54:100 55:100 56:100 57:100 58:100 59:100 60:100 61:100 62:100 63:100 64:100 65:100 66:100 67:100 68:100 69:100 70:100 71:100 72:100 73:100 74:100 75:100 76:100 77:100 78:100 79:100 80:100 81:100 82:100 83:100 84:100 85:100 86:100 87:85 88:15 89:0 90:0 91:0 92:0 93:0 94:0 95:0 96:0 97:0 98:0 99:0 100:0 101:0 102:0 103:0 104:0 105:0 106:0 107:0 108:0 109:0 110:0 111:0 112:0 113:0 114:0 115:0 116:0 117:0 118:0 119:0 120:0'>Start session</span><span class='fig-label' data-i='6' style='left:8.750%;top:47.500%;font-size:2.3438cqw;color:#86e0a6;--a1:1.00;transform:translate(0,calc(-100% + .24em))' data-alpha='0:0 1:0 2:0 3:0 4:0 5:0 6:0 7:0 8:0 9:0 10:0 11:0 12:0 13:0 14:0 15:0 16:0 17:0 18:0 19:0 20:0 21:0 22:0 23:0 24:0 25:0 26:0 27:0 28:0 29:0 30:0 31:0 32:0 33:0 34:0 35:0 36:0 37:0 38:0 39:0 40:0 41:0 42:0 43:0 44:0 45:0 46:0 47:0 48:0 49:0 50:0 51:0 52:0 53:0 54:0 55:0 56:0 57:0 58:0 59:0 60:0 61:0 62:0 63:0 64:0 65:0 66:0 67:0 68:0 69:0 70:0 71:0 72:0 73:0 74:0 75:0 76:0 77:0 78:0 79:0 80:0 81:0 82:0 83:0 84:0 85:0 86:0 87:15 88:85 89:100 90:100 91:100 92:100 93:100 94:100 95:100 96:100 97:100 98:100 99:100 100:100 101:100 102:100 103:100 104:100 105:100 106:100 107:100 108:100 109:100 110:100 111:100 112:100 113:100 114:100 115:100 116:100 117:100 118:100 119:100 120:100'>Session running</span><span class='fig-label' data-i='7' style='left:91.250%;top:21.562%;font-size:2.0312cqw;color:#aab2c4;--a1:0.00;transform:translate(-100%,calc(-100% + .24em))' data-alpha='0:100 1:100 2:100 3:100 4:100 5:100 6:100 7:100 8:100 9:100 10:100 11:100 12:100 13:100 14:100 15:100 16:100 17:100 18:100 19:100 20:100 21:100 22:100 23:85 24:15 25:0 26:0 27:0 28:0 29:0 30:0 31:0 32:0 33:0 34:0 35:0 36:0 37:0 38:0 39:0 40:0 41:0 42:0 43:0 44:0 45:0 46:0 47:0 48:0 49:0 50:0 51:0 52:0 53:0 54:0 55:0 56:0 57:0 58:0 59:0 60:0 61:0 62:0 63:0 64:0 65:0 66:0 67:0 68:0 69:0 70:0 71:0 72:0 73:0 74:0 75:0 76:0 77:0 78:0 79:0 80:0 81:0 82:0 83:0 84:0 85:0 86:0 87:0 88:0 89:0 90:0 91:0 92:0 93:0 94:0 95:0 96:0 97:0 98:0 99:0 100:0 101:0 102:0 103:0 104:0 105:0 106:0 107:0 108:0 109:0 110:0 111:0 112:0 113:0 114:0 115:0 116:0 117:0 118:0 119:0 120:0'>open</span><span class='fig-label' data-i='8' style='left:91.250%;top:21.562%;font-size:2.0312cqw;color:#86e0a6;--a1:1.00;transform:translate(-100%,calc(-100% + .24em))' data-alpha='0:0 1:0 2:0 3:0 4:0 5:0 6:0 7:0 8:0 9:0 10:0 11:0 12:0 13:0 14:0 15:0 16:0 17:0 18:0 19:0 20:0 21:0 22:0 23:15 24:85 25:100 26:100 27:100 28:100 29:100 30:100 31:100 32:100 33:100 34:100 35:100 36:100 37:100 38:100 39:100 40:100 41:100 42:100 43:100 44:100 45:100 46:100 47:100 48:100 49:100 50:100 51:100 52:100 53:100 54:100 55:100 56:100 57:100 58:100 59:100 60:100 61:100 62:100 63:100 64:100 65:100 66:100 67:100 68:100 69:100 70:100 71:100 72:100 73:100 74:100 75:100 76:100 77:100 78:100 79:100 80:100 81:100 82:100 83:100 84:100 85:100 86:100 87:100 88:100 89:100 90:100 91:100 92:100 93:100 94:100 95:100 96:100 97:100 98:100 99:100 100:100 101:100 102:100 103:100 104:100 105:100 106:100 107:100 108:100 109:100 110:100 111:100 112:100 113:100 114:100 115:100 116:100 117:100 118:100 119:100 120:100'>locked</span><span class='fig-label' data-i='9' style='left:91.250%;top:36.562%;font-size:2.0312cqw;color:#aab2c4;--a1:0.00;transform:translate(-100%,calc(-100% + .24em))' data-alpha='0:100 1:100 2:100 3:100 4:100 5:100 6:100 7:100 8:100 9:100 10:100 11:100 12:100 13:100 14:100 15:100 16:100 17:100 18:100 19:100 20:100 21:100 22:100 23:100 24:100 25:100 26:100 27:100 28:100 29:100 30:100 31:100 32:100 33:100 34:100 35:100 36:100 37:100 38:100 39:100 40:100 41:100 42:100 43:100 44:100 45:50 46:0 47:0 48:0 49:0 50:0 51:0 52:0 53:0 54:0 55:0 56:0 57:0 58:0 59:0 60:0 61:0 62:0 63:0 64:0 65:0 66:0 67:0 68:0 69:0 70:0 71:0 72:0 73:0 74:0 75:0 76:0 77:0 78:0 79:0 80:0 81:0 82:0 83:0 84:0 85:0 86:0 87:0 88:0 89:0 90:0 91:0 92:0 93:0 94:0 95:0 96:0 97:0 98:0 99:0 100:0 101:0 102:0 103:0 104:0 105:0 106:0 107:0 108:0 109:0 110:0 111:0 112:0 113:0 114:0 115:0 116:0 117:0 118:0 119:0 120:0'>open</span><span class='fig-label' data-i='10' style='left:91.250%;top:36.562%;font-size:2.0312cqw;color:#86e0a6;--a1:1.00;transform:translate(-100%,calc(-100% + .24em))' data-alpha='0:0 1:0 2:0 3:0 4:0 5:0 6:0 7:0 8:0 9:0 10:0 11:0 12:0 13:0 14:0 15:0 16:0 17:0 18:0 19:0 20:0 21:0 22:0 23:0 24:0 25:0 26:0 27:0 28:0 29:0 30:0 31:0 32:0 33:0 34:0 35:0 36:0 37:0 38:0 39:0 40:0 41:0 42:0 43:0 44:0 45:50 46:100 47:100 48:100 49:100 50:100 51:100 52:100 53:100 54:100 55:100 56:100 57:100 58:100 59:100 60:100 61:100 62:100 63:100 64:100 65:100 66:100 67:100 68:100 69:100 70:100 71:100 72:100 73:100 74:100 75:100 76:100 77:100 78:100 79:100 80:100 81:100 82:100 83:100 84:100 85:100 86:100 87:100 88:100 89:100 90:100 91:100 92:100 93:100 94:100 95:100 96:100 97:100 98:100 99:100 100:100 101:100 102:100 103:100 104:100 105:100 106:100 107:100 108:100 109:100 110:100 111:100 112:100 113:100 114:100 115:100 116:100 117:100 118:100 119:100 120:100'>locked</span><span class='fig-label' data-i='11' style='left:91.250%;top:51.562%;font-size:2.0312cqw;color:#aab2c4;--a1:0.00;transform:translate(-100%,calc(-100% + .24em))' data-alpha='0:100 1:100 2:100 3:100 4:100 5:100 6:100 7:100 8:100 9:100 10:100 11:100 12:100 13:100 14:100 15:100 16:100 17:100 18:100 19:100 20:100 21:100 22:100 23:100 24:100 25:100 26:100 27:100 28:100 29:100 30:100 31:100 32:100 33:100 34:100 35:100 36:100 37:100 38:100 39:100 40:100 41:100 42:100 43:100 44:100 45:100 46:100 47:100 48:100 49:100 50:100 51:100 52:100 53:100 54:100 55:100 56:100 57:100 58:100 59:100 60:100 61:100 62:100 63:100 64:100 65:100 66:85 67:15 68:0 69:0 70:0 71:0 72:0 73:0 74:0 75:0 76:0 77:0 78:0 79:0 80:0 81:0 82:0 83:0 84:0 85:0 86:0 87:0 88:0 89:0 90:0 91:0 92:0 93:0 94:0 95:0 96:0 97:0 98:0 99:0 100:0 101:0 102:0 103:0 104:0 105:0 106:0 107:0 108:0 109:0 110:0 111:0 112:0 113:0 114:0 115:0 116:0 117:0 118:0 119:0 120:0'>open</span><span class='fig-label' data-i='12' style='left:91.250%;top:51.562%;font-size:2.0312cqw;color:#86e0a6;--a1:1.00;transform:translate(-100%,calc(-100% + .24em))' data-alpha='0:0 1:0 2:0 3:0 4:0 5:0 6:0 7:0 8:0 9:0 10:0 11:0 12:0 13:0 14:0 15:0 16:0 17:0 18:0 19:0 20:0 21:0 22:0 23:0 24:0 25:0 26:0 27:0 28:0 29:0 30:0 31:0 32:0 33:0 34:0 35:0 36:0 37:0 38:0 39:0 40:0 41:0 42:0 43:0 44:0 45:0 46:0 47:0 48:0 49:0 50:0 51:0 52:0 53:0 54:0 55:0 56:0 57:0 58:0 59:0 60:0 61:0 62:0 63:0 64:0 65:0 66:15 67:85 68:100 69:100 70:100 71:100 72:100 73:100 74:100 75:100 76:100 77:100 78:100 79:100 80:100 81:100 82:100 83:100 84:100 85:100 86:100 87:100 88:100 89:100 90:100 91:100 92:100 93:100 94:100 95:100 96:100 97:100 98:100 99:100 100:100 101:100 102:100 103:100 104:100 105:100 106:100 107:100 108:100 109:100 110:100 111:100 112:100 113:100 114:100 115:100 116:100 117:100 118:100 119:100 120:100'>locked</span><span class='fig-label' data-i='13' style='left:91.250%;top:66.562%;font-size:2.0312cqw;color:#aab2c4;--a1:0.00;transform:translate(-100%,calc(-100% + .24em))' data-alpha='0:100 1:100 2:100 3:100 4:100 5:100 6:100 7:100 8:100 9:100 10:100 11:100 12:100 13:100 14:100 15:100 16:100 17:100 18:100 19:100 20:100 21:100 22:100 23:100 24:100 25:100 26:100 27:100 28:100 29:100 30:100 31:100 32:100 33:100 34:100 35:100 36:100 37:100 38:100 39:100 40:100 41:100 42:100 43:100 44:100 45:100 46:100 47:100 48:100 49:100 50:100 51:100 52:100 53:100 54:100 55:100 56:100 57:100 58:100 59:100 60:100 61:100 62:100 63:100 64:100 65:100 66:100 67:100 68:100 69:100 70:100 71:100 72:100 73:100 74:100 75:100 76:100 77:100 78:100 79:100 80:100 81:100 82:100 83:100 84:100 85:100 86:100 87:85 88:15 89:0 90:0 91:0 92:0 93:0 94:0 95:0 96:0 97:0 98:0 99:0 100:0 101:0 102:0 103:0 104:0 105:0 106:0 107:0 108:0 109:0 110:0 111:0 112:0 113:0 114:0 115:0 116:0 117:0 118:0 119:0 120:0'>open</span><span class='fig-label' data-i='14' style='left:91.250%;top:66.562%;font-size:2.0312cqw;color:#86e0a6;--a1:1.00;transform:translate(-100%,calc(-100% + .24em))' data-alpha='0:0 1:0 2:0 3:0 4:0 5:0 6:0 7:0 8:0 9:0 10:0 11:0 12:0 13:0 14:0 15:0 16:0 17:0 18:0 19:0 20:0 21:0 22:0 23:0 24:0 25:0 26:0 27:0 28:0 29:0 30:0 31:0 32:0 33:0 34:0 35:0 36:0 37:0 38:0 39:0 40:0 41:0 42:0 43:0 44:0 45:0 46:0 47:0 48:0 49:0 50:0 51:0 52:0 53:0 54:0 55:0 56:0 57:0 58:0 59:0 60:0 61:0 62:0 63:0 64:0 65:0 66:0 67:0 68:0 69:0 70:0 71:0 72:0 73:0 74:0 75:0 76:0 77:0 78:0 79:0 80:0 81:0 82:0 83:0 84:0 85:0 86:0 87:15 88:85 89:100 90:100 91:100 92:100 93:100 94:100 95:100 96:100 97:100 98:100 99:100 100:100 101:100 102:100 103:100 104:100 105:100 106:100 107:100 108:100 109:100 110:100 111:100 112:100 113:100 114:100 115:100 116:100 117:100 118:100 119:100 120:100'>locked</span></div></div>
-    <figcaption>A session starts and the four things iOS will hold go locked.</figcaption>
-  </figure>
-
-
-<p>Every team building assessment software has the same first instinct: build the lock.
-Disable the home button, block the app switcher, kill notifications, watch for screenshots,
-detect a second screen. It is a long list of interesting engineering, and almost all of it
-is either impossible or unnecessary.</p>
-
+<a class="skip" href="#main">Skip to content</a>
+<header class="top"><a class="top__name" href="../">Muhammad Ilham Rilambang</a>
+<nav aria-label="Main"><a href="../#work">Work</a><a href="../blog/">Writing</a><a href="../#path">Path</a><a href="../#contact">Contact</a></nav></header>
+<div class="progress" aria-hidden="true"></div><main id="main"><article class="post">
+<header class="post__head"><p class="post__tag">Platform rules</p><h1>Kiosk and assessment apps: what Apple will and won't let you lock</h1><p class="post__sum">You don't own the device, iOS does. What an exam app can actually lock, what Apple already enforces, and the entitlement to ask for in week one.</p><p class="post__meta">4 min read</p></header>
+<p>In a proctored exam app the exam is the easy part. The hard part is that you don't own the device. iOS does, and every restriction you want has to be one Apple has already agreed to enforce.</p>
+<p>Every team building assessment software starts with the same instinct: build the lock. Disable Home, block the app switcher, silence notifications, watch for screenshots, detect a second screen. It is a long list of interesting engineering, and almost all of it is either impossible or unnecessary.</p>
+<figure class="fig"><div class="fig__frame"><svg viewBox="0 0 720 290" role="img" aria-label="A session starts and four things iOS holds go locked: the app switcher, Home, notifications and other apps."><g class="pop" style="--t:0s"><rect x="265" y="105" width="190" height="80" rx="9" class="bx"/><text x="360" y="140" text-anchor="middle" class="tx">Your app</text><text x="360" y="160" text-anchor="middle" class="tx mut sm">assessment session</text></g><line x1="265" y1="145" x2="230" y2="60" pathLength="1" class="dr ln mut" style="--t:0.5s;--d:0.4s"/><g class="pop" style="--t:0.85s"><rect x="30" y="30" width="200" height="60" rx="9" class="bx"/><text x="116" y="65" text-anchor="middle" class="tx">App switcher</text></g><circle cx="200" cy="60" r="9" class="bb fade" style="--t:1.05s"/><circle cx="200" cy="60" r="6.5" class="fillin" style="--t:1.3s"/><text x="130" y="110" text-anchor="middle" class="fade tx mut sm" style="--t:1.3s">locked</text><line x1="265" y1="145" x2="230" y2="230" pathLength="1" class="dr ln mut" style="--t:1.05s;--d:0.4s"/><g class="pop" style="--t:1.4s"><rect x="30" y="200" width="200" height="60" rx="9" class="bx"/><text x="116" y="235" text-anchor="middle" class="tx">Home</text></g><circle cx="200" cy="230" r="9" class="bb fade" style="--t:1.6s"/><circle cx="200" cy="230" r="6.5" class="fillin" style="--t:1.85s"/><text x="130" y="280" text-anchor="middle" class="fade tx mut sm" style="--t:1.85s">locked</text><line x1="455" y1="145" x2="490" y2="60" pathLength="1" class="dr ln mut" style="--t:1.6s;--d:0.4s"/><g class="pop" style="--t:1.9500000000000002s"><rect x="490" y="30" width="200" height="60" rx="9" class="bx"/><text x="576" y="65" text-anchor="middle" class="tx">Notifications</text></g><circle cx="660" cy="60" r="9" class="bb fade" style="--t:2.1500000000000004s"/><circle cx="660" cy="60" r="6.5" class="fillin" style="--t:2.4000000000000004s"/><text x="590" y="110" text-anchor="middle" class="fade tx mut sm" style="--t:2.4000000000000004s">locked</text><line x1="455" y1="145" x2="490" y2="230" pathLength="1" class="dr ln mut" style="--t:2.1500000000000004s;--d:0.4s"/><g class="pop" style="--t:2.5000000000000004s"><rect x="490" y="200" width="200" height="60" rx="9" class="bx"/><text x="576" y="235" text-anchor="middle" class="tx">Other apps</text></g><circle cx="660" cy="230" r="9" class="bb fade" style="--t:2.7s"/><circle cx="660" cy="230" r="6.5" class="fillin" style="--t:2.95s"/><text x="590" y="280" text-anchor="middle" class="fade tx mut sm" style="--t:2.95s">locked</text></svg></div><figcaption><span>A session starts and four things iOS holds go locked.</span><button type="button" class="fig__replay" hidden>Replay</button></figcaption></figure>
 <h2>Two questions decide everything</h2>
-
-<p>Before writing a line of anti-cheat, answer these:</p>
-
-<ol>
-  <li><strong>Is the device supervised?</strong> A supervised device is enrolled and managed
-  by an organisation — the school or the testing centre owns it and can configure it
-  centrally. A student's own iPad isn't supervised and never will be.</li>
-  <li><strong>Does the OS already have a mode for this?</strong> If it does, your job is to
-  turn it on correctly, not to reimplement it worse.</li>
-</ol>
-
-<p>Those two questions divide the problem cleanly, and they're the reason a kiosk app is a
-smaller engineering project than it looks.</p>
-
-
-  <figure class="fig">
-    <div class="fig-lottie" data-src="./lottie/kiosk-and-assessment-apps-2.json" data-w="640" data-h="240" role="img" aria-label="The assessment entitlement: request, review, session"><svg viewBox='0 0 640 240' width='640' height='240' class='poster' aria-hidden='true' xmlns='http://www.w3.org/2000/svg'><rect x='20.0' y='66.0' width='150.0' height='108.0' rx='10' fill='#161822' stroke='#2c3040' stroke-width='1.2'/><rect x='20.0' y='66.0' width='150.0' height='108.0' rx='10' fill='#1b2440' stroke='#8ab4ff' stroke-width='1.2'/><rect x='245.0' y='66.0' width='150.0' height='108.0' rx='10' fill='#161822' stroke='#2c3040' stroke-width='1.2'/><rect x='245.0' y='66.0' width='150.0' height='108.0' rx='10' fill='#1b2440' stroke='#8ab4ff' stroke-width='1.2'/><rect x='470.0' y='66.0' width='150.0' height='108.0' rx='10' fill='#161822' stroke='#2c3040' stroke-width='1.2'/><rect x='470.0' y='66.0' width='150.0' height='108.0' rx='10' fill='#1b2440' stroke='#8ab4ff' stroke-width='1.2'/><line x1='175.0' y1='120.0' x2='235.0' y2='120.0' stroke='#7b8496' stroke-width='1.5'/><polygon points='240.0,120.0 231.0,124.6 231.0,115.4' fill='#7b8496'/><line x1='400.0' y1='120.0' x2='460.0' y2='120.0' stroke='#7b8496' stroke-width='1.5'/><polygon points='465.0,120.0 456.0,124.6 456.0,115.4' fill='#7b8496'/></svg><div class='fig-labels' aria-hidden='true'><span class='fig-label' data-i='0' style='left:14.844%;top:52.500%;font-size:2.5000cqw;color:#f4f6fb;--a1:1.00;transform:translate(-50%,calc(-100% + .24em))'>Entitlement</span><span class='fig-label' data-i='1' style='left:50.000%;top:52.500%;font-size:2.5000cqw;color:#f4f6fb;--a1:1.00;transform:translate(-50%,calc(-100% + .24em))'>Apple review</span><span class='fig-label' data-i='2' style='left:85.156%;top:52.500%;font-size:2.5000cqw;color:#f4f6fb;--a1:1.00;transform:translate(-50%,calc(-100% + .24em))'>Session</span></div></div>
-    <figcaption>The entitlement is the first thing to ask for, and it is a request.</figcaption>
-  </figure>
+<p>Before you write any anti-cheat, answer these:</p>
+<ul><li><strong>Is the device supervised?</strong> A supervised device is enrolled and managed by an organisation, so a school or testing centre owns it and can configure it centrally. A student's own iPad is not supervised and never will be.</li><li><strong>Does the OS already have a mode for this?</strong> If it does, your job is to turn it on correctly, not to reimplement it worse.</li></ul>
+<p>Those two questions split the problem cleanly, which is why a kiosk app is a smaller project than it looks.</p>
 <h2>What Apple actually provides</h2>
-
-<p>For assessment software specifically, Apple ships the <strong>Automatic Assessment
-Configuration</strong> framework. Its own summary is the clearest possible statement of
-scope: <em>"Enter single-app mode and prevent students from accessing specific system
-features while taking an exam."</em></p>
-
-<p>Three properties of it are worth knowing before you plan anything:</p>
-
-<ul>
-  <li><strong>It needs no device management.</strong> Apple's own support documentation says
-  securing an iPad or Mac for testing with a supported app "requires no additional setup or
-  management, such as a device management service." An app that adopts this framework locks
-  the device into itself automatically. That is the difference between shipping an exam mode
-  to every student and shipping it only to schools with an MDM.</li>
-  <li><strong>It is the app's decision, not the tester's.</strong> The app enables it, and
-  while it's active the user can't switch to another app. There is no setup flow the exam
-  taker can skip, because there is nothing for them to do.</li>
-  <li><strong>Manual modes win, and that's a trap.</strong> If Single App Mode or Guided
-  Access is already enabled on the device, "that feature supersedes assessment mode
-  restrictions." A school that pre-locked the iPads by hand isn't getting your app's
-  configuration — they're getting their own, and it may be stricter or looser than you
-  assume.</li>
-</ul>
-
-<p><strong>And it's gated by an entitlement you have to ask Apple for.</strong> The framework
-requires <code>com.apple.developer.automatic-assessment-configuration</code> — "a Boolean value
-that indicates whether an app may create an assessment session" — and Apple's documentation is
-explicit that you "must first get permission to use it" by submitting a request form. Without
-it the assessment session doesn't begin and the app is just an app. That is lead time on a
-product schedule, and it's the one item here that no amount of engineering removes. Ask for it
-in week one.</p>
-
-<p>Assessment mode arrived in iOS and iPadOS 13.4, and in macOS 10.15.4 — the same framework
-answering the same product question on two platforms, rather than two separate anti-cheat
-implementations.</p>
-
-<h2>The part that's a product decision, not a technical one</h2>
-
-<p>Once you know what the OS will do, the remaining work is a policy conversation dressed as
-engineering:</p>
-
-<p><strong>What do you do with a violation?</strong> A framework that prevents an action gives
-you a clean story. A framework that merely observes one doesn't. If you can't prevent it,
-your options are to warn, to log, or to ignore — and each of those is a different product.
-Discovery after the exam isn't prevention, and telling a candidate they failed because of
-telemetry they can't see isn't a defensible process.</p>
-
-<p><strong>What do you do when the lock fails?</strong> Exam mode is a state the app enters,
-which means it can also fail to enter — low battery, a crash, a force-quit, a device the OS
-decided to restart. The honest design assumes the lock will break at least once, and decides
-in advance what the exam does when it notices. An exam that silently continues in an unlocked
-state is worse than one that visibly halts.</p>
-
-<p><strong>Who is the fallback for?</strong> Assessment mode covers the app. It doesn't cover
-a second phone on the desk, a written answer sheet, or a person helping. Every proctoring
-system has a human layer eventually; deciding where your layer ends is cheaper than
-discovering it during an incident.</p>
-
-<h2>What I'd tell anyone starting this</h2>
-
-<p>Read Apple's platform capabilities before designing the countermeasure, because the
-countermeasures you invent yourself are the ones that get rejected, break on OS updates, or
-quietly stop working when a device is configured differently than you assumed. The interesting
-engineering in a proctored exam app isn't the lock — it's the exam runtime: offline
-resilience, autosave that survives a crash, a submission that's idempotent, and a state
-machine that never loses a candidate's work. The lock is a configuration. Treat it like one,
-and spend the effort where the candidate actually feels it.</p>
-    <div class="sources">
-      <h2>Sources</h2>
-      <ul>
-      <li><a href="https://support.apple.com/101976" target="_blank" rel="noreferrer">Set up iPad and Mac to give tests and assessments — Apple Support</a></li>
-      <li><a href="https://developer.apple.com/documentation/automaticassessmentconfiguration" target="_blank" rel="noreferrer">Automatic Assessment Configuration — Apple Developer Documentation</a></li>
-      <li><a href="https://developer.apple.com/documentation/bundleresources/entitlements/com.apple.developer.automatic-assessment-configuration" target="_blank" rel="noreferrer">com.apple.developer.automatic-assessment-configuration — entitlement and request form</a></li>
-      <li><a href="https://developer.apple.com/videos/play/wwdc2017/716/" target="_blank" rel="noreferrer">iOS Configuration and APIs for Kiosk and Assessment Apps — WWDC17 session 716</a></li>
-      </ul>
-    </div>
-  </article>
-  <p class="foot">Written from experience shipping iOS apps. No client names, no internal details, no unpublished numbers — everything citable here is public.</p>
-  <nav class="pager">
-    <span></span>
-    <a href="./splitting-an-app-into-local-packages.html">Splitting an app into local Swift packages: what breaks first →</a>
-  </nav>
-
-</div>
+<p>For assessment software, Apple ships the Automatic Assessment Configuration framework. Its own summary is the clearest statement of scope: &quot;Enter single-app mode and prevent students from accessing specific system features while taking an exam.&quot;</p>
+<p>Three properties are worth knowing before you plan anything.</p>
+<ul><li><strong>It needs no device management.</strong> Apple's support documentation says that securing an iPad or Mac for testing with a supported app &quot;requires no additional setup or management, such as a device management service.&quot; An app that adopts the framework locks the device into itself. That is the difference between shipping exam mode to every student and shipping it only to schools that run an MDM.</li><li><strong>It is the app's decision, not the tester's.</strong> The app turns it on, and while it is active the user cannot switch to another app. There is no setup flow for the exam taker to skip, because there is nothing for them to do.</li><li><strong>Manual modes win, and that is a trap.</strong> If Single App Mode or Guided Access is already on, &quot;that feature supersedes assessment mode restrictions.&quot; A school that locked its iPads by hand is not getting your app's configuration. It is getting its own, which may be stricter or looser than you assume.</li></ul>
+<h2>The entitlement is lead time</h2>
+<p>The framework is gated by an entitlement you have to request: <code>com.apple.developer.automatic-assessment-configuration</code>, described as &quot;a Boolean value that indicates whether an app may create an assessment session&quot;. Apple's documentation is explicit that you &quot;must first get permission to use it&quot; by submitting a request form. Without it, the session never begins and the app is just an app.</p>
+<p>That is lead time on a product schedule, and it is the one item here that no amount of engineering removes. Ask in week one.</p>
+<figure class="fig"><div class="fig__frame"><svg viewBox="0 0 720 190" role="img" aria-label="The entitlement is a request: you ask Apple, Apple reviews, and only then can a session start."><g class="pop" style="--t:0s"><rect x="30" y="50" width="200" height="80" rx="9" class="bx"/><text x="130" y="85" text-anchor="middle" class="tx">You request</text><text x="130" y="105" text-anchor="middle" class="tx mut sm">the entitlement</text></g><line x1="230" y1="90" x2="265" y2="90" pathLength="1" class="dr ln mut" style="--t:0.5s;--d:0.3s"/><polygon points="265,90 257.8,86.5 257.8,93.5" class="hd mut" style="--t:0.755s"/><g class="pop" style="--t:0.8s"><rect x="265" y="50" width="190" height="80" rx="9" class="bx"/><text x="360" y="85" text-anchor="middle" class="tx">Apple reviews</text><text x="360" y="105" text-anchor="middle" class="tx mut sm">the request</text></g><line x1="455" y1="90" x2="490" y2="90" pathLength="1" class="dr ln mut" style="--t:1.4s;--d:0.3s"/><polygon points="490,90 482.8,86.5 482.8,93.5" class="hd mut" style="--t:1.6549999999999998s"/><g class="pop" style="--t:1.8s"><rect x="490" y="50" width="200" height="80" rx="9" class="bx ink"/><text x="590" y="85" text-anchor="middle" class="tx">A session</text><text x="590" y="105" text-anchor="middle" class="tx mut sm">can start</text></g><text x="130" y="165" text-anchor="middle" class="pop tx ink sm" style="--t:2.4s">Do this in week one</text><text x="590" y="165" text-anchor="middle" class="pop tx mut sm" style="--t:2.6s">Without it, the app is just an app</text></svg></div><figcaption><span>The entitlement is the first thing to ask for, and it is a request.</span><button type="button" class="fig__replay" hidden>Replay</button></figcaption></figure>
+<p>Assessment mode arrived in iOS and iPadOS 13.4 and macOS 10.15.4, so the same framework answers the same product question on two platforms instead of two separate anti-cheat implementations.</p>
+<h2>What is left is a product decision</h2>
+<p>Once you know what the OS will do, the remaining work is a policy conversation dressed up as engineering.</p>
+<p><strong>What do you do with a violation?</strong> A framework that prevents an action gives you a clean story. One that merely observes gives you three options: warn, log or ignore. Each is a different product. Finding out after the exam is not prevention, and telling a candidate they failed because of telemetry they cannot see is not a defensible process.</p>
+<p><strong>What do you do when the lock fails?</strong> Exam mode is a state the app enters, so it can also fail to enter: low battery, a crash, a force-quit, a restart. The honest design assumes the lock will break at least once and decides in advance what the exam does when it notices. An exam that silently carries on unlocked is worse than one that visibly stops.</p>
+<p><strong>Who is the fallback?</strong> Assessment mode covers the app. It does not cover a second phone on the desk, a written answer sheet or a person helping. Every proctoring system has a human layer eventually. Deciding where yours ends is cheaper than discovering it during an incident.</p>
+<h2>What I would tell anyone starting</h2>
+<p>Read Apple's platform capabilities before you design a countermeasure. The countermeasures you invent are the ones that get rejected, break on OS updates, or quietly stop working on a device configured differently from what you assumed.</p>
+<p>The interesting engineering in a proctored exam app is not the lock. It is the exam runtime: offline resilience, autosave that survives a crash, a submission that is idempotent, and a state machine that never loses a candidate's work. The lock is a configuration. Treat it like one, and spend your effort where the candidate actually feels it.</p>
+<aside class="sources"><h2>Sources</h2><ul><li><a href="https://support.apple.com/101976" target="_blank" rel="noreferrer">Set up iPad and Mac to give tests and assessments — Apple Support</a></li><li><a href="https://developer.apple.com/documentation/automaticassessmentconfiguration" target="_blank" rel="noreferrer">Automatic Assessment Configuration — Apple Developer Documentation</a></li><li><a href="https://developer.apple.com/documentation/bundleresources/entitlements/com.apple.developer.automatic-assessment-configuration" target="_blank" rel="noreferrer">com.apple.developer.automatic-assessment-configuration — entitlement and request form</a></li><li><a href="https://developer.apple.com/videos/play/wwdc2017/716/" target="_blank" rel="noreferrer">iOS Configuration and APIs for Kiosk and Assessment Apps — WWDC17 session 716</a></li></ul></aside>
+<p class="post__foot">Written from experience shipping iOS apps. No client names, no internal details, no unpublished numbers.</p>
+<nav class="pager" aria-label="More writing"><i></i><a href="splitting-an-app-into-local-packages.html"><span>Later</span>Splitting an app into local Swift packages: what breaks first</a></nav>
+</article></main>
+<script src="../assets/site.js" defer></script>
 </body>
 </html>

@@ -14,7 +14,7 @@ set -e
 cd "$(dirname "$0")/.."
 
 targets=""
-for d in public/blog docs/blog; do
+for d in site/posts docs/blog; do
   [ -d "$d" ] && targets="$targets $d"
 done
 if [ -z "$targets" ]; then
