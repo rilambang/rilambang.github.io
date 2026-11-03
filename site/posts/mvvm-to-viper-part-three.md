@@ -31,7 +31,7 @@ This matters more here than in most apps, because navigation is a product rule: 
 
 ## Forty-three to nineteen
 
-One package per feature, exporting the same three products under unchanged names, so not one `import` line changed anywhere. That is the only reason a 43-to-19 consolidation landed as a series of boring commits, and boring commits are the only kind that land on a product a million people depend on.
+One package per feature, exporting the same three products under unchanged names, so not one `import` line changed anywhere. That is the only reason a 43-to-19 consolidation landed as a series of boring commits, and boring commits are the only kind that land on a product people sit exams on.
 
 ::fig viper-nineteen
 
@@ -55,7 +55,7 @@ Not the architecture. The operations around it.
 
 ## Choosing today
 
-MVVM got the app to a million students. Clean made the data layer testable and the boundaries real, and cost us a module system. VIPER fixed nothing Clean had not already fixed. It made the last unowned thing, the screen, own its responsibilities, and made the architecture readable in autocomplete.
+MVVM got the app to production scale. Clean made the data layer testable and the boundaries real, and cost us a module system. VIPER fixed nothing Clean had not already fixed. It made the last unowned thing, the screen, own its responsibilities, and made the architecture readable in autocomplete.
 
 If you are choosing now: MVVM while the feature fits in one head, clean boundaries the moment a rule has to be tested without a screen, and VIPER when navigation is a product rule and not a detail. Here navigation is the product, so VIPER earned its ceremony. Most apps do not have that, and should not pay for it.
 

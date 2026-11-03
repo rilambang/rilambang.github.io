@@ -3,7 +3,7 @@ title: An audit week on a shipping exam app: fix by consequence, then fix your f
 tag: Hardening
 summary: I ranked an audit backlog by what a failure costs a student, not by how long it takes. Then some fixes broke things of their own: a debugging library still in the binary, a coverage gate that could not fail, tests that slept. What I changed, in the order I would do it again.
 ---
-The app is the one a million students sit exams on. After a long run of feature work I spent a few days on nothing but an audit backlog: a long list of small items and no new screens. This is what I fixed first, what I fixed second, and the three fixes that needed fixing.
+The app is a proctored exam client used by schools. After a long run of feature work I spent a few days on nothing but an audit backlog: a long list of small items and no new screens. This is what I fixed first, what I fixed second, and the three fixes that needed fixing.
 
 Nothing here is specific to one product. It is the shape of a hardening week on any app where a failure lands on a person who cannot retry.
 

@@ -10,7 +10,7 @@ export const ME = {
   where: 'Jakarta, Indonesia',
   email: 'rilambang@gmail.com',
   blurb:
-    'I lead iOS for Pijar Sekolah at Telkom Indonesia — the exam modules a million students sit. Mobile since 2017, three stacks, one habit: ship it and leave the team able to ship without me.',
+    'I lead iOS for Pijar Sekolah at Telkom Indonesia — the exam app for schools. Mobile since 2017, three stacks, one habit: ship it and leave the team able to ship without me.',
   links: [
     { label: 'LinkedIn', url: 'https://linkedin.com/in/muhammad-ilham-rilambang-6400837b' },
     { label: 'GitHub', url: 'https://github.com/rilambang' },
@@ -21,10 +21,10 @@ export const ME = {
 
 // four numbers, each one a claim with a receipt in WORK below
 export const FACTS = [
-  { figure: '1M+', label: 'students sat exams on modules I architected' },
-  { figure: '99.5%', label: 'crash-free sessions on Indihome Eazy after the rewrite' },
-  { figure: '25%', label: 'faster load times after leaving UIKit behind' },
-  { figure: '2017', label: 'shipping mobile in React Native, UIKit and SwiftUI' },
+  { figure: '9 yrs', label: 'shipping mobile since 2017, in React Native, UIKit and SwiftUI' },
+  { figure: '270K', label: 'total app downloads across the iOS apps I have shipped' },
+  { figure: '11K', label: 'iOS users on the busiest single day of an app I built' },
+  { figure: '100%', label: 'crash-free iOS users on the app I lead today' },
 ]
 
 export const WORK = [
@@ -33,7 +33,7 @@ export const WORK = [
     name: 'Pijar Sekolah',
     year: '2025 — now',
     role: 'Lead iOS engineer',
-    line: 'MVVM + Clean Architecture in SwiftUI, exam modules carrying a million students — and an AI-native delivery setup: agent roles, git hooks and CI gates.',
+    line: 'MVVM + Clean Architecture in SwiftUI, exam modules for school-run proctored exams — and an AI-native delivery setup: agent roles, git hooks and CI gates.',
     tags: ['SwiftUI', 'MVVM', 'Coordinator', 'AI agents'],
     store: 'https://apps.apple.com/id/app/pijar-sekolah-siswa/id6746177919',
     shots: ['pijar-1.webp', 'pijar-2.webp'],

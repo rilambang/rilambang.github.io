@@ -5,7 +5,7 @@ summary: First of three. What MVVM gets right, what the proctored exam screen's 
 ---
 The review comment that started this was one I wrote on my own diff: why does the exam view model know the network layer, the router, the answer queue and the invigilator? I had no good answer, so the next three architecture passes were spent earning one. This is part one of three.
 
-The app is a proctored exam client. A million students sit exams on it, usually on school Wi-Fi, usually with someone watching. That prices every decision differently. A failed exam is not a bad afternoon, and the modules have to keep shipping while the structure moves underneath them.
+The app is a proctored exam client. Students sit exams on it, usually on school Wi-Fi, usually with someone watching. That prices every decision differently. A failed exam is not a bad afternoon, and the modules have to keep shipping while the structure moves underneath them.
 
 ## MVVM is the right answer at the size you meet it
 

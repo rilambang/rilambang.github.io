@@ -28,7 +28,7 @@
 <nav aria-label="Main"><a href="../#work">Work</a><a href="../blog/">Writing</a><a href="../#path">Path</a><a href="../#contact">Contact</a></nav></header>
 <div class="progress" aria-hidden="true"></div><main id="main"><article class="post">
 <header class="post__head"><p class="post__tag">Hardening</p><h1>An audit week on a shipping exam app: fix by consequence, then fix your fixes</h1><p class="post__sum">I ranked an audit backlog by what a failure costs a student, not by how long it takes. Then some fixes broke things of their own: a debugging library still in the binary, a coverage gate that could not fail, tests that slept. What I changed, in the order I would do it again.</p><p class="post__meta">5 min read</p></header>
-<p>The app is the one a million students sit exams on. After a long run of feature work I spent a few days on nothing but an audit backlog: a long list of small items and no new screens. This is what I fixed first, what I fixed second, and the three fixes that needed fixing.</p>
+<p>The app is a proctored exam client used by schools. After a long run of feature work I spent a few days on nothing but an audit backlog: a long list of small items and no new screens. This is what I fixed first, what I fixed second, and the three fixes that needed fixing.</p>
 <p>Nothing here is specific to one product. It is the shape of a hardening week on any app where a failure lands on a person who cannot retry.</p>
 <h2>Rank by consequence, not by effort</h2>
 <p>The backlog arrived in the order people had noticed things. Effort is the wrong sort key, because the cheap items are usually the untidy ones. I sorted by one question instead: what does this cost the person holding the phone?</p>
