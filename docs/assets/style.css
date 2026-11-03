@@ -3,10 +3,10 @@
    The answer sheet survives as the motif: the hero and every figure are drawn on it. */
 :root {
   --sheet: #1a0a10; --pencil: #fcf0f3; --lead: #d6b9c1; --rule: rgba(255, 255, 255, 0.15); --ink: #ff8aa3;
-  --edge: rgba(255, 255, 255, 0.22); --box: rgba(255, 255, 255, 0.07); --panel: rgba(255, 255, 255, 0.08);
+  --edge: rgba(255, 255, 255, 0.14); --box: rgba(255, 255, 255, 0.07); --panel: rgba(255, 255, 255, 0.08);
   --glass: linear-gradient(160deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.05) 48%, rgba(255, 255, 255, 0.1));
   --glass-shadow: 0 28px 60px -32px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.34), inset 0 -1px 0 rgba(255, 255, 255, 0.06);
-  --field-a: #93213f; --field-b: #5e1230; --field-c: #7a1c3a; --field-top: #260b15; --field-bot: #12060a;
+  --field-a: #5c1428; --field-b: #3a0b1d; --field-c: #4a1124; --field-top: #170710; --field-bot: #0a0306;
   --display: "Bricolage Grotesque", system-ui, sans-serif;
   --text: "Source Serif 4", Georgia, serif;
   --mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
@@ -258,10 +258,10 @@ pre { border: 1px solid var(--edge); }
 
 /* ── more glass: colour behind the panels, clearer panels in front ── */
 :root {
-  --orb1: #8e1236; --orb2: #a82a52; --orb3: #6e0f3f;
-  --glass: linear-gradient(160deg, rgba(255, 255, 255, 0.1), rgba(0, 0, 0, 0.22) 46%, rgba(255, 255, 255, 0.05));
-  --edge: rgba(255, 255, 255, 0.22);
-  --glass-shadow: 0 26px 56px -28px rgba(0, 0, 0, 0.75), inset 0 1.5px 0 rgba(255, 255, 255, 0.35), inset 0 -1px 0 rgba(255, 255, 255, 0.12), inset 0 0 22px rgba(255, 255, 255, 0.05);
+  --orb1: #5c0c24; --orb2: #6e1836; --orb3: #45082a;
+  --glass: linear-gradient(160deg, rgba(255, 255, 255, 0.05), rgba(0, 0, 0, 0.4) 46%, rgba(255, 255, 255, 0.025));
+  --edge: rgba(255, 255, 255, 0.14);
+  --glass-shadow: 0 26px 56px -28px rgba(0, 0, 0, 0.75), inset 0 1.5px 0 rgba(255, 255, 255, 0.2), inset 0 -1px 0 rgba(255, 255, 255, 0.12), inset 0 0 22px rgba(255, 255, 255, 0.05);
 }
 @media (prefers-color-scheme: light) {
   :root {
@@ -282,7 +282,7 @@ html::after { width: 46vmax; height: 46vmax; left: 22vw; top: -14vh; background:
 @keyframes drift2 { to { transform: translate3d(22vmax, -18vh, 0) scale(1.12); } }
 
 .top, .fig__frame, .facts dl, .work, .posts, .list, .contact, .pager a {
-  -webkit-backdrop-filter: blur(20px) saturate(170%) brightness(0.85); backdrop-filter: blur(20px) saturate(170%) brightness(0.85);
+  -webkit-backdrop-filter: blur(20px) saturate(150%) brightness(0.7); backdrop-filter: blur(20px) saturate(150%) brightness(0.7);
 }
 @media (prefers-color-scheme: light) {
   .top, .fig__frame, .facts dl, .work, .posts, .list, .contact, .pager a { -webkit-backdrop-filter: blur(20px) saturate(200%) brightness(1.08); backdrop-filter: blur(20px) saturate(200%) brightness(1.08); }
