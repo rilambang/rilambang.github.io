@@ -293,3 +293,13 @@ html::after { width: 46vmax; height: 46vmax; left: 22vw; top: -14vh; background:
   html::before { width: 96vw; height: 96vw; top: 62vh; left: -34vw; }
   html::after { width: 80vw; height: 80vw; top: 4vh; left: 18vw; }
 }
+
+/* dark: calm the glass so glows never flare through it (Safari renders them hotter) */
+.top { background: rgba(22, 7, 13, 0.78); -webkit-backdrop-filter: blur(18px) saturate(100%) brightness(0.55); backdrop-filter: blur(18px) saturate(100%) brightness(0.55); }
+.fig__frame, .facts dl, .work, .posts, .list, .contact, .pager a { -webkit-backdrop-filter: blur(20px) saturate(100%) brightness(0.5); backdrop-filter: blur(20px) saturate(100%) brightness(0.5); }
+body::after, html::before, html::after { opacity: 0.35; }
+@media (prefers-color-scheme: light) {
+  .top { background: var(--glass); }
+  .top, .fig__frame, .facts dl, .work, .posts, .list, .contact, .pager a { -webkit-backdrop-filter: blur(20px) saturate(200%) brightness(1.08); backdrop-filter: blur(20px) saturate(200%) brightness(1.08); }
+  body::after, html::before, html::after { opacity: 0.8; }
+}
