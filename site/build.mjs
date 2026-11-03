@@ -89,8 +89,8 @@ const page = ({ title, desc, url, depth, body, type = 'website', ld = '' }) => {
 <meta name="description" content="${esc(desc)}">
 <meta name="author" content="${esc(ME.name)}">
 <link rel="canonical" href="${url}">
-<meta name="theme-color" content="#f4f5f7" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#16171a" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#f9eff2" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#260b15" media="(prefers-color-scheme: dark)">
 <meta property="og:type" content="${type}">
 <meta property="og:title" content="${esc(title)}">
 <meta property="og:description" content="${esc(desc)}">
@@ -99,7 +99,7 @@ const page = ({ title, desc, url, depth, body, type = 'website', ld = '' }) => {
 <meta name="twitter:card" content="summary_large_image">
 <link rel="me" href="https://github.com/rilambang"><link rel="me" href="https://x.com/rilambang">
 <link rel="alternate" type="application/rss+xml" title="Writing" href="${SITE}/feed.xml">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%231e2024'/><circle cx='16' cy='16' r='7' fill='%23f4f5f7'/></svg>">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%237a1c3a'/><circle cx='16' cy='16' r='7' fill='%23ffd9e2'/></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="${FONTS}">
 <link rel="stylesheet" href="${b}assets/style.css">
