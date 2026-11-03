@@ -10,7 +10,7 @@ export const ME = {
   where: 'Jakarta, Indonesia',
   email: 'rilambang@gmail.com',
   blurb:
-    'I lead iOS for Pijar Sekolah at Telkom Indonesia — the exam app for schools. Mobile since 2017, three stacks, one habit: ship it and leave the team able to ship without me.',
+    'I lead iOS for Pijar at Telkom Indonesia — the exam app for schools. Mobile since 2017, three stacks, one habit: ship it and leave the team able to ship without me.',
   links: [
     { label: 'LinkedIn', url: 'https://linkedin.com/in/muhammad-ilham-rilambang-6400837b' },
     { label: 'GitHub', url: 'https://github.com/rilambang' },
@@ -30,7 +30,7 @@ export const FACTS = [
 export const WORK = [
   {
     slug: 'pijar',
-    name: 'Pijar Sekolah',
+    name: 'Pijar',
     year: '2025 — now',
     role: 'Lead iOS engineer',
     line: 'MVVM + Clean Architecture in SwiftUI, exam modules for school-run proctored exams — and an AI-native delivery setup: agent roles, git hooks and CI gates.',
@@ -72,7 +72,7 @@ export const WORK = [
 ]
 
 export const ROLES = [
-  { role: 'Lead iOS Engineer — Pijar Sekolah', span: '2025 — now', where: 'Telkom Indonesia' },
+  { role: 'Lead iOS Engineer — Pijar', span: '2025 — now', where: 'Telkom Indonesia' },
   { role: 'iOS Engineer — Indihome Eazy, Antares Eazy', span: '2022 — 2025', where: 'Telkom Indonesia' },
   { role: 'iOS Engineer — Agree Mart', span: '2021 — 2022', where: 'Agree' },
   { role: 'Technical Lead — Agree Platform', span: '2018 — 2021', where: 'Agree' },

@@ -141,7 +141,7 @@ const work = (w) => `<article class="work"><div class="work__text"><h3>${esc(w.n
 
 const home = page({
   title: `${ME.name}, iOS engineer`,
-  desc: `${ME.name}, iOS engineer at Telkom Indonesia. Nine years of mobile across React Native, UIKit and SwiftUI. Leads iOS for Pijar Sekolah, a proctored exam app for schools.`,
+  desc: `${ME.name}, iOS engineer at Telkom Indonesia. Nine years of mobile across React Native, UIKit and SwiftUI. Leads iOS for Pijar, a proctored exam app for schools.`,
   url: `${SITE}/`, depth: 0,
   ld: `<script type="application/ld+json">${JSON.stringify({
     '@context': 'https://schema.org', '@type': 'Person', name: ME.name, alternateName: ['Ilham Rilambang'], jobTitle: 'iOS Engineer',
@@ -153,7 +153,7 @@ const home = page({
 <section class="hero">
 <div class="hero__text">
 <h1>Nine years of shipping iOS, now leading an exam app that cannot afford to fail.</h1>
-<p class="hero__lede">I lead iOS for Pijar Sekolah at Telkom Indonesia. Mobile since 2017, across React Native, UIKit and SwiftUI, with one habit: ship it, and leave the team able to ship without me.</p>
+<p class="hero__lede">I lead iOS for Pijar at Telkom Indonesia. Mobile since 2017, across React Native, UIKit and SwiftUI, with one habit: ship it, and leave the team able to ship without me.</p>
 <p class="hero__now">Right now: ${esc(ME.now)}</p>
 <p class="hero__links"><a class="hero__mail" href="mailto:${esc(ME.email)}">${esc(ME.email)}</a>${ME.links.map((l) => `<a href="${esc(l.url)}" target="_blank" rel="noreferrer">${esc(l.label)}</a>`).join('')}</p>
 </div>
