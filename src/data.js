@@ -70,19 +70,6 @@ export const WORK = [
   },
 ]
 
-// My time on each app, not the app's App Store life. IndiHome and Antares were
-// carried together, so those two are the only bars that overlap; the rest are
-// sequential. MyPertamina and SATUSEHAT were occasional work inside the Agree
-// years — left off the chart until their dates are precise enough to draw.
-export const TENURE = {
-  rows: [
-    { name: 'Pijar Sekolah', from: 2025.5, to: null, live: true },
-    { name: 'Antares Eazy', from: 2023.25, to: 2025.5 },
-    { name: 'IndiHome Eazy', from: 2022, to: 2025.5 },
-    { name: 'Agree Mart', from: 2021, to: 2022 },
-  ],
-}
-
 export const ROLES = [
   { role: 'Lead iOS Engineer — Pijar Sekolah', span: '2025 — now', where: 'Telkom Indonesia' },
   { role: 'iOS Engineer — Indihome Eazy, Antares Eazy', span: '2022 — 2025', where: 'Telkom Indonesia' },
