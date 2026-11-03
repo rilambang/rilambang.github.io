@@ -255,3 +255,38 @@ pre { border: 1px solid var(--edge); }
 }
 @media (max-width: 560px) { .top { padding: 10px 18px; } .work { padding: 24px 22px 0; } .posts, .list { padding: 2px 20px; } }
 .work__text { align-self: center; padding-top: 34px; }
+
+/* ── more glass: colour behind the panels, clearer panels in front ── */
+:root {
+  --orb1: #c81e4d; --orb2: #e0436f; --orb3: #a3186b;
+  --glass: linear-gradient(160deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.035) 46%, rgba(255, 255, 255, 0.12));
+  --edge: rgba(255, 255, 255, 0.36);
+  --glass-shadow: 0 26px 56px -28px rgba(0, 0, 0, 0.75), inset 0 1.5px 0 rgba(255, 255, 255, 0.55), inset 0 -1px 0 rgba(255, 255, 255, 0.12), inset 0 0 22px rgba(255, 255, 255, 0.05);
+}
+@media (prefers-color-scheme: light) {
+  :root {
+    --orb1: #ff8fab; --orb2: #f76b8a; --orb3: #ffb199;
+    --glass: linear-gradient(160deg, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.22) 46%, rgba(255, 255, 255, 0.5));
+    --edge: rgba(255, 255, 255, 0.95);
+  }
+}
+html::before, html::after, body::after { content: ""; position: fixed; z-index: -1; border-radius: 50%; pointer-events: none; filter: blur(46px); will-change: transform; }
+body::after { width: 62vmax; height: 62vmax; right: -22vmax; top: 22vh; background: radial-gradient(circle, var(--orb1), transparent 66%); opacity: 0.95; }
+html::before { width: 58vmax; height: 58vmax; left: -26vmax; top: 52vh; background: radial-gradient(circle, var(--orb2), transparent 66%); opacity: 0.8; }
+html::after { width: 46vmax; height: 46vmax; left: 22vw; top: -14vh; background: radial-gradient(circle, var(--orb3), transparent 66%); opacity: 0.85; }
+@media (prefers-reduced-motion: no-preference) {
+  body::after { animation: drift 26s ease-in-out infinite alternate; }
+  html::before { animation: drift2 32s ease-in-out infinite alternate; }
+  html::after { animation: drift 38s ease-in-out infinite alternate-reverse; }
+}
+@keyframes drift2 { to { transform: translate3d(22vmax, -18vh, 0) scale(1.12); } }
+
+.top, .fig__frame, .facts dl, .work, .posts, .list, .contact, .pager a {
+  -webkit-backdrop-filter: blur(20px) saturate(200%) brightness(1.08); backdrop-filter: blur(20px) saturate(200%) brightness(1.08);
+}
+@media (max-width: 700px) {
+  html::before, html::after, body::after { filter: blur(34px); }
+  body::after { width: 90vw; height: 90vw; top: 30vh; right: -30vw; }
+  html::before { width: 96vw; height: 96vw; top: 62vh; left: -34vw; }
+  html::after { width: 80vw; height: 80vw; top: 4vh; left: 18vw; }
+}
