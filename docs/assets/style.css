@@ -149,6 +149,8 @@ pre code { background: none; padding: 0; font-size: inherit; }
 .sources ul { padding-left: 1.1em; }
 .post__foot { margin: 32px 0 0; font-size: 15px; color: var(--lead); }
 .pager { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 36px; padding-top: 22px; border-top: 1px solid var(--rule); }
+/* the pager sits after the article (so importers leave it out), in the article's column */
+.post + .pager { width: min(40em, 100% - 2 * var(--gutter)); margin: -44px auto 80px; }
 .pager a { display: block; text-decoration: none; font: 600 17px/1.3 var(--display); }
 .pager a:last-child { text-align: right; }
 .pager span { display: block; margin-bottom: 4px; font: 500 14px var(--display); color: var(--lead); }
@@ -159,6 +161,7 @@ pre code { background: none; padding: 0; font-size: inherit; }
 .fig svg { display: block; width: 100%; min-width: 600px; height: auto; }
 .fig figcaption { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; margin-top: 10px; font: 500 15px/1.4 var(--display); color: var(--lead); }
 .fig__replay { font: 600 14px var(--display); color: var(--pencil); background: none; border: 1px solid var(--rule); border-radius: 999px; padding: 4px 14px; cursor: pointer; flex: none; }
+.fig__still { display: none; }
 .fig__replay:hover { border-color: var(--ink); color: var(--ink); }
 
 .bx { fill: var(--sheet); stroke: var(--pencil); stroke-width: 1.5; }

@@ -41,7 +41,11 @@ function render(md, slug) {
       const id = l.slice(6).trim(), f = figures[id]
       if (!f) throw new Error(`${slug}: unknown figure "${id}"`)
       const r = f(); figs++
-      out.push(`<figure class="fig"><div class="fig__frame"><svg viewBox="0 0 720 ${r.h}" role="img" aria-label="${esc(r.alt)}">${r.svg}</svg></div>` +
+      // A finished-frame PNG (scripts/stills.mjs) rides along for readers that drop inline
+      // SVG, such as Medium's importer. Hidden here; lazy, so browsers never fetch it.
+      const still = fs.existsSync(path.join(HERE, 'assets', 'figs', `${id}.png`))
+        ? `<img class="fig__still" src="${SITE}/assets/figs/${id}.png" alt="${esc(r.alt)}" width="768" height="${r.h + 48}" loading="lazy" decoding="async">` : ''
+      out.push(`<figure class="fig"><div class="fig__frame"><svg viewBox="0 0 720 ${r.h}" role="img" aria-label="${esc(r.alt)}">${r.svg}</svg>${still}</div>` +
         `<figcaption><span>${esc(r.cap)}</span><button type="button" class="fig__replay" hidden>Replay</button></figcaption></figure>`)
       i++; continue
     }
@@ -195,14 +199,16 @@ const article = (p, i) => {
   const prev = POSTS[i - 1], next = POSTS[i + 1]
   const src = (sources[p.slug] || []).map(([t, u]) => `<li><a href="${esc(u)}" target="_blank" rel="noreferrer">${esc(t)}</a></li>`).join('')
   return page({
-    title: `${p.title}, ${ME.name}`, desc: p.summary, url: `${SITE}/blog/${p.slug}.html`, depth: 1, type: 'article',
+    // the bare title: Medium's importer takes <title> as the story title
+    title: p.title, desc: p.summary, url: `${SITE}/blog/${p.slug}.html`, depth: 1, type: 'article',
     body: `<div class="progress" aria-hidden="true"></div><main id="main"><article class="post">
 <header class="post__head"><p class="post__tag">${esc(p.tag)}</p><h1>${esc(p.title)}</h1><p class="post__sum">${esc(p.summary)}</p><p class="post__meta">${p.minutes} min read</p></header>
 ${p.body}
-<aside class="sources"><h2>Sources</h2><ul>${src}</ul></aside>
+${src ? `<section class="sources"><h2>Sources</h2><ul>${src}</ul></section>` : ''}
 <p class="post__foot">Written from experience shipping iOS apps. No client names, no internal details, no unpublished numbers.</p>
+</article>
 <nav class="pager" aria-label="More writing">${prev ? `<a href="${prev.slug}.html"><span>Earlier</span>${esc(prev.title)}</a>` : '<i></i>'}${next ? `<a href="${next.slug}.html"><span>Later</span>${esc(next.title)}</a>` : '<i></i>'}</nav>
-</article></main>`,
+</main>`,
   })
 }
 
