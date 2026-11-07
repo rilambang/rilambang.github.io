@@ -6,6 +6,7 @@
   "scripts": {
     "build": "node site/build.mjs",
     "stills": "node scripts/stills.mjs",
+    "medium": "node scripts/medium.mjs",
     "check:prose": "sh scripts/prose-check.sh",
     "check:deploy": "npm run build && test -z \"$(git status --porcelain -- docs)\" || (echo 'docs differs from a fresh build: commit the build output'; exit 1)"
   }
