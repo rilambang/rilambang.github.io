@@ -162,6 +162,12 @@ pre code { background: none; padding: 0; font-size: inherit; }
 .fig figcaption { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; margin-top: 10px; font: 500 15px/1.4 var(--display); color: var(--lead); }
 .fig__replay { font: 600 14px var(--display); color: var(--pencil); background: none; border: 1px solid var(--rule); border-radius: 999px; padding: 4px 14px; cursor: pointer; flex: none; }
 .fig__still { display: none; }
+/* Motion figures: a HyperFrames render on the same paper sheet the stills use, so the
+   clip reads the same in either theme. In dark mode one filter flips the sheet instead
+   of a second render: the ink becomes pale and the accent keeps its hue. */
+.fig--motion .fig__frame { background: var(--panel); }
+.fig__video { display: block; width: 100%; height: auto; border-radius: 8px; }
+@media (prefers-color-scheme: dark) { .fig__video { filter: invert(1) hue-rotate(180deg); } }
 .fig__replay:hover { border-color: var(--ink); color: var(--ink); }
 
 .bx { fill: var(--sheet); stroke: var(--pencil); stroke-width: 1.5; }

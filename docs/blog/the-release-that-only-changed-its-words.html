@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>The release that only changed its words</title>
+<meta name="description" content="A release went out where no behaviour changed and every sentence on an error screen did. It still cost a version bump, three build numbers and five re-recorded reference frames. The interesting part was how I reverted it twice before finding a change that was small enough to be safe.">
+<meta name="author" content="Muhammad Ilham Rilambang">
+<link rel="canonical" href="https://rilambang.github.io/blog/the-release-that-only-changed-its-words.html">
+<meta name="theme-color" content="#f9eff2" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#1f0914" media="(prefers-color-scheme: dark)">
+<meta property="og:type" content="article">
+<meta property="og:title" content="The release that only changed its words">
+<meta property="og:description" content="A release went out where no behaviour changed and every sentence on an error screen did. It still cost a version bump, three build numbers and five re-recorded reference frames. The interesting part was how I reverted it twice before finding a change that was small enough to be safe.">
+<meta property="og:url" content="https://rilambang.github.io/blog/the-release-that-only-changed-its-words.html">
+<meta property="og:image" content="https://rilambang.github.io/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="me" href="https://github.com/rilambang"><link rel="me" href="https://x.com/rilambang">
+<link rel="alternate" type="application/rss+xml" title="Writing" href="https://rilambang.github.io/feed.xml">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%237a1c3a'/><circle cx='16' cy='16' r='7' fill='%23ffd9e2'/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=JetBrains+Mono:wght@400&family=Source+Serif+4:ital,opsz,wght@0,8..60,400..650;1,8..60,400&display=swap">
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="top"><a class="top__name" href="../">Muhammad Ilham Rilambang</a>
+<nav aria-label="Main"><a href="../#work">Work</a><a href="../blog/">Writing</a><a href="../#path">Path</a><a href="../#contact">Contact</a></nav></header>
+<div class="progress" aria-hidden="true"></div><main id="main"><article class="post">
+<header class="post__head"><p class="post__tag">Build systems</p><h1>The release that only changed its words</h1><p class="post__sum">A release went out where no behaviour changed and every sentence on an error screen did. It still cost a version bump, three build numbers and five re-recorded reference frames. The interesting part was how I reverted it twice before finding a change that was small enough to be safe.</p><p class="post__meta">4 min read</p></header>
+<p>The release I cut last week changed no logic. Every diff that reached the app moved text: the sentence shown when the network drops, when a forced update blocks you, when the jailbreak check trips, when a task detail has no connection. The error codes stayed the same. The routing stayed the same. And it still took three builds, one package bump, and five screenshots re-recorded by hand.</p>
+<p>That is not overhead. It is the price of the interface being made of words.</p>
+<figure class="fig fig--motion"><div class="fig__frame"><video class="fig__video" width="1440" height="500" poster="../assets/motion/release.jpg" preload="metadata" muted playsinline aria-label="A lock file where one version moves on words alone, five reference frames re-recorded, and a build number stepping from 1 to 3."><source src="../assets/motion/release.mp4" type="video/mp4"></video></div><figcaption><span>A wording change is a release event: one tag, five frames, a new build number.</span><button type="button" class="fig__replay" hidden>Replay</button></figcaption></figure>
+<h2>&quot;Only the words&quot; is a schedule claim</h2>
+<p>The work started as a normal cut. I pinned every package to its release tag and bumped the version, which is the point where you find out what you are actually shipping. The error-handling rework was in. It was also not what people were used to: every message carried a short code in brackets, and the sentences behind the codes had changed.</p>
+<p>The product call came back quickly. Ship the previous wording. Keep the new handling. Those are not contradictory, but the first implementation treated them as one thing, and that is where the week's real lesson was.</p>
+<h2>The first fix was six packages of risk</h2>
+<p>My first move was the obvious one: revert the error work for the release. Six packages went out as patch versions, each a release-only revert of its registry commits, and the app went back to the old constants for the unknown-link snackbar and lost two small surfaces whose only copy was a registry row.</p>
+<p>It worked. It was also six packages of behavioural risk taken to change a sentence. Any one of those reverts could have dragged a fix out with it, and the release notes would have said &quot;wording&quot;. I did not like it enough to leave it overnight.</p>
+<h2>The second fix moved one string</h2>
+<p>I reverted the revert. The registry implementation stayed exactly as it was, the six packages went back to their previous versions, and only the package that owns the copy moved: every registry row now holds the sentence the older release showed for the same condition, with the code prefix gone. When the server sends its own sentence, that still wins.</p>
+<p>One package, one version, no changed code paths. The app behaves like the new release and speaks like the old one.</p>
+<p>I would rather arrive at that in an hour than in a day, but I would rather arrive at it in a day than ship six reverts I could not explain. The second version is the one I can defend in a conversation: here is the string table, here is the diff, nothing else moved.</p>
+<h2>A copy change still spends a build number</h2>
+<p>The package bump broke two string-matching tests in another package, because they asserted the old text. That needed its own patch version, which means another build, because a build that carries a changed dependency set has to be a build you can test.</p>
+<p>By then build one was already on TestFlight. App Store Connect will not accept the same build number twice for the same version, so the re-recorded frames could not ride along silently: they went out as build three, on a push that also carried a version bump. The rule I follow is that a push to the release branch is a build. If it carries a change, it carries a number.</p>
+<figure class="fig"><div class="fig__frame"><svg viewBox="0 0 720 300" role="img" aria-label="One lock row moves to a new version for words alone, while five reference frames are re-recorded and a build number is spent on TestFlight."><g class="pop" style="--t:0s"><rect x="30" y="30" width="300" height="226" rx="9" class="bx"/><text x="180" y="148" text-anchor="middle" class="tx"></text></g><text x="180" y="64" text-anchor="middle" class="pop tx" style="--t:0s">lock file</text><text x="50" y="106" text-anchor="start" class="fade tx sm" style="--t:0.5s">history</text><g class="pop" style="--t:0.5s"><rect x="250" y="87" width="62" height="26" rx="6" class="chip"/><text x="281" y="105" text-anchor="middle" class="tx sm">v1.0.0</text></g><text x="50" y="138" text-anchor="start" class="fade tx sm" style="--t:0.85s">results</text><g class="pop" style="--t:0.85s"><rect x="250" y="119" width="62" height="26" rx="6" class="chip"/><text x="281" y="137" text-anchor="middle" class="tx sm">v1.0.0</text></g><text x="50" y="170" text-anchor="start" class="fade tx sm" style="--t:1.2s">sign-in</text><g class="pop" style="--t:1.2s"><rect x="250" y="151" width="62" height="26" rx="6" class="chip ink"/><text x="281" y="169" text-anchor="middle" class="tx sm ink">v1.0.1</text></g><text x="50" y="202" text-anchor="start" class="fade tx sm" style="--t:1.5499999999999998s">tasks</text><g class="pop" style="--t:1.5499999999999998s"><rect x="250" y="183" width="62" height="26" rx="6" class="chip"/><text x="281" y="201" text-anchor="middle" class="tx sm">v1.0.0</text></g><text x="50" y="234" text-anchor="start" class="fade tx sm" style="--t:1.9s">settings</text><g class="pop" style="--t:1.9s"><rect x="250" y="215" width="62" height="26" rx="6" class="chip"/><text x="281" y="233" text-anchor="middle" class="tx sm">v1.0.0</text></g><line x1="336" y1="170" x2="402" y2="170" pathLength="1" class="dr ln mut" style="--t:2.3s;--d:0.3s"/><polygon points="402,170 394.8,166.5 394.8,173.5" class="hd mut" style="--t:2.5549999999999997s"/><text x="414" y="164" text-anchor="start" class="pop tx ink" style="--t:2.5s">one row moves</text><text x="414" y="188" text-anchor="start" class="pop tx mut sm" style="--t:2.6s">for the words alone</text><text x="414" y="226" text-anchor="start" class="pop tx mut sm" style="--t:2.9s">five frames re-recorded</text><text x="414" y="250" text-anchor="start" class="pop tx mut sm" style="--t:3.1s">a build number spent</text></svg></div><figcaption><span>The words are the interface.</span><button type="button" class="fig__replay" hidden>Replay</button></figcaption></figure>
+<h2>Snapshots are evidence, not opinions</h2>
+<p>Five reference screenshots moved: the jailbreak screen, the certificate-pinning screen, the maintenance and forced-update screens, and one completed-task no-connection screen. Each one is a picture of what a student sees, so each one is a claim about the copy. The moment the sentences changed, the references were wrong. Arguing with them would have been arguing with the build.</p>
+<p>Two others failed once and passed on the confirming run, while the CI deploy jobs were loading the same machine. I left their references alone. A screenshot that fails under load and passes alone is telling you about the machine, not the screen, and re-recording it would have erased the only evidence that something is flaky.</p>
+<p>The distinction is worth writing down because it is the one that decays. A reference that moved because the product changed gets re-recorded. A reference that moved because the runner was busy gets investigated.</p>
+<h2>The merge back is part of the release</h2>
+<p>The last step was merging the release into the long-lived branch, and the merge is not a formality. The release pins its packages to tags; the integration branch keeps its own lock rows, because a build there that quietly took the release's package set would stop testing what it thinks it tests. The five snapshot frames also stay as the integration branch recorded them: that branch still has the code prefix in its copy, so its frames describe a different screen on purpose.</p>
+<p>What crosses over is the version. A branch that lags the release is a branch whose next build is not the next release.</p>
+<h2>What I would keep</h2>
+<ul><li>Treat copy as a change with a schedule, not a comment.</li><li>Revert the smallest thing that produces the shipped behaviour. One package beat six.</li><li>Never reuse a build number to save a pipeline run.</li><li>Re-record a screenshot when the product moved, investigate when the runner was busy.</li><li>Merge the release back the same day, or you are maintaining two products.</li></ul>
+<p>The release shipped exactly what it promised: the same app, saying what it used to say. Getting there cost more thought than code, which is usually the sign that the thinking was the work.</p>
+
+<p class="post__foot">Written from experience shipping iOS apps. No client names, no internal details, no unpublished numbers.</p>
+</article>
+<nav class="pager" aria-label="More writing"><a href="every-way-out-of-an-exam.html"><span>Earlier</span>Every way out of an exam</a><a href="let-the-pipeline-say-it-out-loud.html"><span>Later</span>Let the pipeline say it out loud</a></nav>
+</main>
+<script src="../assets/site.js" defer></script>
+</body>
+</html>

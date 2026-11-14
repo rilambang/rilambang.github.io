@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Let the pipeline say it out loud</title>
+<meta name="description" content="Every build reached the testers and nobody heard about it. This week the deploy lanes started announcing themselves in the channel the team already watches, and the published release started doing the same. The rules that mattered were about failure and untrusted text, not formatting.">
+<meta name="author" content="Muhammad Ilham Rilambang">
+<link rel="canonical" href="https://rilambang.github.io/blog/let-the-pipeline-say-it-out-loud.html">
+<meta name="theme-color" content="#f9eff2" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#1f0914" media="(prefers-color-scheme: dark)">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Let the pipeline say it out loud">
+<meta property="og:description" content="Every build reached the testers and nobody heard about it. This week the deploy lanes started announcing themselves in the channel the team already watches, and the published release started doing the same. The rules that mattered were about failure and untrusted text, not formatting.">
+<meta property="og:url" content="https://rilambang.github.io/blog/let-the-pipeline-say-it-out-loud.html">
+<meta property="og:image" content="https://rilambang.github.io/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="me" href="https://github.com/rilambang"><link rel="me" href="https://x.com/rilambang">
+<link rel="alternate" type="application/rss+xml" title="Writing" href="https://rilambang.github.io/feed.xml">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%237a1c3a'/><circle cx='16' cy='16' r='7' fill='%23ffd9e2'/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=JetBrains+Mono:wght@400&family=Source+Serif+4:ital,opsz,wght@0,8..60,400..650;1,8..60,400&display=swap">
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="top"><a class="top__name" href="../">Muhammad Ilham Rilambang</a>
+<nav aria-label="Main"><a href="../#work">Work</a><a href="../blog/">Writing</a><a href="../#path">Path</a><a href="../#contact">Contact</a></nav></header>
+<div class="progress" aria-hidden="true"></div><main id="main"><article class="post">
+<header class="post__head"><p class="post__tag">Tooling</p><h1>Let the pipeline say it out loud</h1><p class="post__sum">Every build reached the testers and nobody heard about it. This week the deploy lanes started announcing themselves in the channel the team already watches, and the published release started doing the same. The rules that mattered were about failure and untrusted text, not formatting.</p><p class="post__meta">4 min read</p></header>
+<p>For a long time the most reliable part of our pipeline was also the quietest. A commit landed, the build ran, the app reached the testers, and the only way to know was to open a dashboard and look. The people who needed the build were not the people who opened dashboards.</p>
+<p>This week that changed. A successful deploy now posts in the team channel with the tester link and the release notes. A published release posts too, with a link to the release page.</p>
+<figure class="fig fig--motion"><div class="fig__frame"><video class="fig__video" width="1440" height="500" poster="../assets/motion/pipeline.jpg" preload="metadata" muted playsinline aria-label="A commit and a tag both end at one Discord card that carries the tester link, the release page and a mention."><source src="../assets/motion/pipeline.mp4" type="video/mp4"></video></div><figcaption><span>The job that ships is the job that says it shipped.</span><button type="button" class="fig__replay" hidden>Replay</button></figcaption></figure>
+<h2>A green job is not a message</h2>
+<p>The pipeline was not broken. That is what made it easy to ignore. Green means the machine did what it was told; it does not mean anyone found out. A build nobody installs is the same as a build that failed, except it also consumes an hour of CI.</p>
+<p>The fix is not a monitoring system. It is a message in the place where people already are, at the moment the thing happens, carrying what they need to act on it: the install link, what changed, and the name of the person who should look.</p>
+<h2>The platform integration could not carry it</h2>
+<p>Our source host can post to chat on its own, and we tried that first. It cannot attach the test link, because that link is produced by the deploy step and lives outside the host's model of the job. It also cannot mention a specific person, which is the difference between a notification and a note on a wall.</p>
+<p>So the deploy lane posts to a chat webhook itself, after the upload succeeds. The hook URL and the tester's user id come from CI variables, not from the repository. That last part is not tidiness: a webhook URL in a repository is a credential, and a user id in a repository is a person's identity published forever.</p>
+<h2>The announcement must never become a second failure point</h2>
+<p>Both announcements run after the thing they announce, and both are allowed to fail without failing the job.</p>
+<p>That ordering matters more than it sounds. If the deploy uploads the build and then the notification throws, the build is already in the testers' hands; failing the lane would tell them the opposite. So the deploy lane catches the error, logs it, and stays green. The release announcement does the same, for a stronger reason: by the time it runs, the release is published and cannot be unpublished by a chat error.</p>
+<p>A notification is a side effect of shipping. Treat it as a step that ships, and it will eventually lie about a build that went out.</p>
+<h2>Pasted text is untrusted input</h2>
+<p>The release notes are written by a person and pasted into a command. They can contain anything, including <code>@everyone</code>. A chat client that parses mentions out of arbitrary text will happily ping the whole server because someone pasted a release note from somewhere else.</p>
+<p>The announcement sends the notes with mention parsing turned off, so nothing inside the text can ping. The only pings it sends come from a separate field of numeric ids, held as a constant in the script and overridable for a one-off release. Numeric ids ping; text never does.</p>
+<figure class="fig"><div class="fig__frame"><svg viewBox="0 0 720 280" role="img" aria-label="What the channel message may do: carry the tester link, mention the QA, and never ping everyone from text pasted into the notes."><g class="pop" style="--t:0.3s"><rect x="30" y="46" width="540" height="54" rx="9" class="bx"/><text x="300" y="78" text-anchor="middle" class="tx">Carry the tester link</text></g><polyline points="638,73 644,80 655,65" pathLength="1" class="dr tk" style="--t:0.75s;--d:0.35s"/><g class="pop" style="--t:0.8500000000000001s"><rect x="30" y="112" width="540" height="54" rx="9" class="bx"/><text x="300" y="144" text-anchor="middle" class="tx">Mention the QA</text></g><polyline points="638,139 644,146 655,131" pathLength="1" class="dr tk" style="--t:1.3s;--d:0.35s"/><g class="pop" style="--t:1.4000000000000001s"><rect x="30" y="178" width="540" height="54" rx="9" class="bx ink"/><text x="300" y="210" text-anchor="middle" class="tx">Ping everyone from the notes</text></g><g class="x" style="--t:1.85s"><line x1="634" y1="195" x2="654" y2="215" pathLength="1" class="dr rg" style="--t:1.85s;--d:0.25s"/><line x1="654" y1="195" x2="634" y2="215" pathLength="1" class="dr rg" style="--t:2.0500000000000003s;--d:0.25s"/></g><text x="330" y="258" text-anchor="middle" class="fade tx mut sm" style="--t:2.3s">parse: [] — a pasted @everyone cannot ping the channel</text></svg></div><figcaption><span>A notification is an input handler too.</span><button type="button" class="fig__replay" hidden>Replay</button></figcaption></figure>
+<p>It is the same rule as any other input boundary, applied to a channel that people treat as trusted because it is internal. The text is data. It does not get to act.</p>
+<h2>Two events, one channel</h2>
+<p>The deploy and the release are different moments. A deploy puts a build in someone's hands; a release declares a version finished. Both were silent, both now speak, and they speak in the same place with the same shape, so people learn one place to look.</p>
+<p>What they carry is different on purpose. The deploy carries the tester link, the notes and the tester's name. The release carries the release page and the team ids that need to know. One is &quot;try this&quot;, the other is &quot;this is done&quot;.</p>
+<h2>What I would keep</h2>
+<ul><li>Announce at the moment the thing succeeds, not on a schedule.</li><li>Put the message where people already read, not where the build lives.</li><li>A notification failure must not change the outcome of the job it describes.</li><li>Keep the hook and the ids in CI variables.</li><li>Mentions come from structured fields; pasted text is data.</li><li>Every event that people need to know about gets a message, including the ones that are &quot;only&quot; a release.</li></ul>
+<p>Shipping is two acts: doing the thing, and making sure the right people know it happened. The pipeline was already good at the first one. The second one is a dozen lines and one habit.</p>
+
+<p class="post__foot">Written from experience shipping iOS apps. No client names, no internal details, no unpublished numbers.</p>
+</article>
+<nav class="pager" aria-label="More writing"><a href="the-release-that-only-changed-its-words.html"><span>Earlier</span>The release that only changed its words</a><i></i></nav>
+</main>
+<script src="../assets/site.js" defer></script>
+</body>
+</html>

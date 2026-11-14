@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Every way out of an exam</title>
+<meta name="description" content="A proctored exam has four exits, not one: the student finishes, the timer ends, the student leaves, or the server closes the paper. Most of the bugs lived in the edges between them, including one where leaving an exam quietly submitted an empty one.">
+<meta name="author" content="Muhammad Ilham Rilambang">
+<link rel="canonical" href="https://rilambang.github.io/blog/every-way-out-of-an-exam.html">
+<meta name="theme-color" content="#f9eff2" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#1f0914" media="(prefers-color-scheme: dark)">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Every way out of an exam">
+<meta property="og:description" content="A proctored exam has four exits, not one: the student finishes, the timer ends, the student leaves, or the server closes the paper. Most of the bugs lived in the edges between them, including one where leaving an exam quietly submitted an empty one.">
+<meta property="og:url" content="https://rilambang.github.io/blog/every-way-out-of-an-exam.html">
+<meta property="og:image" content="https://rilambang.github.io/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="me" href="https://github.com/rilambang"><link rel="me" href="https://x.com/rilambang">
+<link rel="alternate" type="application/rss+xml" title="Writing" href="https://rilambang.github.io/feed.xml">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%237a1c3a'/><circle cx='16' cy='16' r='7' fill='%23ffd9e2'/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=JetBrains+Mono:wght@400&family=Source+Serif+4:ital,opsz,wght@0,8..60,400..650;1,8..60,400&display=swap">
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="top"><a class="top__name" href="../">Muhammad Ilham Rilambang</a>
+<nav aria-label="Main"><a href="../#work">Work</a><a href="../blog/">Writing</a><a href="../#path">Path</a><a href="../#contact">Contact</a></nav></header>
+<div class="progress" aria-hidden="true"></div><main id="main"><article class="post">
+<header class="post__head"><p class="post__tag">Behaviour</p><h1>Every way out of an exam</h1><p class="post__sum">A proctored exam has four exits, not one: the student finishes, the timer ends, the student leaves, or the server closes the paper. Most of the bugs lived in the edges between them, including one where leaving an exam quietly submitted an empty one.</p><p class="post__meta">4 min read</p></header>
+<p>When I say an exam has an Exit button, I mean the student can leave. When I say an exam has four exits, I mean the code has four ways out, and they do not agree about what leaving means. That disagreement is where most of a week went.</p>
+<figure class="fig fig--motion"><div class="fig__frame"><video class="fig__video" width="1440" height="500" poster="../assets/motion/doors.jpg" preload="metadata" muted playsinline aria-label="Four ways out of an exam: submit, the timer, an exit, and a paper the server closed."><source src="../assets/motion/doors.mp4" type="video/mp4"></video></div><figcaption><span>Four doors out. Leaving through one cancels what the others left behind.</span><button type="button" class="fig__replay" hidden>Replay</button></figcaption></figure>
+<h2>Four doors, four rules</h2>
+<p>The student taps Submit. The timer runs out. The student taps Exit. The server closes the paper while the student is still in it. Each of those ends the exam, and each one carries a different obligation about what gets sent, what stays queued and what the student sees next.</p>
+<p>The rule I ended with is narrow: only Submit and the timer finish an exam. Exit does not finish it. Leaving is not answering.</p>
+<figure class="fig"><div class="fig__frame"><svg viewBox="0 0 720 250" role="img" aria-label="Four ways out of an exam and the rule each one carries: submit is the only done, the timer ends the exam rather than the student, an exit cancels a waiting finish, and a paper the server closed is already gone."><circle cx="40" cy="62" r="9" class="bb fade" style="--t:0.04999999999999999s"/><circle cx="40" cy="62" r="6.5" class="fillin" style="--t:0.3s"/><text x="66" y="67" text-anchor="start" class="fade tx" style="--t:0.3s">Submit</text><text x="200" y="67" text-anchor="start" class="fade tx mut sm" style="--t:0.4s">the only door that means done</text><circle cx="40" cy="116" r="9" class="bb fade" style="--t:0.6000000000000001s"/><circle cx="40" cy="116" r="6.5" class="fillin" style="--t:0.8500000000000001s"/><text x="66" y="121" text-anchor="start" class="fade tx" style="--t:0.8500000000000001s">The timer</text><text x="200" y="121" text-anchor="start" class="fade tx mut sm" style="--t:0.9500000000000001s">ends the exam, not the student</text><circle cx="40" cy="170" r="9" class="bb fade" style="--t:1.1500000000000001s"/><circle cx="40" cy="170" r="6.5" class="fillin" style="--t:1.4000000000000001s"/><text x="66" y="175" text-anchor="start" class="fade tx" style="--t:1.4000000000000001s">Exit</text><text x="200" y="175" text-anchor="start" class="fade tx mut sm" style="--t:1.5000000000000002s">cancels a finish that was waiting</text><circle cx="40" cy="224" r="9" class="bb fade" style="--t:1.7000000000000002s"/><circle cx="40" cy="224" r="6.5" class="fillin" style="--t:1.9500000000000002s"/><text x="66" y="229" text-anchor="start" class="fade tx" style="--t:1.9500000000000002s">Server closed</text><text x="200" y="229" text-anchor="start" class="fade tx mut sm" style="--t:2.0500000000000003s">the paper is already gone</text></svg></div><figcaption><span>Four doors out, and each one has its own rule.</span><button type="button" class="fig__replay" hidden>Replay</button></figcaption></figure>
+<p>The first version of the code did not say that out loud. A failed finish sat in a queue and retried itself; the retry could fire after the student had already left the screen, which meant something was being sent on behalf of a person who had walked away. Now a finish that fails while time remains is not retried, and a confirmed Exit withdraws a finish that was waiting. One door, one outcome.</p>
+<p>The timer is the strange one. A failed finish is not retried while time is left, because there is still a paper to answer; the retry belongs to the moment the clock runs out. Once the timer ends the exam, a stored finish can go and there is nothing left for it to disturb. The timer ends the exam. It never acts for the student while they are still working.</p>
+<h2>The exit that returned you to a locked paper</h2>
+<p>Under the assessment framework the device is held for the length of an assessment. Exit used to be handled inside the paper: tapping it while offline returned the student to the same paper, still on a locked device, with no way forward. The lock had done its job too well. There was nothing left to do and nowhere to go.</p>
+<p>Now an offline Exit leaves the exam and the blocking report is sent later, when there is a connection. The student gets out; the school still learns what happened. Those are two different deliveries, and treating them as one was the bug.</p>
+<p>A refused Exit is not queued, though. If the server says no, the answer is no, and the app does not keep asking in the background until it gets a different one.</p>
+<h2>The empty paper that finished itself</h2>
+<p>The worst of the week was a screen that built itself. Pressing Exit popped the exam, and the popped screen's saved view was released on the next run loop, while the pop was still animating. The navigation stack asked itself to build the outgoing page one last time and got a brand new exam screen with no exam in it. That screen's timer had no end date, read as expired immediately, and sent a finish with an empty exam id. When the server refused, the app pushed the result page onto the home screen.</p>
+<p>I fixed it the lazy way first: the empty exam page was made to build nothing, so nothing could finish. That hid the cause behind a screen that did nothing, and the next person to touch the stack would have had no idea why it was there. I replaced it the same day. The saved view is now released a second after the pop starts, which is longer than the animation, and the page builder is exactly what it was. The lesson is the usual one: a guard that returns empty is a note saying &quot;something upstream is wrong&quot;. Fix upstream.</p>
+<p>The result page had one more rule by then. A finish that lands late no longer pushes a result from outside the exam screen. The result belongs to the moment of finishing, on the screen where the student finished, not to a network callback that may arrive when they are somewhere else.</p>
+<h2>One rule for the door I did not ship</h2>
+<p>I wrote a rule for the fourth door, the paper the server closes under the student, and then took it out again along with the test and the release note. It described behaviour that was not in the build. Leaving the rule in the spec would have made the spec a wish list, and the next person would have implemented against a sentence that no test backed.</p>
+<p>That is the cheapest kind of honesty available in a week like this: if the code does not do it, the document does not say it does.</p>
+<h2>What I keep from this</h2>
+<ul><li>Name the exits. An exam has more than one, and each one needs its own sentence.</li><li>Leaving is not answering. Exit withdraws, it does not submit.</li><li>A queue that retries on its own will eventually send something on behalf of someone who left.</li><li>An offline exit and its report can travel separately.</li><li>A guard that returns an empty screen is hiding a cause, not fixing it.</li></ul>
+<p>None of it is exam-specific. Every flow with a timer has doors, and the bugs live in what each door thinks it is allowed to send.</p>
+
+<p class="post__foot">Written from experience shipping iOS apps. No client names, no internal details, no unpublished numbers.</p>
+</article>
+<nav class="pager" aria-label="More writing"><a href="one-sign-in-across-app-and-web.html"><span>Earlier</span>One sign-in across the app and the web</a><a href="the-release-that-only-changed-its-words.html"><span>Later</span>The release that only changed its words</a></nav>
+</main>
+<script src="../assets/site.js" defer></script>
+</body>
+</html>
