@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/gsap.min.js"></script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 1440px; height: 500px; overflow: hidden; background: #fcf2f4; }
+  #root { position: relative; width: 1440px; height: 500px; }
+  .box { fill: #fcf2f4; stroke: #2b0e18; stroke-width: 3; }
+  .box.acc { stroke: #a31d47; }
+  .tx { fill: #2b0e18; font: 500 30px Inter, sans-serif; }
+  .tx.sm { font-size: 24px; fill: #6a4250; }
+  .tx.acc { fill: #a31d47; }
+  .arrow { fill: none; stroke: #6a4250; stroke-width: 4; stroke-linecap: round; }
+  .arrow.acc { stroke: #a31d47; }
+  .head { fill: #6a4250; }
+  .head.acc { fill: #a31d47; }
+  .strike { fill: none; stroke: #a31d47; stroke-width: 5; stroke-linecap: round; }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="doors" data-start="0" data-duration="5.4" data-width="1440" data-height="500">
+  <svg viewBox="0 0 1440 500" width="1440" height="500">
+    <g id="exam">
+      <rect x="580" y="185" width="280" height="130" rx="14" class="box" />
+      <text x="720" y="258" text-anchor="middle" class="tx">Exam</text>
+    </g>
+
+    <g id="d1">
+      <rect x="60" y="52" width="300" height="96" rx="12" class="box" />
+      <text x="210" y="92" text-anchor="middle" class="tx">Submit</text>
+      <text x="210" y="126" text-anchor="middle" class="tx sm">the student says done</text>
+    </g>
+    <g id="d2">
+      <rect x="1080" y="52" width="300" height="96" rx="12" class="box" />
+      <text x="1230" y="92" text-anchor="middle" class="tx">Timer ends</text>
+      <text x="1230" y="126" text-anchor="middle" class="tx sm">nobody said anything</text>
+    </g>
+    <g id="d3">
+      <rect x="60" y="336" width="300" height="96" rx="12" class="box acc" />
+      <text x="210" y="376" text-anchor="middle" class="tx">Exit</text>
+      <text x="210" y="410" text-anchor="middle" class="tx sm">not an answer</text>
+    </g>
+    <g id="d4">
+      <rect x="1080" y="336" width="300" height="96" rx="12" class="box" />
+      <text x="1230" y="376" text-anchor="middle" class="tx">Closed by server</text>
+      <text x="1230" y="410" text-anchor="middle" class="tx sm">the paper is gone</text>
+    </g>
+
+    <g id="e1">
+      <line x1="596" y1="204" x2="372" y2="134" pathLength="1" class="arrow" />
+      <g transform="translate(368,132) rotate(-162.2)"><polygon points="0,0 -20,-8 -20,8" class="head" /></g>
+    </g>
+    <g id="e2">
+      <line x1="844" y1="204" x2="1068" y2="134" pathLength="1" class="arrow" />
+      <g transform="translate(1072,132) rotate(-17.8)"><polygon points="0,0 -20,-8 -20,8" class="head" /></g>
+    </g>
+    <g id="e3">
+      <line x1="596" y1="296" x2="372" y2="366" pathLength="1" class="arrow acc" />
+      <g transform="translate(368,368) rotate(162.2)"><polygon points="0,0 -20,-8 -20,8" class="head acc" /></g>
+    </g>
+    <g id="e4">
+      <line x1="844" y1="296" x2="1068" y2="366" pathLength="1" class="arrow" />
+      <g transform="translate(1072,368) rotate(17.8)"><polygon points="0,0 -20,-8 -20,8" class="head" /></g>
+    </g>
+
+    <g id="pending">
+      <rect x="590" y="392" width="260" height="56" rx="10" class="box" />
+      <text x="720" y="428" text-anchor="middle" class="tx sm" fill="#8a6a75">a finish, waiting</text>
+    </g>
+    <g id="withdraw">
+      <line x1="586" y1="420" x2="854" y2="420" pathLength="1" class="strike" />
+    </g>
+  </svg>
+</div>
+<script>
+  const tl = gsap.timeline({ paused: true });
+  tl.fromTo('#exam', { opacity: 0, scale: 0.94, transformOrigin: '50% 50%' }, { opacity: 1, scale: 1, duration: 0.5, ease: 'power4.out' }, 0.1);
+  [['#d1', 0.45], ['#d2', 0.62], ['#d3', 0.79], ['#d4', 0.96]].forEach(([sel, t]) => {
+    tl.fromTo(sel, { opacity: 0, scale: 0.94, transformOrigin: '50% 50%' }, { opacity: 1, scale: 1, duration: 0.45, ease: 'power4.out' }, t);
+  });
+  [['#e1 line', 1.15], ['#e2 line', 1.28], ['#e3 line', 1.41], ['#e4 line', 1.54]].forEach(([sel, t]) => {
+    tl.fromTo(sel, { attr: { 'stroke-dashoffset': 1 }, strokeDasharray: 1 }, { attr: { 'stroke-dashoffset': 0 }, duration: 0.45, ease: 'power2.inOut' }, t);
+  });
+  tl.fromTo('#e1 g, #e2 g, #e3 g, #e4 g', { opacity: 0 }, { opacity: 1, duration: 0.15, stagger: 0.12 }, 1.5);
+  tl.fromTo('#pending', { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.4, ease: 'power3.out' }, 2.2);
+  tl.fromTo('#withdraw line', { attr: { 'stroke-dashoffset': 1 }, strokeDasharray: 1 }, { attr: { 'stroke-dashoffset': 0 }, duration: 0.4, ease: 'power2.out' }, 2.9);
+  window.__timelines['doors'] = tl;
+</script>
+</body>
+</html>

@@ -1,0 +1,8 @@
+{
+  "name": "rilambang-motion",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "render": "sh render.sh"
+  }
+}

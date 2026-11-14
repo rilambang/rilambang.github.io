@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/gsap.min.js"></script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 1440px; height: 500px; overflow: hidden; background: #fcf2f4; }
+  #root { position: relative; width: 1440px; height: 500px; }
+  .box { fill: #fcf2f4; stroke: #2b0e18; stroke-width: 3; }
+  .box.acc { stroke: #a31d47; }
+  .tag { fill: #fcf2f4; stroke: #6a4250; stroke-width: 2.5; }
+  .tag.acc { stroke: #a31d47; stroke-width: 3; fill: #fff0f3; }
+  .tx { fill: #2b0e18; font: 500 30px Inter, sans-serif; }
+  .tx.sm { font-size: 24px; fill: #6a4250; }
+  .tx.tag { font: 500 22px 'JetBrains Mono', monospace; fill: #6a4250; stroke: none; }
+  .tx.tag.acc { fill: #a31d47; }
+  .arrow { fill: none; stroke: #6a4250; stroke-width: 4; stroke-linecap: round; }
+  .head { fill: #6a4250; }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="release" data-start="0" data-duration="5.4" data-width="1440" data-height="500">
+  <svg viewBox="0 0 1440 500" width="1440" height="500">
+    <g id="lock">
+      <rect x="60" y="70" width="420" height="300" rx="14" class="box" />
+      <text x="90" y="112" class="tx">lock file</text>
+    </g>
+    <g id="rows">
+      <g id="r1"><text x="90" y="166" class="tx sm">history</text><rect x="350" y="142" width="100" height="34" rx="8" class="tag" /><text x="400" y="166" text-anchor="middle" class="tx tag">v1.0.0</text></g>
+      <g id="r2"><text x="90" y="212" class="tx sm">results</text><rect x="350" y="188" width="100" height="34" rx="8" class="tag" /><text x="400" y="212" text-anchor="middle" class="tx tag">v1.0.0</text></g>
+      <g id="r3"><text x="90" y="258" class="tx sm">sign-in</text><rect x="350" y="234" width="100" height="34" rx="8" class="tag" /><text x="400" y="258" text-anchor="middle" class="tx tag">v1.0.0</text></g>
+      <g id="r4"><text x="90" y="304" class="tx sm">tasks</text><rect x="350" y="280" width="100" height="34" rx="8" class="tag" /><text x="400" y="304" text-anchor="middle" class="tx tag">v1.0.0</text></g>
+      <g id="r5"><text x="90" y="350" class="tx sm">settings</text><rect x="350" y="326" width="100" height="34" rx="8" class="tag" /><text x="400" y="350" text-anchor="middle" class="tx tag">v1.0.0</text></g>
+    </g>
+    <g id="bump">
+      <rect x="330" y="230" width="116" height="42" rx="8" class="tag acc" />
+      <text x="388" y="258" text-anchor="middle" class="tx tag acc">v1.0.1</text>
+    </g>
+    <text id="bump-note" x="270" y="404" text-anchor="middle" class="tx sm acc">only the words move</text>
+
+    <text id="frames-h" x="560" y="112" class="tx sm">reference frames</text>
+    <g id="f1"><rect x="560" y="132" width="124" height="104" rx="10" class="box" /><text x="622" y="192" text-anchor="middle" class="tx sm">1</text></g>
+    <g id="f2"><rect x="700" y="132" width="124" height="104" rx="10" class="box" /><text x="762" y="192" text-anchor="middle" class="tx sm">2</text></g>
+    <g id="f3"><rect x="840" y="132" width="124" height="104" rx="10" class="box" /><text x="902" y="192" text-anchor="middle" class="tx sm">3</text></g>
+    <g id="f4"><rect x="980" y="132" width="124" height="104" rx="10" class="box" /><text x="1042" y="192" text-anchor="middle" class="tx sm">4</text></g>
+    <g id="f5"><rect x="1120" y="132" width="124" height="104" rx="10" class="box" /><text x="1182" y="192" text-anchor="middle" class="tx sm">5</text></g>
+
+    <text id="build-h" x="560" y="296" class="tx sm">build number</text>
+    <g id="b1"><rect x="560" y="314" width="230" height="66" rx="10" class="box" /><text x="675" y="357" text-anchor="middle" class="tx">build 1</text></g>
+    <g id="b2"><rect x="860" y="314" width="230" height="66" rx="10" class="box" /><text x="975" y="357" text-anchor="middle" class="tx">build 2</text></g>
+    <g id="b3"><rect x="1140" y="314" width="230" height="66" rx="10" class="box acc" /><text x="1255" y="357" text-anchor="middle" class="tx acc">build 3</text></g>
+    <g id="c1"><line x1="796" y1="347" x2="852" y2="347" pathLength="1" class="arrow" /><polygon points="860,347 844,339 844,355" class="head" /></g>
+    <g id="c2"><line x1="1096" y1="347" x2="1132" y2="347" pathLength="1" class="arrow" /><polygon points="1140,347 1124,339 1124,355" class="head" /></g>
+
+  </svg>
+</div>
+<script>
+  const tl = gsap.timeline({ paused: true });
+  tl.fromTo('#lock', { opacity: 0, scale: 0.96, transformOrigin: '50% 50%' }, { opacity: 1, scale: 1, duration: 0.45, ease: 'power4.out' }, 0.1);
+  [['#r1', 0.35], ['#r2', 0.45], ['#r3', 0.55], ['#r4', 0.65], ['#r5', 0.75]].forEach(([sel, t]) => {
+    tl.fromTo(sel, { opacity: 0 }, { opacity: 1, duration: 0.3 }, t);
+  });
+  tl.fromTo('#r3 rect, #r3 .tx.tag', { opacity: 1 }, { opacity: 0, duration: 0.25 }, 1.05);
+  tl.fromTo('#bump', { opacity: 0, x: -40 }, { opacity: 1, x: 0, duration: 0.45, ease: 'power3.out' }, 1.15);
+  tl.fromTo('#bump-note', { opacity: 0 }, { opacity: 1, duration: 0.35 }, 1.5);
+  tl.fromTo('#frames-h', { opacity: 0 }, { opacity: 1, duration: 0.3 }, 1.6);
+  [['#f1', 1.8], ['#f2', 1.92], ['#f3', 2.04], ['#f4', 2.16], ['#f5', 2.28]].forEach(([sel, t]) => {
+    tl.fromTo(sel, { opacity: 0, scaleX: 0.4, transformOrigin: '50% 50%' }, { opacity: 1, scaleX: 1, duration: 0.4, ease: 'power4.out' }, t);
+  });
+  tl.fromTo('#build-h', { opacity: 0 }, { opacity: 1, duration: 0.3 }, 2.7);
+  tl.fromTo('#b1', { opacity: 0, y: 8 }, { opacity: 1, y: 0, duration: 0.4, ease: 'power3.out' }, 2.85);
+  tl.fromTo('#c1 line', { attr: { 'stroke-dashoffset': 1 }, strokeDasharray: 1 }, { attr: { 'stroke-dashoffset': 0 }, duration: 0.3 }, 3.3);
+  tl.fromTo('#c1 polygon', { opacity: 0 }, { opacity: 1, duration: 0.1 }, 3.55);
+  tl.fromTo('#b2', { opacity: 0, y: 8 }, { opacity: 1, y: 0, duration: 0.4, ease: 'power3.out' }, 3.55);
+  tl.fromTo('#c2 line', { attr: { 'stroke-dashoffset': 1 }, strokeDasharray: 1 }, { attr: { 'stroke-dashoffset': 0 }, duration: 0.3 }, 3.95);
+  tl.fromTo('#c2 polygon', { opacity: 0 }, { opacity: 1, duration: 0.1 }, 4.2);
+  tl.fromTo('#b3', { opacity: 0, y: 8 }, { opacity: 1, y: 0, duration: 0.4, ease: 'power3.out' }, 4.2);
+  window.__timelines['release'] = tl;
+</script>
+</body>
+</html>

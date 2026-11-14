@@ -3,7 +3,11 @@
 const calm = matchMedia('(prefers-reduced-motion: reduce)').matches
 const figs = [...document.querySelectorAll('.fig')]
 if (figs.length && !calm && 'IntersectionObserver' in window) {
-  const play = (f) => { f.classList.remove('go'); void f.offsetWidth; f.classList.add('go') }
+  const play = (f) => {
+    const v = f.querySelector('.fig__video')
+    if (v) { v.currentTime = 0; const p = v.play(); if (p) p.catch(() => {}); return }
+    f.classList.remove('go'); void f.offsetWidth; f.classList.add('go')
+  }
   const io = new IntersectionObserver((es) => es.forEach((e) => {
     if (e.isIntersecting) { play(e.target); io.unobserve(e.target) }
   }), { threshold: 0.35 })

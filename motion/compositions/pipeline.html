@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/gsap.min.js"></script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 1440px; height: 500px; overflow: hidden; background: #fcf2f4; }
+  #root { position: relative; width: 1440px; height: 500px; }
+  .box { fill: #fcf2f4; stroke: #2b0e18; stroke-width: 3; }
+  .box.acc { stroke: #a31d47; }
+  .tx { fill: #2b0e18; font: 500 30px Inter, sans-serif; }
+  .tx.sm { font-size: 24px; fill: #6a4250; }
+  .tx.acc { fill: #a31d47; }
+  .arrow { fill: none; stroke: #6a4250; stroke-width: 4; stroke-linecap: round; }
+  .arrow.acc { stroke: #a31d47; }
+  .head { fill: #6a4250; }
+  .head.acc { fill: #a31d47; }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="pipeline" data-start="0" data-duration="5.4" data-width="1440" data-height="500">
+  <svg viewBox="0 0 1440 500" width="1440" height="500">
+    <g id="n1"><rect x="50" y="60" width="200" height="90" rx="12" class="box" /><text x="150" y="115" text-anchor="middle" class="tx">commit</text></g>
+    <g id="n2"><rect x="300" y="60" width="200" height="90" rx="12" class="box" /><text x="400" y="115" text-anchor="middle" class="tx">build</text></g>
+    <g id="n3"><rect x="550" y="60" width="220" height="90" rx="12" class="box" /><text x="660" y="100" text-anchor="middle" class="tx">deploy</text><text x="660" y="134" text-anchor="middle" class="tx sm">to testers</text></g>
+
+    <g id="n4"><rect x="50" y="350" width="200" height="90" rx="12" class="box" /><text x="150" y="405" text-anchor="middle" class="tx">tag</text></g>
+    <g id="n5"><rect x="300" y="350" width="200" height="90" rx="12" class="box" /><text x="400" y="405" text-anchor="middle" class="tx">release</text></g>
+
+    <g id="e1"><line x1="256" y1="105" x2="292" y2="105" pathLength="1" class="arrow" /><polygon points="300,105 284,97 284,113" class="head" /></g>
+    <g id="e2"><line x1="506" y1="105" x2="542" y2="105" pathLength="1" class="arrow" /><polygon points="550,105 534,97 534,113" class="head" /></g>
+    <g id="e3"><line x1="256" y1="395" x2="292" y2="395" pathLength="1" class="arrow" /><polygon points="300,395 284,387 284,403" class="head" /></g>
+    <g id="e4"><line x1="776" y1="120" x2="1046" y2="228" pathLength="1" class="arrow acc" /><polygon points="1058,232 1043,219 1038,236" class="head acc" /></g>
+    <g id="e5"><line x1="506" y1="390" x2="1046" y2="262" pathLength="1" class="arrow acc" /><polygon points="1058,258 1038,254 1043,271" class="head acc" /></g>
+
+    <g id="discord">
+      <rect x="1060" y="150" width="330" height="200" rx="14" class="box acc" />
+      <text x="1225" y="196" text-anchor="middle" class="tx">Discord</text>
+      <text id="l1" x="1225" y="240" text-anchor="middle" class="tx sm">tester link, notes, QA</text>
+      <text id="l2" x="1225" y="278" text-anchor="middle" class="tx sm">release page, team cc</text>
+      <text id="l3" x="1225" y="316" text-anchor="middle" class="tx sm acc">never fails the job</text>
+    </g>
+
+  </svg>
+</div>
+<script>
+  const tl = gsap.timeline({ paused: true });
+  [['#n1', 0.1], ['#n2', 0.35], ['#n3', 0.6], ['#n4', 0.85], ['#n5', 1.05]].forEach(([sel, t]) => {
+    tl.fromTo(sel, { opacity: 0, scale: 0.94, transformOrigin: '50% 50%' }, { opacity: 1, scale: 1, duration: 0.4, ease: 'power4.out' }, t);
+  });
+  [['#e1 line', 0.4], ['#e2 line', 0.65], ['#e3 line', 0.9], ['#e4 line', 1.5], ['#e5 line', 1.75]].forEach(([sel, t]) => {
+    tl.fromTo(sel, { attr: { 'stroke-dashoffset': 1 }, strokeDasharray: 1 }, { attr: { 'stroke-dashoffset': 0 }, duration: 0.5, ease: 'power2.inOut' }, t);
+  });
+  tl.fromTo('#e1 polygon, #e2 polygon, #e3 polygon', { opacity: 0 }, { opacity: 1, duration: 0.12, stagger: 0.12 }, 0.75);
+  tl.fromTo('#e4 polygon, #e5 polygon', { opacity: 0 }, { opacity: 1, duration: 0.15, stagger: 0.1 }, 1.95);
+  tl.fromTo('#discord', { opacity: 0, scale: 0.92, transformOrigin: '50% 50%' }, { opacity: 1, scale: 1, duration: 0.5, ease: 'power4.out' }, 2.2);
+  tl.fromTo('#l1', { opacity: 0 }, { opacity: 1, duration: 0.3 }, 2.7);
+  tl.fromTo('#l2', { opacity: 0 }, { opacity: 1, duration: 0.3 }, 2.95);
+  tl.fromTo('#l3', { opacity: 0 }, { opacity: 1, duration: 0.3 }, 3.2);
+  window.__timelines['pipeline'] = tl;
+</script>
+</body>
+</html>

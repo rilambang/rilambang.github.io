@@ -513,5 +513,51 @@ export const figures = {
     g.tick(640, 170, { t: 4.8 })
     g.text(360, 236, 'Where no request exists yet, the wait stays. Settling on nothing proves nothing.', { t: 5.0, a: 'middle', sm: true, tone: 'mut' })
   }),
+
+  // ── one-sign-in-across-app-and-web ──────────────────────────────────────
+  'handoff-id': () => make(240, 'Three corrections a web hand-off needs: the profile, not the link, names the student; a bad code fails the hand-off, not the session; no reply means not yet, not failed.', 'The token is a claim. The profile is the identity.', (g) => {
+    claims(g, [
+      ['The link names the student', 'The profile does'],
+      ['A bad code ends the session', 'It fails the hand-off'],
+      ['No reply means sign-in failed', 'It means not yet'],
+    ], 66, 62)
+  }),
+
+  // ── every-way-out-of-an-exam ────────────────────────────────────────────
+  'exam-paths': () => make(250, 'Four ways out of an exam and the rule each one carries: submit is the only done, the timer ends the exam rather than the student, an exit cancels a waiting finish, and a paper the server closed is already gone.', 'Four doors out, and each one has its own rule.', (g) => {
+    rows(g, [
+      ['Submit', 'the only door that means done'],
+      ['The timer', 'ends the exam, not the student'],
+      ['Exit', 'cancels a finish that was waiting'],
+      ['Server closed', 'the paper is already gone'],
+    ], 62, 54, { t0: 0.3, dt: 0.55, bx: 200 })
+  }),
+
+  // ── the-release-that-only-changed-its-words ─────────────────────────────
+  'release-vocab': () => make(300, 'One lock row moves to a new version for words alone, while five reference frames are re-recorded and a build number is spent on TestFlight.', 'The words are the interface.', (g) => {
+    g.box(30, 30, 300, 226, '', { t: 0 })
+    g.text(180, 64, 'lock file', { t: 0, a: 'middle' })
+    ;[['history', 'v1.0.0'], ['results', 'v1.0.0'], ['sign-in', 'v1.0.1'], ['tasks', 'v1.0.0'], ['settings', 'v1.0.0']].forEach(([m, v], i) => {
+      const y = 106 + i * 32, t = 0.5 + i * 0.35, ink = v === 'v1.0.1'
+      g.text(50, y, m, { t, cls: 'fade', sm: true })
+      g.raw(`<g class="pop" style="--t:${t}s"><rect x="250" y="${y - 19}" width="62" height="26" rx="6" class="chip${ink ? ' ink' : ''}"/><text x="281" y="${y - 1}" text-anchor="middle" class="tx sm${ink ? ' ink' : ''}">${v}</text></g>`)
+    })
+    g.ln(336, 170, 402, 170, { t: 2.3, d: 0.3, head: true, tone: 'mut' })
+    g.text(414, 164, 'one row moves', { t: 2.5, tone: 'ink' })
+    g.text(414, 188, 'for the words alone', { t: 2.6, sm: true, tone: 'mut' })
+    g.text(414, 226, 'five frames re-recorded', { t: 2.9, sm: true, tone: 'mut' })
+    g.text(414, 250, 'a build number spent', { t: 3.1, sm: true, tone: 'mut' })
+  }),
+
+  // ── let-the-pipeline-say-it-out-loud ────────────────────────────────────
+  'pipeline-message': () => make(280, 'What the channel message may do: carry the tester link, mention the QA, and never ping everyone from text pasted into the notes.', 'A notification is an input handler too.', (g) => {
+    ;[['Carry the tester link', true], ['Mention the QA', true], ['Ping everyone from the notes', false]].forEach(([l, ok], i) => {
+      const y = 46 + i * 66, t = 0.3 + i * 0.55
+      g.box(30, y, 540, 54, l, { t, tone: ok ? '' : 'ink' })
+      if (ok) g.tick(646, y + 27, { t: t + 0.45 })
+      else g.cross(644, y + 27, 10, { t: t + 0.45 })
+    })
+    g.text(330, 258, 'parse: [] — a pasted @everyone cannot ping the channel', { t: 2.3, a: 'middle', sm: true, tone: 'mut', cls: 'fade' })
+  }),
 }
 export { W }

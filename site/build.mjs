@@ -13,9 +13,21 @@ const ORDER = ['kiosk-and-assessment-apps', 'splitting-an-app-into-local-package
   'uikit-to-swiftui-without-a-rewrite', 'a-design-system-is-a-review-policy', 'how-i-review-ios-pull-requests',
   'the-ios-stack-i-actually-reach-for', 'ai-native-development-process', 'what-a-green-build-does-not-prove',
   'four-gates-that-certified-nothing', 'mvvm-to-viper-part-one', 'mvvm-to-viper-part-two', 'mvvm-to-viper-part-three',
-  'exam-mode-one-screen-earlier', 'what-a-year-of-ai-native-ios-still-cant-prove', 'an-audit-week-on-a-shipping-ios-app']
+  'exam-mode-one-screen-earlier', 'what-a-year-of-ai-native-ios-still-cant-prove', 'an-audit-week-on-a-shipping-ios-app',
+  'one-sign-in-across-app-and-web', 'every-way-out-of-an-exam', 'the-release-that-only-changed-its-words',
+  'let-the-pipeline-say-it-out-loud']
 
 const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
+
+// Motion figures: HyperFrames renders (motion/) written to site/assets/motion/<id>.mp4,
+// with the finished frame beside it as the poster, so no-JS and reduced-motion readers
+// get the same drawing the animated SVG figures fall back to.
+const MOTION = {
+  handoff: { alt: 'A web sign-in hands off to the app, the account syncs under a success tick, and then the same student goes straight in while a different student lands on Login.', cap: 'The tick is the promise. The profile decides which door opens.' },
+  doors: { alt: 'Four ways out of an exam: submit, the timer, an exit, and a paper the server closed.', cap: 'Four doors out. Leaving through one cancels what the others left behind.' },
+  release: { alt: 'A lock file where one version moves on words alone, five reference frames re-recorded, and a build number stepping from 1 to 3.', cap: 'A wording change is a release event: one tag, five frames, a new build number.' },
+  pipeline: { alt: 'A commit and a tag both end at one Discord card that carries the tester link, the release page and a mention.', cap: 'The job that ships is the job that says it shipped.' },
+}
 
 // ── markdown subset: ## h2, paragraphs, - lists, > quotes, ``` code, ::fig id ─────────
 const inline = (s) => {
@@ -49,6 +61,14 @@ function render(md, slug) {
         `<figcaption><span>${esc(r.cap)}</span><button type="button" class="fig__replay" hidden>Replay</button></figcaption></figure>`)
       i++; continue
     }
+    if (l.startsWith('::motion ')) {
+      const id = l.slice(9).trim(), m = MOTION[id]
+      if (!m) throw new Error(`${slug}: unknown motion "${id}"`)
+      figs++
+      out.push(`<figure class="fig fig--motion"><div class="fig__frame"><video class="fig__video" width="1440" height="500" poster="../assets/motion/${id}.jpg" preload="metadata" muted playsinline aria-label="${esc(m.alt)}"><source src="../assets/motion/${id}.mp4" type="video/mp4"></video></div>` +
+        `<figcaption><span>${esc(m.cap)}</span><button type="button" class="fig__replay" hidden>Replay</button></figcaption></figure>`)
+      i++; continue
+    }
     if (l.startsWith('## ')) { out.push(`<h2>${inline(l.slice(3))}</h2>`); i++; continue }
     if (l.startsWith('> ')) {
       const q = []; while (i < lines.length && lines[i].startsWith('> ')) q.push(lines[i++].slice(2))
@@ -63,7 +83,7 @@ function render(md, slug) {
       out.push(`<ul>${items.map((t) => `<li>${inline(t)}</li>`).join('')}</ul>`); continue
     }
     const p = []
-    while (i < lines.length && lines[i].trim() && !/^(## |- |> |```|::fig )/.test(lines[i])) p.push(lines[i++])
+    while (i < lines.length && lines[i].trim() && !/^(## |- |> |```|::fig |::motion )/.test(lines[i])) p.push(lines[i++])
     out.push(`<p>${inline(p.join(' '))}</p>`)
   }
   if (!figs) throw new Error(`${slug}: every article needs at least one figure`)
@@ -74,7 +94,7 @@ function loadPost(slug) {
   const raw = fs.readFileSync(path.join(HERE, 'posts', `${slug}.md`), 'utf8')
   const m = raw.match(/^---\n([\s\S]*?)\n---\n([\s\S]*)$/)
   const meta = Object.fromEntries(m[1].split('\n').map((l) => [l.slice(0, l.indexOf(':')).trim(), l.slice(l.indexOf(':') + 1).trim()]))
-  const words = m[2].replace(/::fig .*/g, '').split(/\s+/).length
+  const words = m[2].replace(/::(fig|motion) .*/g, '').split(/\s+/).length
   return { slug, ...meta, body: render(m[2], slug), minutes: Math.max(1, Math.round(words / 220)) }
 }
 const POSTS = ORDER.map(loadPost)
