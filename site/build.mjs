@@ -232,17 +232,55 @@ ${src ? `<section class="sources"><h2>Sources</h2><ul>${src}</ul></section>` : '
   })
 }
 
+// ── TechFlops Publisher: the upload tool's public home + privacy policy (YouTube API audit) ──
+const TF_CHANNEL = 'https://www.youtube.com/channel/UCr0ttzMCQVMZeVwgtndyXdQ'
+const techflopsHome = page({
+  title: 'TechFlops Publisher',
+  desc: 'The private upload tool behind the TechFlops YouTube channel.',
+  url: `${SITE}/techflops/`, depth: 1,
+  body: `<main id="main"><article class="post">
+<header class="post__head"><p class="post__tag">TechFlops</p><h1>TechFlops Publisher</h1><p class="post__sum">The private upload tool behind the <a href="${TF_CHANNEL}" target="_blank" rel="noreferrer">TechFlops channel on YouTube</a>.</p></header>
+<p><a href="${TF_CHANNEL}" target="_blank" rel="noreferrer">TechFlops</a> is my YouTube and Instagram channel of animated stories about technology: where it came from, and why some of it flopped.</p>
+<p>TechFlops Publisher is a small command-line script I run on my own computer to upload my finished videos to my own channel. It uses YouTube API Services (only the <code>youtube.upload</code> permission) and the Instagram Graph API. It is not offered to anyone else.</p>
+<ul><li><a href="${TF_CHANNEL}" target="_blank" rel="noreferrer">TechFlops on YouTube</a></li><li><a href="privacy.html">Privacy Policy</a></li><li><a href="https://www.youtube.com/t/terms" target="_blank" rel="noreferrer">YouTube Terms of Service</a></li></ul>
+</article></main>`,
+})
+const techflopsPrivacy = page({
+  title: 'TechFlops Publisher: Privacy Policy',
+  desc: 'How TechFlops Publisher uses YouTube API Services and what data it keeps.',
+  url: `${SITE}/techflops/privacy.html`, depth: 1,
+  body: `<main id="main"><article class="post">
+<header class="post__head"><p class="post__tag">TechFlops</p><h1>Privacy Policy</h1><p class="post__sum">TechFlops Publisher, last updated 19 November 2026.</p></header>
+<p>TechFlops Publisher is a private command-line tool used only by ${esc(ME.name)}, owner of the <a href="${TF_CHANNEL}" target="_blank" rel="noreferrer">TechFlops YouTube channel</a>, to upload his own videos to his own YouTube channel and Instagram account. It is not offered to, or used by, anyone else.</p>
+<h2>YouTube API Services</h2>
+<p>TechFlops Publisher uses YouTube API Services. By using it you agree to be bound by the <a href="https://www.youtube.com/t/terms" target="_blank" rel="noreferrer">YouTube Terms of Service</a>. Google's handling of data is described in the <a href="https://policies.google.com/privacy" target="_blank" rel="noreferrer">Google Privacy Policy</a>.</p>
+<h2>What data is accessed</h2>
+<p>The tool requests only the <code>youtube.upload</code> permission. It uses it to upload the video files, titles, descriptions, tags and thumbnails the owner chooses, to the owner's own channel. It does not read, collect, analyse or store any other YouTube data, and it never accesses another user's account.</p>
+<h2>What data is stored, and where</h2>
+<p>The only data stored is the OAuth token for the owner's own Google account, kept in a local file on the owner's computer. Nothing is sent to any server other than Google's (and Meta's, for Instagram uploads). Nothing is shared with or sold to third parties.</p>
+<h2>Retention and deletion</h2>
+<p>The token is kept only while the tool is in use and can be deleted at any time by removing the local token file. Access can also be revoked at any time on the <a href="https://security.google.com/settings/security/permissions" target="_blank" rel="noreferrer">Google security settings page</a>, after which the tool holds no data.</p>
+<h2>Cookies and tracking</h2>
+<p>The tool has no website component and uses no cookies, analytics or tracking.</p>
+<h2>Contact</h2>
+<p>Questions about this policy: <a href="mailto:rilambang@gmail.com">rilambang@gmail.com</a>.</p>
+</article></main>`,
+})
+
 // ── write ───────────────────────────────────────────────────────────────────────────
 fs.rmSync(OUT, { recursive: true, force: true })
 fs.mkdirSync(path.join(OUT, 'blog'), { recursive: true })
 fs.cpSync(path.join(HERE, 'assets'), path.join(OUT, 'assets'), { recursive: true })
 fs.copyFileSync(path.join(HERE, 'assets', 'og.png'), path.join(OUT, 'og.png'))
 fs.writeFileSync(path.join(OUT, 'index.html'), home)
+fs.mkdirSync(path.join(OUT, 'techflops'), { recursive: true })
+fs.writeFileSync(path.join(OUT, 'techflops', 'index.html'), techflopsHome)
+fs.writeFileSync(path.join(OUT, 'techflops', 'privacy.html'), techflopsPrivacy)
 fs.writeFileSync(path.join(OUT, 'blog', 'index.html'), index)
 POSTS.forEach((p, i) => fs.writeFileSync(path.join(OUT, 'blog', `${p.slug}.html`), article(p, i)))
 fs.writeFileSync(path.join(OUT, 'robots.txt'), `User-agent: *\nAllow: /\nSitemap: ${SITE}/sitemap.xml\n`)
 fs.writeFileSync(path.join(OUT, 'sitemap.xml'), `<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">` +
-  [`${SITE}/`, `${SITE}/blog/`, ...POSTS.map((p) => `${SITE}/blog/${p.slug}.html`)].map((u) => `<url><loc>${u}</loc></url>`).join('') + '</urlset>\n')
+  [`${SITE}/`, `${SITE}/blog/`, `${SITE}/techflops/`, `${SITE}/techflops/privacy.html`, ...POSTS.map((p) => `${SITE}/blog/${p.slug}.html`)].map((u) => `<url><loc>${u}</loc></url>`).join('') + '</urlset>\n')
 fs.writeFileSync(path.join(OUT, 'feed.xml'), `<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"><channel><title>${esc(ME.name)}: Writing</title><link>${SITE}/blog/</link><description>Notes on the craft of iOS.</description>` +
   NEWEST.map((p) => `<item><title>${esc(p.title)}</title><link>${SITE}/blog/${p.slug}.html</link><guid>${SITE}/blog/${p.slug}.html</guid><description>${esc(p.summary)}</description></item>`).join('') + '</channel></rss>\n')
 console.log(`${POSTS.length} articles, ${POSTS.reduce((n, p) => n + (p.body.match(/class="fig"/g) || []).length, 0)} figures -> docs/`)
